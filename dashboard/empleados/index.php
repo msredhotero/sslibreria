@@ -41,12 +41,12 @@ $tituloWeb = "Gestión: Talleres";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbempleados";
 
-$lblCambio	 	= array("nrodocumento","fechanacimiento","telefono","direccion","telefonofijo");
-$lblreemplazo	= array("Nro Documento","Fecha Nacimiento","Teléfono","dirección","Teléfono Fijo");
+$lblCambio	 	= array("dni","fechanac","telefono","direccion","fechaing");
+$lblreemplazo	= array("Nro Documento","Fecha Nacimiento","Teléfono","dirección","Fecha Ingreso");
 
 
-$cadRef 	= '';
-
+$cadRef 	= ''; 
+    
 $refdescripcion = array();
 $refCampo 	=  array();
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -55,15 +55,18 @@ $refCampo 	=  array();
 
 
 /////////////////////// Opciones para la creacion del view  apellido,nombre,nrodocumento,fechanacimiento,direccion,telefono,email/////////////////////
-$cabeceras 		= "	<th>Apellido</th>
-					<th>Nombre</th>
-					<th>Nro Documento</th>
+$cabeceras 		= "	<th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Nro Documento</th>
+                    <th>Sexo</th>
 					<th>Fecha Nacimiento</th>
-					<th>CUIL</th>
-					<th>Teléfono</th>
-					<th>Teléfono Fijo</th>
 					<th>Dirección</th>
-					<th>Email</th>";
+					<th>Teléfono Fijo</th>
+					<th>Celular</th>
+					<th>Email</th>
+					<th>Fecha Ingreso</th>
+                    <th>Sueldo</th>
+                    <th>Estado</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -72,7 +75,7 @@ $cabeceras 		= "	<th>Apellido</th>
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerEmpleados(),9);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerEmpleados(),12);
 
 
 

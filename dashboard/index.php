@@ -50,8 +50,8 @@ $cabeceras 		= "	<th>Nro</th>
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerOrdenesActivos(),95);
-$lstCargadosMora 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerOrdenesMora(),94);
+//$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerOrdenesActivos(),95);
+//$lstCargadosMora 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerOrdenesMora(),94);
 
 ?>
 
@@ -66,7 +66,7 @@ $lstCargadosMora 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosRe
 
 
 
-<title>Gesti&oacute;n: Taller Mecanico</title>
+<title>Gesti&oacute;n: Libreria</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
@@ -125,7 +125,7 @@ $lstCargadosMora 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosRe
                 
                 </div>
             </div>
-    		<?php echo $lstCargados; ?>
+    		<?php // echo $lstCargados; ?>
     	</div>
     </div>
     
@@ -144,7 +144,7 @@ $lstCargadosMora 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosRe
                 
                 </div>
             </div>
-    		<?php echo $lstCargadosMora; ?>
+    		<?php //echo $lstCargadosMora; ?>
     	</div>
     </div>
     

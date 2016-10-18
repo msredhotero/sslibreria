@@ -36,61 +36,43 @@ function query($sql,$accion) {
 
 
 $tablasAr	= array("clientes"        => "dbclientes",        
-"clientevehiculos"=> "dbclientevehiculos",
-"ordenes"         => "dbordenes",         
+"empleados"=> "dbempleados",
+"productos"         => "dbproductos",         
 "usuarios"        => "dbusuarios",        
-"vehiculos"       => "dbvehiculos",       
+"proveedores"       => "dbproveedores",       
 "predio_menu"     => "predio_menu",       
-"estados"         => "tbestados",         
-"marca"           => "tbmarca",           
-"modelo"          => "tbmodelo",          
+"estados"         => "tbestados",                 
 "roles"           => "tbroles",          
-"tipovehiculo"    => "tbtipovehiculo",
-"empleados"		  => "dbempleados",
-"ordenesresponsables" => "dbordenesresponsables",
-"pagos"			  => "dbpagos",
-"configuracion"   => "tbconfiguracion",
-"tipoidentificaciontributaria" => "tbtipoidentificaciontributaria",
+"categorias"    => "tbcategorias",
+"compras"       => "dbcompras",
 "tipopago"        => "tbtipopago");
 
 
 function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 	
 	$tablasArAux2	= array("clientes"        => "dbclientes",        
-	"clientevehiculos"=> "dbclientevehiculos",
-	"ordenes"         => "dbordenes",         
-	"usuarios"        => "dbusuarios",        
-	"vehiculos"       => "dbvehiculos",       
-	"predio_menu"     => "predio_menu",       
-	"estados"         => "tbestados",         
-	"marca"           => "tbmarca",           
-	"modelo"          => "tbmodelo",          
-	"roles"           => "tbroles",          
-	"tipovehiculo"    => "tbtipovehiculo",
-	"empleados"		  => "dbempleados",
-	"ordenesresponsables" => "dbordenesresponsables",
-	"pagos"			  => "dbpagos",
-    "configuracion"   => "tbconfiguracion",
-    "tipoidentificaciontributaria" => "tbtipoidentificaciontributaria",
-    "tipopago"        => "tbtipopago");
+"empleados"=> "dbempleados",
+"productos"         => "dbproductos",         
+"usuarios"        => "dbusuarios",        
+"proveedores"       => "dbproveedores",       
+"predio_menu"     => "predio_menu",       
+"estados"         => "tbestados",                 
+"roles"           => "tbroles",          
+"categorias"    => "tbcategorias",
+"compras"       => "dbcompras",
+"tipopago"        => "tbtipopago");
 
 	$tablasArAux	= array("clientes"        => 1,        
-	"clientevehiculos"=> 1,
-	"ordenes"         => 4,         
-	"usuarios"        => 1,        
-	"vehiculos"       => 1,       
-	"predio_menu"     => 1,       
-	"estados"         => 1,         
-	"marca"           => 1,           
-	"modelo"          => 1,          
-	"roles"           => 1,          
-	"tipovehiculo"    => 1,
-	"empleados"		  => 1,
-	"ordenesresponsables" => 4,
-	"pagos"			  => 1,
-    "configuracion"   => 2,
-    "tipoidentificaciontributaria" => 1,
-    "tipopago"        => 1);
+"empleados"=> 1,
+"productos"         => 3,         
+"usuarios"        => 2,        
+"proveedores"       => 1,       
+"predio_menu"     => 1,       
+"estados"         => 1,                 
+"roles"           => 1,          
+"categorias"    => 1,
+"compras"       => 3,
+"tipopago"        => 1);
 	
 	$inner= '';
 	$sql	=	"show columns from ".$tabla;
@@ -120,7 +102,7 @@ $ajaxFuncionesController = '';
 
 $servicios	= "Referencias";
 
-$sqlMapaer	= "SHOW FULL TABLES FROM sstaller";
+$sqlMapaer	= "SHOW FULL TABLES FROM sslibreria";
 $resMapeo 	=	query($sqlMapaer,0);
 
 $aliasTablaMadre = '';

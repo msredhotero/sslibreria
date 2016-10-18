@@ -236,7 +236,7 @@ class Servicios {
 		$sql	=	"show columns from ".$tabla;
 		$res 	=	$this->query($sql,0);
 		$label  = '';
-		$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi");
+		$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen");
 		
 		$geoposicionamiento = array("latitud","longitud");
 		

@@ -41,15 +41,15 @@ $modificar = "modificarClientes";
 
 $idTabla = "idcliente";
 
-$tituloWeb = "Gestión: Talleres";
+$tituloWeb = "Gestión: Libreria";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbclientes";
 
-$lblCambio	 	= array("nrodocumento","fechanaciomiento","telefono");
-$lblreemplazo	= array("Nro Documento","Fecha Nacimiento","Teléfono");
+$lblCambio	 	= array("nombrecompleto","fechanacimiento","telefono","direccion");
+$lblreemplazo	= array("Nombre Completo","Fecha Nacimiento","Teléfono","dirección");
 
 
 $cadRef 	= '';

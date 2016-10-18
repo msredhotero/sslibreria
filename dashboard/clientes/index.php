@@ -34,15 +34,15 @@ $eliminar = "eliminarClientes";
 
 $insertar = "insertarClientes";
 
-$tituloWeb = "Gestión: Talleres";
+$tituloWeb = "Gestión: Libreria";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbclientes";
 
-$lblCambio	 	= array("nrodocumento","fechanacimiento","telefono","direccion");
-$lblreemplazo	= array("Nro Documento","Fecha Nacimiento","Teléfono","dirección");
+$lblCambio	 	= array("nombrecompleto","fechanacimiento","telefono","direccion");
+$lblreemplazo	= array("Nombre Completo","Fecha Nacimiento","Teléfono","dirección");
 
 
 $cadRef 	= '';

@@ -22,47 +22,52 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Empleados",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Modelos",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerEmpleadosPorId($id);
+$resResultado = $serviciosReferencias->traerModeloPorId($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Empleado";
+$singular = "Modelo";
 
-$plural = "Empleados";
+$plural = "Modelos";
 
-$eliminar = "eliminarEmpleados";
+$eliminar = "eliminarModelo";
 
-$modificar = "modificarEmpleados";
+$modificar = "modificarModelo";
 
-$idTabla = "idempleado";
+$idTabla = "idmodelo";
 
 $tituloWeb = "Gestión: Talleres";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbempleados";
+$tabla 			= "tbmodelo";
 
-$lblCambio	 	= array("dni","fechanac","telefono","direccion","fechaing");
-$lblreemplazo	= array("Nro Documento","Fecha Nacimiento","Teléfono","dirección","Fecha Ingreso");
+$lblCambio	 	= array("refmarca");
+$lblreemplazo	= array("Marca");
 
 
-$cadRef 	= '';
+$resMarca 	= $serviciosReferencias->traerMarca();
+$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resMarca,array(1),'',mysql_result($resResultado,0,'refmarca'));
 
-$refdescripcion = array();
-$refCampo 	=  array();
+$refdescripcion = array(0 => $cadRef);
+$refCampo 	=  array("refmarca");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+
+
+
 
 
 $formulario 	= $serviciosFunciones->camposTablaModificar($id, $idTabla, $modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
 
-if ($_SESSION['refroll_predio'] != 1) {
+if ($_SESSION['idroll_predio'] != 1) {
 
 } else {
 
@@ -101,7 +106,7 @@ if ($_SESSION['refroll_predio'] != 1) {
 	<link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
+
 	<style type="text/css">
 		
   
@@ -187,9 +192,6 @@ if ($_SESSION['refroll_predio'] != 1) {
 </div>
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
 <script src="../../bootstrap/js/dataTables.bootstrap.js"></script>
-
-<script src="../../js/bootstrap-datetimepicker.min.js"></script>
-<script src="../../js/bootstrap-datetimepicker.es.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -319,20 +321,6 @@ $(document).ready(function(){
 		}
     });
 
-});
-</script>
-
-<script type="text/javascript">
-$('.form_date').datetimepicker({
-	language:  'es',
-	weekStart: 1,
-	todayBtn:  1,
-	autoclose: 1,
-	todayHighlight: 1,
-	startView: 2,
-	minView: 2,
-	forceParse: 0,
-	format: 'dd/mm/yyyy'
 });
 </script>
 <?php } ?>
