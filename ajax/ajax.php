@@ -69,11 +69,15 @@ modificarProductos($serviciosReferencias);
 break; 
 case 'eliminarProductos': 
 eliminarProductos($serviciosReferencias); 
-break; 
+break;
+ 
 case 'eliminarFoto':
 	eliminarFoto($serviciosReferencias);
 	break;
-	
+case 'traerProductoPorCodigo':
+	traerProductoPorCodigo($serviciosReferencias);
+	break;
+		
 case 'insertarProveedores': 
 insertarProveedores($serviciosReferencias); 
 break; 
@@ -110,6 +114,17 @@ break;
 case 'eliminarDetallepedido': 
 eliminarDetallepedido($serviciosReferencias); 
 break; 
+
+case 'insertarDetallepedidoaux':
+insertarDetallepedidoaux($serviciosReferencias);
+break;
+case 'modificarDetallepedidoaux':
+modificarDetallepedidoaux($serviciosReferencias);
+break;
+case 'eliminarDetallepedidoaux':
+eliminarDetallepedidoaux($serviciosReferencias);
+break; 
+
 case 'insertarDetalleventa': 
 insertarDetalleventa($serviciosReferencias); 
 break; 
@@ -312,6 +327,18 @@ $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarEmpleados($id); 
 echo $res; 
 } 
+
+
+
+function traerProductoPorCodigo($servicios) {
+	$codigo		= $_POST['idproducto'];
+	
+	$res = $servicios->traerProductosPorId($codigo);
+	
+	echo json_encode(toArray($res));
+}
+
+
 function insertarProductos($serviciosReferencias) { 
 $codigo = $_POST['codigo']; 
 $codigobarra = $_POST['codigobarra']; 
@@ -523,6 +550,40 @@ $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarDetallepedido($id); 
 echo $res; 
 } 
+
+
+function insertarDetallepedidoaux($serviciosReferencias) {
+$refproductos = $_POST['refproductos'];
+$cantidad = $_POST['cantidad'];
+$precio = $_POST['precio'];
+$total = $_POST['total'];
+$res = $serviciosReferencias->insertarDetallepedidoaux($refproductos,$cantidad,$precio,$total);
+if ((integer)$res > 0) {
+echo '';
+} else {
+echo 'Huvo un error al insertar datos';
+}
+}
+function modificarDetallepedidoaux($serviciosReferencias) {
+$id = $_POST['id'];
+$refproductos = $_POST['refproductos'];
+$cantidad = $_POST['cantidad'];
+$precio = $_POST['precio'];
+$total = $_POST['total'];
+$res = $serviciosReferencias->modificarDetallepedidoaux($id,$refproductos,$cantidad,$precio,$total);
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
+}
+function eliminarDetallepedidoaux($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarDetallepedidoaux($id);
+echo $res;
+} 
+
+
 function insertarDetalleventa($serviciosReferencias) { 
 $idventa = $_POST['idventa']; 
 $idproducto = $_POST['idproducto']; 

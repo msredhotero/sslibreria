@@ -504,6 +504,62 @@ return $res;
 /* /* Fin de la Tabla: dbproveedores*/
 
 
+
+/* PARA Detallepedidoaux */
+
+function insertarDetallepedidoaux($refproductos,$cantidad,$precio,$total) {
+$sql = "insert into dbdetallepedidoaux(iddetallepedidoaux,refproductos,cantidad,precio,total)
+values ('',".$refproductos.",".$cantidad.",".$precio.",".$total.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarDetallepedidoaux($id,$refproductos,$cantidad,$precio,$total) {
+$sql = "update dbdetallepedidoaux
+set
+refproductos = ".$refproductos.",cantidad = ".$cantidad.",precio = ".$precio.",total = ".$total."
+where iddetallepedidoaux =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarDetallepedidoaux($id) {
+$sql = "delete from dbdetallepedidoaux where iddetallepedidoaux =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerDetallepedidoaux() {
+$sql = "select
+d.iddetallepedidoaux,
+d.refproductos,
+p.nombre,
+d.cantidad,
+p.preciocosto as precio,
+d.total
+from dbdetallepedidoaux d
+inner
+join	dbproductos p
+on		p.idproducto = d.refproductos
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerDetallepedidoauxPorId($id) {
+$sql = "select iddetallepedidoaux,refproductos,cantidad,precio,total from dbdetallepedidoaux where iddetallepedidoaux =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbdetallepedidoaux*/
+
+
 /* PARA Usuarios */
 
 function insertarUsuarios($usuario,$password,$refroles,$email,$nombrecompleto) { 

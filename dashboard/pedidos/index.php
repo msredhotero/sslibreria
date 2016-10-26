@@ -80,6 +80,7 @@ $lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosRefere
 
 $lstCargadosProductosFaltantes 	= $serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosFaltantes(),5);
 
+$pedidosTemporal = $serviciosReferencias->traerDetallepedidoaux();
 
 if ($_SESSION['refroll_predio'] != 1) {
 
@@ -168,12 +169,12 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <h3><?php echo $plural; ?></h3>
 	
-    <div class="boxInfoLargo">
+    <div class="boxInfoLargo" style="margin-bottom:-15px;">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Productos Faltantes</p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Productos Faltantes <span class="glyphicon glyphicon-minus abrir" style="cursor:pointer; float:right; padding-right:12px;">(Cerrar)</span></p>
         	
         </div>
-    	<div class="cuerpoBox">
+    	<div class="cuerpoBox filt">
         	<?php echo $lstCargadosProductosFaltantes; ?>
     	</div>
     </div>
@@ -186,14 +187,14 @@ if ($_SESSION['refroll_predio'] != 1) {
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
         	<div class="row">
-            	<div class="form-group col-md-2" style="display:block">
+            	<div class="form-group col-md-1" style="display:block">
                 	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
                     <div class="input-group col-md-12">
-	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required="" type="text">
+	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required="" type="number" value="1">
                     </div>
                 </div>
                 
-				<div class="form-group col-md-7" style="display:block">
+				<div class="form-group col-md-8" style="display:block">
                 	<label class="control-label" for="producto" style="text-align:left">Lista de Productos</label>
                 	<div class="input-group col-md-12">
                 		<select data-placeholder="selecione el producto..." id="refproductobuscar" name="refproductobuscar" class="chosen-select" tabindex="2" style="z-index:9999999; width:100%;">
@@ -201,7 +202,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                             <?php 
 								while ($row = mysql_fetch_array($resProductos)) {
 							?>
-                            	<option value="<?php echo $row[0]; ?>"><?php echo "Prod: ".$row[1]." - Stock: ".$row[2]." - StockMin: ".$row[3]." - Precio: ".$row[4]; ?></option>
+                            	<option value="<?php echo $row[0]; ?>"><?php echo "Prod: ".$row['nombre']." - Stock: ".$row['stock']." - Stock Min.: ".$row['stockmin']." - Precio: $".number_format($row['preciocosto'],2,',','.'); ?></option>
                             <?php
 								}
 							?>
@@ -217,7 +218,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                         	<button type="button" class="btn btn-success" id="agregar" style="margin-left:0px;"><span class="glyphicon glyphicon-plus"></span> Agregar</button>
                         </li>
                         <li>
-                        	<button type="button" class="btn btn-primary" id="ver" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Ver</button>
+                        	<button type="button" class="btn btn-info" id="ver" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Ver</button>
                         </li>
                     </div>
                 </div>
@@ -247,7 +248,24 @@ if ($_SESSION['refroll_predio'] != 1) {
                     </tr>
                 </thead>
                 <tbody class="detalle">
-                
+                	<?php
+						$total = 0;
+						if (mysql_num_rows($pedidosTemporal)>0) {
+							while ($rowT = mysql_fetch_array($pedidosTemporal)) {
+								$total += $rowT['precio'] * $rowT['cantidad'];
+					?>
+                    		<tr>
+                    		<td><?php echo $rowT['refproductos']; ?></td>
+                    		<td><?php echo $rowT['nombre']; ?></td>
+                            <td><?php echo $rowT['cantidad']; ?></td>
+                            <td><?php echo $rowT['precio']; ?></td>
+                            <td><?php echo $rowT['precio'] * $rowT['cantidad']; ?></td>
+                    		<td><button type="button" class="btn btn-danger eliminarfila" id="<?php echo $rowT['iddetallepedidoaux']; ?>" style="margin-left:0px;">Eliminar</button></td>
+                    		</tr>
+                    <?php
+							}
+						}
+					?>
                 </tbody>
                 <tfoot>
                     <tr style="background-color:#CCC; font-weight:bold; font-size:18px;">
@@ -255,7 +273,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                             Total $
                         </td>
                         <td>
-                            <input type="text" readonly name="total" id="total" value="0" style="border:none; background-color:#CCC;"/>
+                            <input type="text" readonly name="total" id="total" value="<?php echo $total; ?>" style="border:none; background-color:#CCC;"/>
                         </td>
                     </tr>
                 </tfoot>
@@ -266,11 +284,22 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-left:15px;">
                     <li>
-                        <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;">Guardar</button>
+                        <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;">Confirmar</button>
                     </li>
                 </ul>
                 </div>
             </div>
+            
+            <div class="row" id="aviso" style="display:none;">
+            	<div class="col-md-12">
+                	<div class='alert alert-info'>
+                		<p>Se guardo temporalmente el pedido para una posterior modificación</p>
+                	</div>
+                </div>
+            </div>
+            <input type="hidden" name="prodNombre" id="prodNombre" value="" />
+            <input type="hidden" name="prodPrecio" id="prodPrecio" value="" />
+            
             </form>
     	</div>
     </div>
@@ -302,12 +331,54 @@ if ($_SESSION['refroll_predio'] != 1) {
         <p><strong>Importante: </strong>Si elimina el <?php echo $singular; ?> se perderan todos los datos de este</p>
         <input type="hidden" value="" id="idEliminar" name="idEliminar">
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Detalle del producto</h4>
+      </div>
+      <div class="modal-body userasignates">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
 <script src="../../bootstrap/js/dataTables.bootstrap.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	$('.abrir').click(function() {
+		
+		if ($('.abrir').text() == '(Abrir)') {
+			$('.filt').show( "slow" );
+			$('.abrir').text('(Cerrar)');
+			$('.abrir').removeClass('glyphicon glyphicon-plus');
+			$('.abrir').addClass('glyphicon glyphicon-minus');
+		} else {
+			$('.filt').slideToggle( "slow" );
+			$('.abrir').text('(Abrir)');
+			$('.abrir').addClass('glyphicon glyphicon-plus');
+			$('.abrir').removeClass('glyphicon glyphicon-minus');
+
+		}
+	});
+	
+	$('.abrir').click();
+	
+	$('.abrir').click(function() {
+		$('.filt').show();
+	});
 	
 	$('#example').dataTable({
 		"order": [[ 0, "asc" ]],
@@ -405,10 +476,49 @@ $(document).ready(function(){
 	
 	?>
 	
-
-	function getProducto() {
+	function insertarDetalleAux(idProducto, cantidad, precio, total) {
 		$.ajax({
-					data:  {idproducto: $('#idproducto').val(),
+				data:  {refproductos: idProducto, 
+						cantidad: cantidad, 
+						precio: precio, 
+						total: total, 
+						accion: 'insertarDetallepedidoaux'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+						
+				},
+				success:  function (response) {
+					setTimeout(function() {
+						$("#aviso").fadeOut(1500);
+					},3000);	
+						
+				}
+		});
+	}
+	
+	
+	function eliminarDetalleAux(idProducto) {
+		$.ajax({
+				data:  {id: idProducto, 
+						accion: 'eliminarDetallepedidoaux'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+						
+				},
+				success:  function (response) {
+						
+						
+				}
+		});
+	}
+	
+	
+
+	function getProducto(idProd) {
+		$.ajax({
+					data:  {idproducto: idProd,
 							accion: 'traerProductoPorCodigo'},
 					url:   '../../ajax/ajax.php',
 					type:  'post',
@@ -420,33 +530,61 @@ $(document).ready(function(){
 							//idproducto,codigo,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,idcategoria,tipoimagen,nroserie,codigobarra
 							json = $.parseJSON(response);
 
-							//alert(json[0].nombre);
-							if (parseInt(json[0].stock) == 0) {
+							
+							//var producto = [json[0].nombre, json[0].preciocosto];
+							$('#prodNombre').val(json[0].nombre);
+							$('#prodPrecio').val(json[0].preciocosto);
+							monto = parseFloat(json[0].preciocosto) * parseInt($('#cantidadbuscar').val()).toFixed(2);
+							$('.detalle').prepend('<tr><td>'+$('#refproductobuscar').chosen().val()+'</td><td>'+json[0].nombre+'</td><td>'+$('#cantidadbuscar').val()+'</td><td>'+json[0].preciocosto+'</td><td>'+monto.toFixed(2)+'</td><td><button type="button" class="btn btn-danger eliminarfila" id="eliminar" style="margin-left:0px;">Eliminar</button></td></tr>');
 								
-								alert('No disponemos de stock');
-							} else {
-								$('#cantidad').val(1);
-								$('#precio').val(json[0].precioventa);
-								$('#precioprod').html(json[0].precioventa);
-								$('#producto').html(json[0].nombre);
-								$('#serie').html(json[0].nroserie);
-								$('#stock').html(parseInt(json[0].stock));
-								$('#stockbasico').val(parseInt(json[0].stock));
-								$('#carateristicas').html(json[0].descripcion);
-								$('#idprod').val(json[0].idproducto);
-							}
+							$('#total').val(SumarTabla());
+							$('#cantidadbuscar').val(1);
+							
+							$("#aviso").show();
+							
+							//inserta en la tabla temperal para que me guarde el pedido por si quiero salir y volver a entrar
+							insertarDetalleAux($('#refproductobuscar').chosen().val(), $('#cantidadbuscar').val(), json[0].preciocosto, monto);
+							
 						} else {
-							$('#precio').val('');
-							$('#precioprod').html('');
-							$('#producto').html('');
-							$('#stock').html('');
-							$('#carateristicas').html('');
-							$('#idprod').val();
+							//var producto = ['', 0];
+							$('#prodNombre').val('');
+							$('#prodPrecio').val(0);
 						}
 					}
 			});	
 	}
 	
+	
+	$('#agregar').click(function(e) {
+		
+		getProducto($('#refproductobuscar').chosen().val());
+		
+    });
+	
+	
+	function SumarTabla() {
+		var suma = 0;
+		$('.detalle tr').each(function(){
+			
+			suma += parseFloat($(this).find('td').eq(4).text()||0,10); //numero de la celda 3
+		})
+		return suma.toFixed(2);
+
+	  }
+	  
+	//elimina una fila
+	  $(document).on("click",".eliminarfila",function(){
+		var padre = $(this).parents().get(1);
+
+		$(padre).remove();
+		
+		id =  $(this).attr("id");
+		
+		eliminarDetalleAux(id);
+		
+		$('#total').val(SumarTabla());
+	  });
+	  
 	//al enviar el formulario
     $('#cargar').click(function(){
 		
@@ -505,21 +643,7 @@ $(document).ready(function(){
 		}
     });
     
-    $('#imagen1').on('change', function(e) {
-	  var Lector,
-		  oFileInput = this;
-	 
-	  if (oFileInput.files.length === 0) {
-		return;
-	  };
-	 
-	  Lector = new FileReader();
-	  Lector.onloadend = function(e) {
-		$('#vistaPrevia1').attr('src', e.target.result);         
-	  };
-	  Lector.readAsDataURL(oFileInput.files[0]);
-	 
-	});
+
 
 });
 </script>
