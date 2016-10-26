@@ -22,62 +22,63 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Productos",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Pedidos",$_SESSION['refroll_predio'],'');
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Producto";
+$singular = "Pedido";
 
-$plural = "Productos";
+$plural = "Pedidos";
 
-$eliminar = "eliminarProductos";
+$eliminar = "eliminarPedidos";
 
-$insertar = "insertarProductos";
+$insertar = "insertarPedidos";
 
 $tituloWeb = "Gestión: Libreria";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbproductos";
+$tabla 			= "dbpedidos";
 
-$codigo			= $serviciosReferencias->generarCodigo();
-
-$lblCambio	 	= array("codigobarra","stockmin","preciocosto","precioventa","refcategorias");
-$lblreemplazo	= array("Cod. Barra","Stock Minimo","Precio Costo","Precio Venta","Categoria");
+$lblCambio	 	= array();
+$lblreemplazo	= array();
 
 
-$resCategorias 	= $serviciosReferencias->traerCategorias();
-$cadRef 	= $serviciosFunciones->devolverSelectBox($resCategorias,array(1),'');
+$cadRef 	= '';
 
-$refdescripcion = array(0 => $cadRef);
-$refCampo 	=  array("refcategorias");
+$resProductos	=	$serviciosReferencias->traerProductos();
+
+$refdescripcion = array();
+$refCampo 	=  array();
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
 
 
 /////////////////////// Opciones para la creacion del view  patente,refmodelo,reftipovehiculo,anio/////////////////////
-$cabeceras 		= "	<th>Codigo</th>
-                    <th>Cod.Barra</th>
-                    <th>Nombre</th>
-					<th>Descripción</th>
-					<th>Stock</th>
-                    <th>Stock Min.</th>
-                    <th>Precio</th>
-                    <th>Imagen</th>
-                    <th>Categoria</th>
-                    <th>Unidades</th>";
+$cabeceras 		= "	<th>Referencia</th>
+                    <th>Fecha Pedido</th>
+                    <th>Fecha Entrega</th>
+					<th>Total</th>
+					<th>Estado</th>
+                    <th>Obserbaciones</th>";
 
+$cabecerasProductos 		= "<th>Prdoucto</th>
+                    <th>Cantidad</th>
+					<th>Stock</th>
+					<th>Stock Min.</th>
+					<th>Precio</th>";
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
 
 
-$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+//$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
 $lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerProductos(),10);
 
+$lstCargadosProductosFaltantes 	= $serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosFaltantes(),5);
 
 
 if ($_SESSION['refroll_predio'] != 1) {
@@ -119,9 +120,29 @@ if ($_SESSION['refroll_predio'] != 1) {
 	<link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
-
+	<link rel="stylesheet" href="../../css/chosen.css">
 	<style type="text/css">
+		#table-6 {
+			border:2px solid #C0C0C0;
+		}
 		
+		#table-6 thead {
+		text-align: left;
+		}
+		#table-6 thead th {
+		background: -moz-linear-gradient(top, #F0F0F0 0, #DBDBDB 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #F0F0F0), color-stop(100%, #DBDBDB));
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#DBDBDB', GradientType=0);
+		border: 1px solid #C0C0C0;
+		color: #444;
+		font-size: 16px;
+		font-weight: bold;
+		padding: 3px 10px;
+		}
+		
+		#table-6 tbody td .cent {
+			text-align:center;	
+		}
   
 		
 	</style>
@@ -146,7 +167,17 @@ if ($_SESSION['refroll_predio'] != 1) {
 <div id="content">
 
 <h3><?php echo $plural; ?></h3>
-
+	
+    <div class="boxInfoLargo">
+        <div id="headBoxInfo">
+        	<p style="color: #fff; font-size:18px; height:16px;">Productos Faltantes</p>
+        	
+        </div>
+    	<div class="cuerpoBox">
+        	<?php echo $lstCargadosProductosFaltantes; ?>
+    	</div>
+    </div>
+    
     <div class="boxInfoLargo">
         <div id="headBoxInfo">
         	<p style="color: #fff; font-size:18px; height:16px;">Carga de <?php echo $plural; ?></p>
@@ -155,7 +186,42 @@ if ($_SESSION['refroll_predio'] != 1) {
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form">
         	<div class="row">
-			<?php echo $formulario; ?>
+            	<div class="form-group col-md-2" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
+                    <div class="input-group col-md-12">
+	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required="" type="text">
+                    </div>
+                </div>
+                
+				<div class="form-group col-md-7" style="display:block">
+                	<label class="control-label" for="producto" style="text-align:left">Lista de Productos</label>
+                	<div class="input-group col-md-12">
+                		<select data-placeholder="selecione el producto..." id="refproductobuscar" name="refproductobuscar" class="chosen-select" tabindex="2" style="z-index:9999999; width:100%;">
+            				<option value=""></option>
+                            <?php 
+								while ($row = mysql_fetch_array($resProductos)) {
+							?>
+                            	<option value="<?php echo $row[0]; ?>"><?php echo "Prod: ".$row[1]." - Stock: ".$row[2]." - StockMin: ".$row[3]." - Precio: ".$row[4]; ?></option>
+                            <?php
+								}
+							?>
+                        </select>
+                	</div>
+                </div>
+                
+                <div class="form-group col-md-3" style="display:block">
+                	<label class="control-label text-right" for="producto" style="text-align:right"></label>
+                    <div class="input-group col-md-12 text-right">
+	                    <ul class="list-inline">
+                        <li>
+                        	<button type="button" class="btn btn-success" id="agregar" style="margin-left:0px;"><span class="glyphicon glyphicon-plus"></span> Agregar</button>
+                        </li>
+                        <li>
+                        	<button type="button" class="btn btn-primary" id="ver" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Ver</button>
+                        </li>
+                    </div>
+                </div>
+                
             </div>
 
             
@@ -168,6 +234,34 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
             </div>
             
+            <div class="col-md-12">
+            <table class="table table-striped" id="table-6">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Sub-Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="detalle">
+                
+                </tbody>
+                <tfoot>
+                    <tr style="background-color:#CCC; font-weight:bold; font-size:18px;">
+                        <td colspan="5" align="right">
+                            Total $
+                        </td>
+                        <td>
+                            <input type="text" readonly name="total" id="total" value="0" style="border:none; background-color:#CCC;"/>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
+                    
             <div class="row">
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-left:15px;">
@@ -187,7 +281,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="cuerpoBox">
-        	<?php echo $lstCargados; ?>
+        	<?php //echo $lstCargados; ?>
     	</div>
     </div>
     
@@ -214,7 +308,6 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	$('#activo').prop('checked',true);
 	
 	$('#example').dataTable({
 		"order": [[ 0, "asc" ]],
@@ -243,7 +336,6 @@ $(document).ready(function(){
 		  }
 	} );
 	
-	$('#codigo').attr('value','<?php echo $codigo; ?>');
 
 	$("#example").on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
@@ -314,7 +406,46 @@ $(document).ready(function(){
 	?>
 	
 
-	
+	function getProducto() {
+		$.ajax({
+					data:  {idproducto: $('#idproducto').val(),
+							accion: 'traerProductoPorCodigo'},
+					url:   '../../ajax/ajax.php',
+					type:  'post',
+					beforeSend: function () {
+							
+					},
+					success:  function (response) {
+						if(response){
+							//idproducto,codigo,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,idcategoria,tipoimagen,nroserie,codigobarra
+							json = $.parseJSON(response);
+
+							//alert(json[0].nombre);
+							if (parseInt(json[0].stock) == 0) {
+								
+								alert('No disponemos de stock');
+							} else {
+								$('#cantidad').val(1);
+								$('#precio').val(json[0].precioventa);
+								$('#precioprod').html(json[0].precioventa);
+								$('#producto').html(json[0].nombre);
+								$('#serie').html(json[0].nroserie);
+								$('#stock').html(parseInt(json[0].stock));
+								$('#stockbasico').val(parseInt(json[0].stock));
+								$('#carateristicas').html(json[0].descripcion);
+								$('#idprod').val(json[0].idproducto);
+							}
+						} else {
+							$('#precio').val('');
+							$('#precioprod').html('');
+							$('#producto').html('');
+							$('#stock').html('');
+							$('#carateristicas').html('');
+							$('#idprod').val();
+						}
+					}
+			});	
+	}
 	
 	//al enviar el formulario
     $('#cargar').click(function(){
@@ -392,6 +523,19 @@ $(document).ready(function(){
 
 });
 </script>
+<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+  </script>
 <?php } ?>
 </body>
 </html>

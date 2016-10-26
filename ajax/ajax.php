@@ -70,6 +70,10 @@ break;
 case 'eliminarProductos': 
 eliminarProductos($serviciosReferencias); 
 break; 
+case 'eliminarFoto':
+	eliminarFoto($serviciosReferencias);
+	break;
+	
 case 'insertarProveedores': 
 insertarProveedores($serviciosReferencias); 
 break; 
@@ -317,18 +321,31 @@ $stock = $_POST['stock'];
 $stockmin = $_POST['stockmin']; 
 $preciocosto = $_POST['preciocosto']; 
 $precioventa = $_POST['precioventa']; 
-$utilidad = $_POST['utilidad']; 
+$utilidad = $precioventa - $preciocosto; 
 $estado = $_POST['estado']; 
-$imagen = $_POST['imagen']; 
+$imagen = ''; 
 $refcategorias = $_POST['refcategorias']; 
-$tipoimagen = $_POST['tipoimagen']; 
+$tipoimagen = ''; 
 $unidades = $_POST['unidades']; 
-$res = $serviciosReferencias->insertarProductos($codigo,$codigobarra,$nombre,$descripcion,$stock,$stockmin,$preciocosto,$precioventa,$utilidad,$estado,$imagen,$refcategorias,$tipoimagen,$unidades); 
-if ((integer)$res > 0) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al insertar datos';	
-} 
+	
+	$existeCodigo = $serviciosReferencias->existeCodigo($codigo);
+	
+	if ($existeCodigo == 1) {
+		$codigo = $serviciosReferencias->generarCodigo();	
+	}
+	
+	$res = $serviciosReferencias->insertarProductos($codigo,$codigobarra,$nombre,$descripcion,$stock,$stockmin,$preciocosto,$precioventa,$utilidad,$estado,$imagen,$refcategorias,$tipoimagen,$unidades); 
+	
+	if ((integer)$res > 0) { 
+		$imagenes = array("imagen" => 'imagen');
+	
+		foreach ($imagenes as $valor) {
+			$serviciosReferencias->subirArchivo($valor,'galeria',$res);
+		}
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al insertar datos';	
+	} 
 } 
 function modificarProductos($serviciosReferencias) { 
 $id = $_POST['id']; 
@@ -340,24 +357,38 @@ $stock = $_POST['stock'];
 $stockmin = $_POST['stockmin']; 
 $preciocosto = $_POST['preciocosto']; 
 $precioventa = $_POST['precioventa']; 
-$utilidad = $_POST['utilidad']; 
+$utilidad = $precioventa - $preciocosto; 
 $estado = $_POST['estado']; 
-$imagen = $_POST['imagen']; 
+$imagen = ''; 
 $refcategorias = $_POST['refcategorias']; 
-$tipoimagen = $_POST['tipoimagen']; 
+$tipoimagen = ''; 
 $unidades = $_POST['unidades'];
-$res = $serviciosReferencias->modificarProductos($id,$codigo,$codigobarra,$nombre,$descripcion,$stock,$stockmin,$preciocosto,$precioventa,$utilidad,$estado,$imagen,$refcategorias,$tipoimagen,$unidades); 
-if ($res == true) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al modificar datos'; 
-} 
+	
+	$res = $serviciosReferencias->modificarProductos($id,$codigo,$codigobarra,$nombre,$descripcion,$stock,$stockmin,$preciocosto,$precioventa,$utilidad,$estado,$imagen,$refcategorias,$tipoimagen,$unidades); 
+	
+	if ($res == true) { 
+		$imagenes = array("imagen" => 'imagen');
+	
+		foreach ($imagenes as $valor) {
+			$serviciosReferencias->subirArchivo($valor,'galeria',$id);
+		}
+		echo ''; 
+	} else { 
+		echo 'Huvo un error al modificar datos'; 
+	} 
 } 
 function eliminarProductos($serviciosReferencias) { 
 $id = $_POST['id']; 
 $res = $serviciosReferencias->eliminarProductos($id); 
 echo $res; 
 } 
+
+function eliminarFoto($serviciosReferencias) {
+	$id			=	$_POST['id'];
+	echo $serviciosReferencias->eliminarFoto($id);
+}
+
+
 function insertarProveedores($serviciosReferencias) { 
 $nombre = $_POST['nombre']; 
 $cuit = $_POST['cuit']; 

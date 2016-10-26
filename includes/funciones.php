@@ -236,7 +236,7 @@ class Servicios {
 		$sql	=	"show columns from ".$tabla;
 		$res 	=	$this->query($sql,0);
 		$label  = '';
-		$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen");
+		$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad");
 		
 		$geoposicionamiento = array("latitud","longitud");
 		
@@ -494,20 +494,65 @@ class Servicios {
 												';
 												
 												} else {
-												$label = ucwords($label);
-												$campo = strtolower($row[0]);
 												
-
-												$form	=	$form.'
-												
-												<div class="form-group col-md-6" style="display:'.$lblOculta.'">
-													<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-													<div class="input-group col-md-12">
-														<input type="text" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required>
-													</div>
+												if ($row[0]=='imagen') {
+													$label = ucwords($label);
+													$campo = strtolower($row[0]);
+													
+	
+													$form	=	$form.'
+													
+													<div class="row" style="margin-left:25px; margin-right:25px;">
+														<h4>Agregar Imagen</h4>
+															<p style=" color: #999;">Imagenes / Archivos (tamaño maximo del archivo 2 MB)</p>
+															<div style="height:auto; 
+																	width:100%; 
+																	background-color:#FFF;
+																	-webkit-border-radius: 13px; 
+																	-moz-border-radius: 13px;
+																	border-radius: 13px;
+																	margin-left:15px;
+																	padding-left:20px;">
+									
+																
+												<ul class="list-inline">
+															<li style="margin-top:14px;">
+															<div style=" height:210px; width:340px; border:2px dashed #CCC; text-align:center; overflow: auto;">
+																<div class="custom-input-file">
+																	<input type="file" name="'.$campo.'" id="imagen1">
+																	<img src="../../imagenes/clip20.jpg">
+																	<div class="files">...</div>
+																</div>
+																
+																<img id="vistaPrevia1" name="vistaPrevia1" width="100" height="100"/>
+															</div>
+															<div style="height:14px;">
+																
+															</div>
+															
+															</li>
+															
+															
+															</ul>   
 												</div>
-												
-												';
+												</div>	
+													';
+												}else {
+													$label = ucwords($label);
+													$campo = strtolower($row[0]);
+													
+	
+													$form	=	$form.'
+													
+													<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+														<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+														<div class="input-group col-md-12">
+															<input type="text" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required>
+														</div>
+													</div>
+													
+													';
+												}
 												
 											}
 										}
@@ -534,7 +579,19 @@ class Servicios {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	
+	function traerImagenUnica($id) {
+		$sql    =   "select 'galeria',s.idproducto,f.imagen,f.idfoto,f.type
+							from dbproductos s
+							
+							inner
+							join images f
+							on	s.idproducto = f.refproyecto
 
+							where s.idproducto = ".$id;
+		$result =   $this->query($sql, 0);
+		return $result;	
+	}
 
 
 	function camposTablaModificar($id,$lblid,$accion,$tabla,$lblcambio,$lblreemplazo,$refdescripcion,$refCampo) {
@@ -557,7 +614,7 @@ class Servicios {
 		$sql	=	"show columns from ".$tabla;
 		$res 	=	$this->query($sql,0);
 		
-		$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi");
+		$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad");
 		
 		$camposEscondido = "";
 		/* Analizar para despues */
@@ -733,7 +790,7 @@ class Servicios {
 											<div class="form-group col-md-6" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 												<div class="input-group col-md-12">
-													<textarea type="text" rows="10" cols="6" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required>'.utf8_encode(mysql_result($resMod,0,$row[0])).'</textarea>
+													<textarea type="text" rows="10" cols="6" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required>'.(mysql_result($resMod,0,$row[0])).'</textarea>
 												</div>
 												
 											</div>
@@ -763,19 +820,82 @@ class Servicios {
 											';
 											
 											} else {
-												$label = ucwords($label);
-												$campo = strtolower($row[0]);
 												
-												$form	=	$form.'
-												
-												<div class="form-group col-md-6" style="display:'.$lblOculta.'">
-													<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-													<div class="input-group col-md-12">
-														<input type="text" value="'.(mysql_result($resMod,0,$row[0])).'" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required>
+												if ($row[0]=='imagen') {
+													$label = ucwords($label);
+													$campo = strtolower($row[0]);
+													
+													$imagen = $this->traerImagenUnica(mysql_result($resMod,0,0));
+													
+													if (mysql_num_rows($imagen)>0) {
+														$mystring = mysql_result($imagen,0,"type");
+														$findme   = "image";
+														$pos = strpos($mystring, $findme);
+													} else {
+														$mystring = 0;
+														$findme   = "image";
+														$pos = strpos($mystring, $findme);
+
+													}
+													$form	=	$form.'
+													
+													<div class="form-group col-md-6" style="display:'.$lblOculta.'">';
+													if (mysql_num_rows($imagen)>0) {
+														$form	=	$form.'<h3>Imagen Cargada</h3>
+														<ul class="list-inline">
+															<li>
+																
+																<div class="col-md-4" align="center">
+																<div id="img'.$row[0].'">';
+                            	
+													if ($pos !== false) { 
+								
+                               				 		$form	=	$form.'<img src="../../archivos/'.mysql_result($imagen,0,0).'/'.mysql_result($imagen,0,1).'/'.utf8_encode(mysql_result($imagen,0,2)).'" width="100" height="100">';
+                                					} else { 
+                                					$form	=	$form.'<img src="../../imagenes/pdf_ico2.jpg" width="100" height="100">'.$imagen["imagen"];
+													
+                                 					} 
+                            $form	=	$form.'</div>';
+							
+                            	$form	=	$form.'<input type="button" name="eliminar" id="'.mysql_result($imagen,0,3).'" class="btn btn-danger eliminar" value="Borrar">';
+							
+							$form	=	$form.'</div>
+															
+														</li>';
+													} //fin del if de si existe imagen
+							$form	=	$form.'<li>
+															<div style=" height:210px; width:340px; border:2px dashed #CCC; text-align:center; overflow: auto;">
+																<div class="custom-input-file">
+																	<input type="file" name="'.$campo.'" id="imagen1">
+																	<img src="../../imagenes/clip20.jpg">
+																	<div class="files">...</div>
+																</div>
+																
+																<img id="vistaPrevia1" name="vistaPrevia1" width="100" height="100"/>
+															</div>
+															<div style="height:14px;">
+																
+															</div>
+														</li>
+													</ul>
 													</div>
-												</div>
-												
-												';
+													
+													';
+												} else {
+													$label = ucwords($label);
+													$campo = strtolower($row[0]);
+													
+													$form	=	$form.'
+													
+													<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+														<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+														<div class="input-group col-md-12">
+															<input type="text" value="'.(mysql_result($resMod,0,$row[0])).'" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required>
+														</div>
+													</div>
+													
+													';
+												}
 											}
 										}
 									}

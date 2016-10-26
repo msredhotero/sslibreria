@@ -20,6 +20,202 @@ function GUID()
 }
 
 
+///**********  PARA SUBIR ARCHIVOS  ***********************//////////////////////////
+	function borrarDirecctorio($dir) {
+		array_map('unlink', glob($dir."/*.*"));	
+	
+	}
+	
+	function borrarArchivo($id,$archivo) {
+		$sql	=	"delete from images where idfoto =".$id;
+		
+		$res =  unlink("./../archivos/".$archivo);
+		if ($res)
+		{
+			$this->query($sql,0);	
+		}
+		return $res;
+	}
+	
+	
+	function existeArchivo($id,$nombre,$type) {
+		$sql		=	"select * from images where refproyecto =".$id." and imagen = '".$nombre."' and type = '".$type."'";
+		$resultado  =   $this->query($sql,0);
+			   
+			   if(mysql_num_rows($resultado)>0){
+	
+				   return mysql_result($resultado,0,0);
+	
+			   }
+	
+			   return 0;	
+	}
+	
+	function sanear_string($string)
+{
+ 
+    $string = trim($string);
+ 
+    $string = str_replace(
+        array('á', 'à', 'ä', 'â', 'ª', 'Á', 'À', 'Â', 'Ä'),
+        array('a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A'),
+        $string
+    );
+ 
+    $string = str_replace(
+        array('é', 'è', 'ë', 'ê', 'É', 'È', 'Ê', 'Ë'),
+        array('e', 'e', 'e', 'e', 'E', 'E', 'E', 'E'),
+        $string
+    );
+ 
+    $string = str_replace(
+        array('í', 'ì', 'ï', 'î', 'Í', 'Ì', 'Ï', 'Î'),
+        array('i', 'i', 'i', 'i', 'I', 'I', 'I', 'I'),
+        $string
+    );
+ 
+    $string = str_replace(
+        array('ó', 'ò', 'ö', 'ô', 'Ó', 'Ò', 'Ö', 'Ô'),
+        array('o', 'o', 'o', 'o', 'O', 'O', 'O', 'O'),
+        $string
+    );
+ 
+    $string = str_replace(
+        array('ú', 'ù', 'ü', 'û', 'Ú', 'Ù', 'Û', 'Ü'),
+        array('u', 'u', 'u', 'u', 'U', 'U', 'U', 'U'),
+        $string
+    );
+ 
+    $string = str_replace(
+        array('ñ', 'Ñ', 'ç', 'Ç'),
+        array('n', 'N', 'c', 'C',),
+        $string
+    );
+ 
+ 
+ 
+    return $string;
+}
+
+	function subirArchivo($file,$carpeta,$id) {
+		
+		$this->eliminarFotoPorObjeto($id);
+		
+		$dir_destino = '../archivos/'.$carpeta.'/'.$id.'/';
+		$imagen_subida = $dir_destino . $this->sanear_string(str_replace(' ','',basename($_FILES[$file]['name'])));
+		
+		$noentrar = '../imagenes/index.php';
+		$nuevo_noentrar = '../archivos/'.$carpeta.'/'.$id.'/'.'index.php';
+		
+		if (!file_exists($dir_destino)) {
+			mkdir($dir_destino, 0777);
+		}
+		
+		 
+		if(!is_writable($dir_destino)){
+			
+			echo "no tiene permisos";
+			
+		}	else	{
+			if ($_FILES[$file]['tmp_name'] != '') {
+				if(is_uploaded_file($_FILES[$file]['tmp_name'])){
+					/*echo "Archivo ". $_FILES['foto']['name'] ." subido con éxtio.\n";
+					echo "Mostrar contenido\n";
+					echo $imagen_subida;*/
+					if (move_uploaded_file($_FILES[$file]['tmp_name'], $imagen_subida)) {
+						
+						$archivo = $this->sanear_string($_FILES[$file]["name"]);
+						$tipoarchivo = $_FILES[$file]["type"];
+						
+						if ($this->existeArchivo($id,$archivo,$tipoarchivo) == 0) {
+							$sql	=	"insert into images(idfoto,refproyecto,imagen,type) values ('',".$id.",'".str_replace(' ','',$archivo)."','".$tipoarchivo."')";
+							$this->query($sql,1);
+						}
+						echo "";
+						
+						copy($noentrar, $nuevo_noentrar);
+		
+					} else {
+						echo "Posible ataque de carga de archivos!\n";
+					}
+				}else{
+					echo "Posible ataque del archivo subido: ";
+					echo "nombre del archivo '". $_FILES[$file]['tmp_name'] . "'.";
+				}
+			}
+		}	
+	}
+
+
+	
+	function TraerFotosRelacion($id) {
+		$sql    =   "select 'galeria',s.idproducto,f.imagen,f.idfoto,f.type
+							from dbproductos s
+							
+							inner
+							join images f
+							on	s.idproducto = f.refproyecto
+
+							where s.idproducto = ".$id;
+		$result =   $this->query($sql, 0);
+		return $result;
+	}
+	
+	
+	function eliminarFoto($id)
+	{
+		
+		$sql		=	"select concat('galeria','/',s.idproducto,'/',f.imagen) as archivo
+							from dbproductos s
+							
+							inner
+							join images f
+							on	s.idproducto = f.refproyecto
+
+							where f.idfoto =".$id;
+		$resImg		=	$this->query($sql,0);
+		
+		if (mysql_num_rows($resImg)>0) {
+			$res 		=	$this->borrarArchivo($id,mysql_result($resImg,0,0));
+		} else {
+			$res = true;
+		}
+		if ($res == false) {
+			return 'Error al eliminar datos';
+		} else {
+			return '';
+		}
+	}
+	
+	
+	function eliminarFotoPorObjeto($id)
+	{
+		
+		$sql		=	"select concat('galeria','/',s.idproducto,'/',f.imagen) as archivo,f.idfoto
+							from dbproductos s
+							
+							inner
+							join images f
+							on	s.idproducto = f.refproyecto
+
+							where s.idproducto =".$id;
+		$resImg		=	$this->query($sql,0);
+		
+		if (mysql_num_rows($resImg)>0) {
+			$res 		=	$this->borrarArchivo(mysql_result($resImg,0,1),mysql_result($resImg,0,0));
+		} else {
+			$res = true;
+		}
+		if ($res == false) {
+			return 'Error al eliminar datos';
+		} else {
+			return '';
+		}
+	}
+
+/* fin archivos */
+
+
 
 
 /* PARA Clientes */
@@ -136,6 +332,30 @@ return $res;
 
 /* PARA Productos */
 
+function zerofill($valor, $longitud){
+ $res = str_pad($valor, $longitud, '0', STR_PAD_LEFT);
+ return $res;
+}
+
+function generarCodigo() {
+	$sql = "select idproducto from dbproductos order by idproducto desc limit 1";
+	$res = $this->query($sql,0);
+	if (mysql_num_rows($res)>0) {
+		$c = $this->zerofill(mysql_result($res,0,0)+1,6);
+		return "PRO".$c;
+	}
+	return "PRO000001";
+}
+
+function existeCodigo($codigo) {
+	$sql = "select idproducto from dbproductos where codigo ='".$codigo."'";
+	$res = $this->query($sql,0);
+	if (mysql_num_rows($res)>0) {
+		return 1;
+	}
+	return 0;
+}
+
 function insertarProductos($codigo,$codigobarra,$nombre,$descripcion,$stock,$stockmin,$preciocosto,$precioventa,$utilidad,$estado,$imagen,$refcategorias,$tipoimagen,$unidades) { 
 $sql = "insert into dbproductos(idproducto,codigo,codigobarra,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,refcategorias,tipoimagen,unidades) 
 values ('','".utf8_decode($codigo)."','".utf8_decode($codigobarra)."','".utf8_decode($nombre)."','".utf8_decode($descripcion)."',".($stock=='' ? 0 : $stock).",".($stockmin == '' ? 0 : $stockmin).",".($preciocosto == '' ?  0 : $preciocosto).",".($precioventa == '' ? 0 : $precioventa).",".$utilidad.",'".utf8_decode($estado)."','".utf8_decode($imagen)."',".$refcategorias.",'".utf8_decode($tipoimagen)."',".($unidades=='' ? 1 : $unidades).")";
@@ -155,6 +375,7 @@ return $res;
 
 
 function eliminarProductos($id) { 
+$this->eliminarFotoPorObjeto($id);
 $sql = "delete from dbproductos where idproducto =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -183,6 +404,36 @@ p.tipoimagen
 from dbproductos p 
 inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
 order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
+
+function traerProductosFaltantes() { 
+$sql = "select 
+p.idproducto,
+p.nombre,
+
+p.stock,
+p.stockmin,
+p.preciocosto,
+
+p.precioventa,
+p.imagen,
+cat.descripcion,
+p.unidades,
+p.refcategorias,
+p.estado,
+p.utilidad,
+
+p.codigo,
+p.codigobarra,
+p.descripcion,
+p.tipoimagen
+from dbproductos p 
+inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
+where p.stockmin >= p.stock
+order by nombre"; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
