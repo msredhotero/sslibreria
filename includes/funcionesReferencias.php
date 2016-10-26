@@ -538,6 +538,7 @@ d.iddetallepedidoaux,
 d.refproductos,
 p.nombre,
 d.cantidad,
+p.stock,
 p.preciocosto as precio,
 d.total
 from dbdetallepedidoaux d
@@ -559,6 +560,115 @@ return $res;
 /* Fin */
 /* /* Fin de la Tabla: dbdetallepedidoaux*/
 
+
+/* PARA Pedidos */
+
+function insertarPedidos($fechasolicitud,$fechaentrega,$total,$refestados,$referencia,$observacion) {
+$sql = "insert into dbpedidos(idpedido,fechasolicitud,fechaentrega,total,refestados,referencia,observacion)
+values ('','".utf8_decode($fechasolicitud)."','".utf8_decode($fechaentrega)."',".$total.",".$refestados.",'".utf8_decode($referencia)."','".utf8_decode($observacion)."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarPedidos($id,$fechasolicitud,$fechaentrega,$total,$refestados,$referencia,$observacion) {
+$sql = "update dbpedidos
+set
+fechasolicitud = '".utf8_decode($fechasolicitud)."',fechaentrega = '".utf8_decode($fechaentrega)."',total = ".$total.",refestados = ".$refestados.",referencia = '".utf8_decode($referencia)."',observacion = '".utf8_decode($observacion)."'
+where idpedido =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarPedidos($id) {
+$sql = "delete from dbpedidos where idpedido =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerPedidos() {
+$sql = "select
+p.idpedido,
+p.fechasolicitud,
+p.fechaentrega,
+p.total,
+p.refestados,
+p.referencia,
+p.observacion
+from dbpedidos p
+inner join tbestados est ON est.idestado = p.refestados
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerPedidosPorId($id) {
+$sql = "select idpedido,fechasolicitud,fechaentrega,total,refestados,referencia,observacion from dbpedidos where idpedido =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbpedidos*/
+
+/* PARA Detallepedido */
+
+function insertarDetallepedido($refpedidos,$refproductos,$cantidad,$precio,$total,$falto) {
+$sql = "insert into dbdetallepedido(iddetallepedido,refpedidos,refproductos,cantidad,precio,total,falto)
+values ('',".$refpedidos.",".$refproductos.",".$cantidad.",".$precio.",".$total.",".$falto.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarDetallepedido($id,$refpedidos,$refproductos,$cantidad,$precio,$total,$falto) {
+$sql = "update dbdetallepedido
+set
+refpedidos = ".$refpedidos.",refproductos = ".$refproductos.",cantidad = ".$cantidad.",precio = ".$precio.",total = ".$total.",falto = ".$falto."
+where iddetallepedido =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarDetallepedido($id) {
+$sql = "delete from dbdetallepedido where iddetallepedido =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerDetallepedido() {
+$sql = "select
+d.iddetallepedido,
+d.refpedidos,
+d.refproductos,
+d.cantidad,
+d.precio,
+d.total,
+d.falto
+from dbdetallepedido d
+inner join dbpedidos ped ON ped.idpedido = d.refpedidos
+inner join tbestados es ON es.idestado = ped.refestados
+inner join dbproductos pro ON pro.idproducto = d.refproductos
+inner join tbcategorias ca ON ca.idcategoria = pro.refcategorias
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerDetallepedidoPorId($id) {
+$sql = "select iddetallepedido,refpedidos,refproductos,cantidad,precio,total,falto from dbdetallepedido where iddetallepedido =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbdetallepedido*/
 
 /* PARA Usuarios */
 

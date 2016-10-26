@@ -129,7 +129,7 @@ if ($_SESSION['refroll_predio'] != 1) {
 		}
 		
 		#table-6 thead {
-		text-align: left;
+		text-align: center;
 		}
 		#table-6 thead th {
 		background: -moz-linear-gradient(top, #F0F0F0 0, #DBDBDB 100%);
@@ -168,73 +168,19 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <div id="content">
 
-<h3><?php echo $plural; ?></h3>
-	
-    <div class="boxInfoLargo" style="margin-bottom:-15px;">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Productos Faltantes <span class="glyphicon glyphicon-minus abrir" style="cursor:pointer; float:right; padding-right:12px;">(Cerrar)</span></p>
-        	
-        </div>
-    	<div class="cuerpoBox filt">
-        	<?php echo $lstCargadosProductosFaltantes; ?>
-    	</div>
-    </div>
+<h3><?php echo $plural; ?> <span style="color:#006666;"><span class="glyphicon glyphicon-chevron-right"></span> Confirmar</span></h3>
     
     <div class="boxInfoLargo">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Carga de <?php echo $plural; ?></p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Confirmar <?php echo $plural; ?></p>
         	
         </div>
     	<div class="cuerpoBox">
-        	<form class="form-inline formulario" role="form" action="confirmar.php">
-        	<div class="row">
-            	<div class="form-group col-md-1" style="display:block">
-                	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
-                    <div class="input-group col-md-12">
-	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required="" type="number" value="1">
-                    </div>
-                </div>
-                
-				<div class="form-group col-md-8" style="display:block">
-                	<label class="control-label" for="producto" style="text-align:left">Lista de Productos</label>
-                	<div class="input-group col-md-12">
-                		<select data-placeholder="selecione el producto..." id="refproductobuscar" name="refproductobuscar" class="chosen-select" tabindex="2" style="z-index:9999999; width:100%;">
-            				<option value=""></option>
-                            <?php 
-								while ($row = mysql_fetch_array($resProductos)) {
-							?>
-                            	<option value="<?php echo $row[0]; ?>"><?php echo "Prod: ".$row['nombre']." - Stock: ".$row['stock']." - Stock Min.: ".$row['stockmin']." - Precio: $".number_format($row['preciocosto'],2,',','.'); ?></option>
-                            <?php
-								}
-							?>
-                        </select>
-                	</div>
-                </div>
-                
-                <div class="form-group col-md-3" style="display:block">
-                	<label class="control-label text-right" for="producto" style="text-align:right"></label>
-                    <div class="input-group col-md-12 text-right">
-	                    <ul class="list-inline">
-                        <li>
-                        	<button type="button" class="btn btn-success" id="agregar" style="margin-left:0px;"><span class="glyphicon glyphicon-plus"></span> Agregar</button>
-                        </li>
-                        <li>
-                        	<button type="button" class="btn btn-info" id="ver" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Ver</button>
-                        </li>
-                    </div>
-                </div>
-                
+        	<div class="alert alert-info">
+            	<p><span class="glyphicon glyphicon-info-sign"></span> Recuerde cargar la fecha de entrega y una referencia</p>
             </div>
+        	<form class="form-inline formulario" role="form">
 
-            
-            <div class='row' style="margin-left:25px; margin-right:25px;">
-                <div class='alert'>
-                
-                </div>
-                <div id='load'>
-                
-                </div>
-            </div>
             
             <div class="col-md-12">
             <table class="table table-striped" id="table-6">
@@ -243,9 +189,9 @@ if ($_SESSION['refroll_predio'] != 1) {
                         <th class="text-center">Id</th>
                         <th class="text-center">Producto</th>
                         <th class="text-center">Cantidad</th>
+                        <th class="text-center">Nuevo Stock</th>
                         <th class="text-center">Precio</th>
                         <th class="text-center">Sub-Total</th>
-                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="detalle">
@@ -258,10 +204,10 @@ if ($_SESSION['refroll_predio'] != 1) {
                     		<tr>
                     		<td><?php echo $rowT['refproductos']; ?></td>
                     		<td><?php echo $rowT['nombre']; ?></td>
-                            <td><?php echo $rowT['cantidad']; ?></td>
-                            <td><?php echo $rowT['precio']; ?></td>
-                            <td><?php echo $rowT['precio'] * $rowT['cantidad']; ?></td>
-                    		<td><button type="button" class="btn btn-danger eliminarfila" id="<?php echo $rowT['iddetallepedidoaux']; ?>" style="margin-left:0px;">Eliminar</button></td>
+                            <td align="center"><?php echo $rowT['cantidad']; ?></td>
+                            <td align="right"><?php echo $rowT['stock']; ?> <span class="text-success">+ <?php echo $rowT['cantidad']; ?></span> = <?php echo $rowT['stock']+$rowT['cantidad']; ?></td>
+                            <td align="right"><?php echo $rowT['precio']; ?></td>
+                            <td align="right"><?php echo $rowT['precio'] * $rowT['cantidad']; ?></td>
                     		</tr>
                     <?php
 							}
@@ -281,12 +227,37 @@ if ($_SESSION['refroll_predio'] != 1) {
             </table>
             </div>
             
+            <div class="form-group col-md-6">
+                <label for="fechaentrega" class="control-label" style="text-align:left">Fecha de Entrega</label>
+                <div class="input-group date form_date col-md-6" data-date="" data-date-format="dd MM yyyy" data-link-field="fechaentrega" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" size="50" type="text" value="" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+                <input type="hidden" name="fechaentrega" id="fechaentrega" value="" />
+            </div>
+            
+            <div class="form-group col-md-6" style="display:block">
+                <label class="control-label" for="referencia" style="text-align:left">Referencia</label>
+                <div class="input-group col-md-12">
+                    <input id="referencia" class="form-control" name="referencia" placeholder="Referencia..." required="" type="text"/>
+                </div>
+            </div>
+            
+            <div class="form-group col-md-6" style="display:block">
+                <label class="control-label" for="observaciones" style="text-align:left">Observaciones</label>
+                <div class="input-group col-md-12">
+                    <input id="observaciones" class="form-control" name="observaciones" placeholder="Observaciones..." required="" type="text" />
+                </div>
+            </div>
                     
             <div class="row">
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-left:15px;">
                     <li>
-                        <button type="submit" class="btn btn-primary" id="cargar" style="margin-left:0px;">Confirmar</button>
+                        <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;">Cargar</button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn btn-default volver" id="volver" style="margin-left:0px;">Volver</button>
                     </li>
                 </ul>
                 </div>
@@ -299,59 +270,19 @@ if ($_SESSION['refroll_predio'] != 1) {
                 	</div>
                 </div>
             </div>
-            <input type="hidden" name="prodNombre" id="prodNombre" value="" />
-            <input type="hidden" name="prodPrecio" id="prodPrecio" value="" />
+            <input type="hidden" name="accion" id="accion" value="" />
             
             </form>
     	</div>
     </div>
-    
-    <div class="boxInfoLargo">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;"><?php echo $plural; ?> Cargados</p>
-        	
-        </div>
-    	<div class="cuerpoBox">
-        	<?php //echo $lstCargados; ?>
-    	</div>
-    </div>
-    
-    
-
-    
+ 
     
    
 </div>
 
 
 </div>
-<div id="dialog2" title="Eliminar <?php echo $singular; ?>">
-    	<p>
-        	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
-            ¿Esta seguro que desea eliminar el <?php echo $singular; ?>?.<span id="proveedorEli"></span>
-        </p>
-        <p><strong>Importante: </strong>Si elimina el <?php echo $singular; ?> se perderan todos los datos de este</p>
-        <input type="hidden" value="" id="idEliminar" name="idEliminar">
-</div>
 
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Detalle del producto</h4>
-      </div>
-      <div class="modal-body userasignates">
-        
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
@@ -362,27 +293,6 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	$('.abrir').click(function() {
-		
-		if ($('.abrir').text() == '(Abrir)') {
-			$('.filt').show( "slow" );
-			$('.abrir').text('(Cerrar)');
-			$('.abrir').removeClass('glyphicon glyphicon-plus');
-			$('.abrir').addClass('glyphicon glyphicon-minus');
-		} else {
-			$('.filt').slideToggle( "slow" );
-			$('.abrir').text('(Abrir)');
-			$('.abrir').addClass('glyphicon glyphicon-plus');
-			$('.abrir').removeClass('glyphicon glyphicon-minus');
-
-		}
-	});
-	
-	$('.abrir').click();
-	
-	$('.abrir').click(function() {
-		$('.filt').show();
-	});
 	
 	$('#example').dataTable({
 		"order": [[ 0, "asc" ]],
@@ -410,6 +320,12 @@ $(document).ready(function(){
 			}
 		  }
 	} );
+	
+	$('.volver').click(function(event){
+		 
+		url = "index.php";
+		$(location).attr('href',url);
+	});//fin del boton modificar
 	
 
 	$("#example").on("click",'.varborrar', function(){
@@ -590,61 +506,60 @@ $(document).ready(function(){
 	  });
 	  
 	//al enviar el formulario
-    $('#cargar44').click(function(){
+    $('#cargar').click(function(){
 		
-		if (validador() == "")
-        {
-			//información del formulario
-			var formData = new FormData($(".formulario")[0]);
-			var message = "";
-			//hacemos la petición ajax  
-			$.ajax({
-				url: '../../ajax/ajax.php',  
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$("#load").html('<img src="../../imagenes/load13.gif" width="50" height="50" />');       
-				},
-				//una vez finalizado correctamente
-				success: function(data){
 
-					if (data == '') {
-                                            $(".alert").removeClass("alert-danger");
-											$(".alert").removeClass("alert-info");
-                                            $(".alert").addClass("alert-success");
-                                            $(".alert").html('<strong>Ok!</strong> Se cargo exitosamente el <strong><?php echo $singular; ?></strong>. ');
-											$(".alert").delay(3000).queue(function(){
-												/*aca lo que quiero hacer 
-												  después de los 2 segundos de retraso*/
-												$(this).dequeue(); //continúo con el siguiente ítem en la cola
-												
-											});
-											$("#load").html('');
-											url = "index.php";
-											$(location).attr('href',url);
-                                            
+		//información del formulario
+		var formData = new FormData($(".formulario")[0]);
+		var message = "";
+		//hacemos la petición ajax  
+		$.ajax({
+			url: '../../ajax/ajax.php',  
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: formData,
+			//necesario para subir archivos via ajax
+			cache: false,
+			contentType: false,
+			processData: false,
+			//mientras enviamos el archivo
+			beforeSend: function(){
+				$("#load").html('<img src="../../imagenes/load13.gif" width="50" height="50" />');       
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+
+				if (data == '') {
+										$(".alert").removeClass("alert-danger");
+										$(".alert").removeClass("alert-info");
+										$(".alert").addClass("alert-success");
+										$(".alert").html('<strong>Ok!</strong> Se cargo exitosamente el <strong><?php echo $singular; ?></strong>. ');
+										$(".alert").delay(3000).queue(function(){
+											/*aca lo que quiero hacer 
+											  después de los 2 segundos de retraso*/
+											$(this).dequeue(); //continúo con el siguiente ítem en la cola
 											
-                                        } else {
-                                        	$(".alert").removeClass("alert-danger");
-                                            $(".alert").addClass("alert-danger");
-                                            $(".alert").html('<strong>Error!</strong> '+data);
-                                            $("#load").html('');
-                                        }
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-                    $("#load").html('');
-				}
-			});
-		}
+										});
+										$("#load").html('');
+										url = "index.php";
+										$(location).attr('href',url);
+										
+										
+									} else {
+										$(".alert").removeClass("alert-danger");
+										$(".alert").addClass("alert-danger");
+										$(".alert").html('<strong>Error!</strong> '+data);
+										$("#load").html('');
+									}
+			},
+			//si ha ocurrido un error
+			error: function(){
+				$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+				$("#load").html('');
+			}
+		});
+		
     });
     
 
