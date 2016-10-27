@@ -413,7 +413,7 @@ function traerProductosFaltantes() {
 $sql = "select 
 p.idproducto,
 p.nombre,
-
+(p.stockmin - p.stock) + p.stockmin as cantidad,
 p.stock,
 p.stockmin,
 p.preciocosto,

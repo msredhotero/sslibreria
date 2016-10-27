@@ -78,7 +78,7 @@ $cabecerasProductos 		= "<th>Prdoucto</th>
 
 $lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerProductos(),10);
 
-$lstCargadosProductosFaltantes 	= $serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosFaltantes(),5);
+$lstCargadosProductosFaltantes 	= $serviciosReferencias->traerProductosFaltantes();
 
 $pedidosTemporal = $serviciosReferencias->traerDetallepedidoaux();
 
@@ -176,7 +176,50 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="cuerpoBox filt">
-        	<?php echo $lstCargadosProductosFaltantes; ?>
+        	<div class="col-md-12">
+            <table class="table table-striped" id="table-6">
+                <thead>
+                    <tr>
+                        <th class="text-center">Id</th>
+                        <th class="text-center">Producto</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-center">Precio</th>
+                        <th class="text-center">Sub-Total</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="detallefaltante">
+                	<?php
+						$total = 0;
+						if (mysql_num_rows($lstCargadosProductosFaltantes)>0) {
+							while ($rowT = mysql_fetch_array($lstCargadosProductosFaltantes)) {
+								$total += $rowT['preciocosto'] * $rowT['cantidad'];
+					?>
+                    		<tr>
+                    		<td align="center"><?php echo $rowT['idproducto']; ?></td>
+                    		<td><?php echo $rowT['nombre']; ?></td>
+                            <td align="center"><?php echo $rowT['cantidad']; ?></td>
+                            <td align="right"><?php echo $rowT['preciocosto']; ?></td>
+                            <td align="right"><?php echo $rowT['preciocosto'] * $rowT['cantidad']; ?></td>
+                    		<td class="text-center"><button type="button" class="btn btn-success agregarfila" id="<?php echo $rowT['idproducto']; ?>" style="margin-left:0px;"><span class="glyphicon glyphicon-plus"></span> Agregar</button></td>
+                    		</tr>
+                    <?php
+							}
+						}
+					?>
+                </tbody>
+                <tfoot>
+                    <tr style="background-color:#CCC; font-weight:bold; font-size:18px;">
+                        <td colspan="5" align="right">
+                            Total $
+                        </td>
+                        <td>
+                            <input type="text" readonly name="totalfaltante" id="totalfaltante" value="<?php echo $total; ?>" style="border:none; background-color:#CCC;"/>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
     	</div>
     </div>
     
@@ -191,7 +234,7 @@ if ($_SESSION['refroll_predio'] != 1) {
             	<div class="form-group col-md-1" style="display:block">
                 	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
                     <div class="input-group col-md-12">
-	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required="" type="number" value="1">
+	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required type="number" value="1">
                     </div>
                 </div>
                 
@@ -256,12 +299,12 @@ if ($_SESSION['refroll_predio'] != 1) {
 								$total += $rowT['precio'] * $rowT['cantidad'];
 					?>
                     		<tr>
-                    		<td><?php echo $rowT['refproductos']; ?></td>
+                    		<td align="center"><?php echo $rowT['refproductos']; ?></td>
                     		<td><?php echo $rowT['nombre']; ?></td>
-                            <td><?php echo $rowT['cantidad']; ?></td>
-                            <td><?php echo $rowT['precio']; ?></td>
-                            <td><?php echo $rowT['precio'] * $rowT['cantidad']; ?></td>
-                    		<td><button type="button" class="btn btn-danger eliminarfila" id="<?php echo $rowT['iddetallepedidoaux']; ?>" style="margin-left:0px;">Eliminar</button></td>
+                            <td align="center"><?php echo $rowT['cantidad']; ?></td>
+                            <td align="right"><?php echo $rowT['precio']; ?></td>
+                            <td align="right"><?php echo $rowT['precio'] * $rowT['cantidad']; ?></td>
+                    		<td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="<?php echo $rowT['iddetallepedidoaux']; ?>" style="margin-left:0px;">Eliminar</button></td>
                     		</tr>
                     <?php
 							}
@@ -480,7 +523,8 @@ $(document).ready(function(){
 	
 	?>
 	
-	function insertarDetalleAux(idProducto, cantidad, precio, total) {
+	function insertarDetalleAux(idProducto, cantidad, precio, total, json) {
+		var id = 0;
 		$.ajax({
 				data:  {refproductos: idProducto, 
 						cantidad: cantidad, 
@@ -496,11 +540,22 @@ $(document).ready(function(){
 					setTimeout(function() {
 						$("#aviso").fadeOut(1500);
 					},3000);	
-						
+					
+					$('#prodNombre').val(json[0].nombre);
+					$('#prodPrecio').val(json[0].preciocosto);
+					
+					$('.detalle').prepend('<tr><td align="center">'+idProducto+'</td><td>'+json[0].nombre+'</td><td align="center">'+cantidad+'</td><td align="right">'+json[0].preciocosto+'</td><td align="right">'+monto.toFixed(2)+'</td><td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="'+response+'" style="margin-left:0px;">Eliminar</button></td></tr>');
+					
+					$('#cantidadbuscar').val(1);
+							
+					$("#aviso").show();
+							
+					$('#total').val(SumarTabla());
 				}
 		});
+		
+		return id;
 	}
-	
 	
 	function eliminarDetalleAux(idProducto) {
 		$.ajax({
@@ -512,48 +567,39 @@ $(document).ready(function(){
 						
 				},
 				success:  function (response) {
-						
-						
+					$('#total').val(SumarTabla());	
 				}
 		});
 	}
 	
 	
 
-	function getProducto(idProd) {
+	function getProducto(idProd, cantidad) {
 		$.ajax({
 					data:  {idproducto: idProd,
 							accion: 'traerProductoPorCodigo'},
 					url:   '../../ajax/ajax.php',
 					type:  'post',
 					beforeSend: function () {
-							
+						$('#agregar').hide();
+						$('#agregarfila').hide();	
 					},
 					success:  function (response) {
 						if(response){
 							//idproducto,codigo,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,idcategoria,tipoimagen,nroserie,codigobarra
 							json = $.parseJSON(response);
-
 							
-							//var producto = [json[0].nombre, json[0].preciocosto];
-							$('#prodNombre').val(json[0].nombre);
-							$('#prodPrecio').val(json[0].preciocosto);
-							monto = parseFloat(json[0].preciocosto) * parseInt($('#cantidadbuscar').val()).toFixed(2);
-							$('.detalle').prepend('<tr><td>'+$('#refproductobuscar').chosen().val()+'</td><td>'+json[0].nombre+'</td><td>'+$('#cantidadbuscar').val()+'</td><td>'+json[0].preciocosto+'</td><td>'+monto.toFixed(2)+'</td><td><button type="button" class="btn btn-danger eliminarfila" id="eliminar" style="margin-left:0px;">Eliminar</button></td></tr>');
-								
-							$('#total').val(SumarTabla());
-							$('#cantidadbuscar').val(1);
-							
-							$("#aviso").show();
-							
-							//inserta en la tabla temperal para que me guarde el pedido por si quiero salir y volver a entrar
-							insertarDetalleAux($('#refproductobuscar').chosen().val(), $('#cantidadbuscar').val(), json[0].preciocosto, monto);
+							monto = parseFloat(json[0].preciocosto) * parseInt(cantidad);
+							var idRetornado = insertarDetalleAux(idProd, cantidad, json[0].preciocosto, monto, json);
 							
 						} else {
 							//var producto = ['', 0];
 							$('#prodNombre').val('');
 							$('#prodPrecio').val(0);
 						}
+						
+						$('#agregar').show();
+						$('#agregarfila').show();
 					}
 			});	
 	}
@@ -561,9 +607,25 @@ $(document).ready(function(){
 	
 	$('#agregar').click(function(e) {
 		
-		getProducto($('#refproductobuscar').chosen().val());
+		getProducto($('#refproductobuscar').chosen().val(), $('#cantidadbuscar').val());
 		
     });
+	
+	$('.agregarfila').click(function(e) {
+		id =  $(this).attr("id");
+		//getProducto(id);
+		var cantidad = 1;
+		$('.detallefaltante tr').each(function(){
+			
+			if ($(this).find('td').eq(0).text() == id) {
+				cantidad = $(this).find('td').eq(2).text();	
+			}
+			//suma += parseFloat($(this).find('td').eq(4).text()||0,10); //numero de la celda 3
+		});
+		
+		getProducto(id, cantidad);
+		
+	});
 	
 	
 	function SumarTabla() {
@@ -586,7 +648,7 @@ $(document).ready(function(){
 		
 		eliminarDetalleAux(id);
 		
-		$('#total').val(SumarTabla());
+		
 	  });
 	  
 	//al enviar el formulario

@@ -559,7 +559,7 @@ $precio = $_POST['precio'];
 $total = $_POST['total'];
 $res = $serviciosReferencias->insertarDetallepedidoaux($refproductos,$cantidad,$precio,$total);
 if ((integer)$res > 0) {
-echo '';
+echo $res;
 } else {
 echo 'Huvo un error al insertar datos';
 }
