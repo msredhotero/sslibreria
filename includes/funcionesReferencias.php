@@ -99,7 +99,7 @@ function GUID()
 
 	function subirArchivo($file,$carpeta,$id) {
 		
-		$this->eliminarFotoPorObjeto($id);
+		
 		
 		$dir_destino = '../archivos/'.$carpeta.'/'.$id.'/';
 		$imagen_subida = $dir_destino . $this->sanear_string(str_replace(' ','',basename($_FILES[$file]['name'])));
@@ -119,6 +119,7 @@ function GUID()
 		}	else	{
 			if ($_FILES[$file]['tmp_name'] != '') {
 				if(is_uploaded_file($_FILES[$file]['tmp_name'])){
+					$this->eliminarFotoPorObjeto($id);
 					/*echo "Archivo ". $_FILES['foto']['name'] ." subido con éxtio.\n";
 					echo "Mostrar contenido\n";
 					echo $imagen_subida;*/
@@ -531,6 +532,12 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+function vaciarDetallepedidoaux() {
+$sql = "delete from dbdetallepedidoaux ";
+$res = $this->query($sql,0);
+return $res;
+}
+
 
 function traerDetallepedidoaux() {
 $sql = "select
@@ -591,12 +598,13 @@ return $res;
 function traerPedidos() {
 $sql = "select
 p.idpedido,
+p.referencia,
 p.fechasolicitud,
 p.fechaentrega,
 p.total,
-p.refestados,
-p.referencia,
-p.observacion
+est.estado,
+p.observacion,
+p.refestados
 from dbpedidos p
 inner join tbestados est ON est.idestado = p.refestados
 order by 1";
@@ -615,6 +623,19 @@ return $res;
 /* /* Fin de la Tabla: dbpedidos*/
 
 /* PARA Detallepedido */
+
+function insertarDetallepedidoDesdeTemporal($idpedido) {
+	$sql	=	"INSERT INTO dbdetallepedido (iddetallepedido,refpedidos,refproductos,cantidad,precio,total,falto)
+				  SELECT '', ".$idpedido.", d.refproductos, d.cantidad, p.preciocosto, d.cantidad * p.preciocosto, 0
+				  FROM dbdetallepedidoaux  d
+					inner
+					join	dbproductos p
+					on		p.idproducto = d.refproductos;";	
+				  
+	$res = $this->query($sql,1);
+	
+	return $res;			  
+}
 
 function insertarDetallepedido($refpedidos,$refproductos,$cantidad,$precio,$total,$falto) {
 $sql = "insert into dbdetallepedido(iddetallepedido,refpedidos,refproductos,cantidad,precio,total,falto)
@@ -644,17 +665,39 @@ return $res;
 function traerDetallepedido() {
 $sql = "select
 d.iddetallepedido,
-d.refpedidos,
-d.refproductos,
+pro.nombre,
 d.cantidad,
 d.precio,
 d.total,
-d.falto
+d.falto,
+d.refpedidos,
+d.refproductos,
 from dbdetallepedido d
 inner join dbpedidos ped ON ped.idpedido = d.refpedidos
 inner join tbestados es ON es.idestado = ped.refestados
 inner join dbproductos pro ON pro.idproducto = d.refproductos
 inner join tbcategorias ca ON ca.idcategoria = pro.refcategorias
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerDetallepedidoPorPedido($idPedido) {
+$sql = "select
+d.iddetallepedido,
+pro.nombre,
+d.cantidad,
+d.precio,
+d.total,
+d.falto,
+d.refpedidos,
+d.refproductos,
+from dbdetallepedido d
+inner join dbpedidos ped ON ped.idpedido = d.refpedidos
+inner join tbestados es ON es.idestado = ped.refestados
+inner join dbproductos pro ON pro.idproducto = d.refproductos
+inner join tbcategorias ca ON ca.idcategoria = pro.refcategorias
+where	ped.idpedido = ".$idPedido."
 order by 1";
 $res = $this->query($sql,0);
 return $res;

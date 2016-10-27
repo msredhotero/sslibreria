@@ -115,6 +115,10 @@ case 'eliminarDetallepedido':
 eliminarDetallepedido($serviciosReferencias); 
 break; 
 
+case 'traerDetallepedidoPorPedido':
+	traerDetallepedidoPorPedido($serviciosReferencias);
+	break;
+
 case 'insertarDetallepedidoaux':
 insertarDetallepedidoaux($serviciosReferencias);
 break;
@@ -134,14 +138,14 @@ break;
 case 'eliminarDetalleventa': 
 eliminarDetalleventa($serviciosReferencias); 
 break; 
-case 'insertarPedido': 
-insertarPedido($serviciosReferencias); 
-break; 
-case 'modificarPedido': 
-modificarPedido($serviciosReferencias); 
-break; 
-case 'eliminarPedido': 
-eliminarPedido($serviciosReferencias); 
+case 'insertarPedidos':
+insertarPedidos($serviciosReferencias);
+break;
+case 'modificarPedidos':
+modificarPedidos($serviciosReferencias);
+break;
+case 'eliminarPedidos':
+eliminarPedidos($serviciosReferencias);
 break; 
 case 'insertarPredio_menu': 
 insertarPredio_menu($serviciosReferencias); 
@@ -552,6 +556,53 @@ echo $res;
 } 
 
 
+function traerDetallepedidoPorPedido($serviciosReferencias) {
+	$id		=	$_POST['id'];
+	
+	$res	= $serviciosReferencias->traerDetallepedidoPorPedido($id);
+	
+	while ($row = mysql_fetch_array($datos)) {
+			$cadsubRows = '';
+			$cadRows = $cadRows.'
+			
+					<tr class="'.$row[0].'">
+                        	';
+			
+			
+			for ($i=1;$i<=6;$i++) {
+				
+				$cadsubRows = $cadsubRows.'<td><div style="height:60px;overflow:auto;">'.$row[$i].'</div></td>';	
+			}
+			
+			$cadRows = $cadRows.'
+								'.$cadsubRows.'</tr>';
+			
+	}
+			
+	
+	$cad	= '';
+	$cad = $cad.'
+			<table class="table table-striped table-responsive">
+            	<thead>
+                	<tr>
+                        <th>Producto</th>
+						<th>Cantidad</th>
+						<th>Precio</th>
+						<th>Sub-Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                	'.($cadRows).'
+                </tbody>
+            </table>
+			<div style="margin-bottom:85px; margin-right:60px;"></div>
+		
+		';	
+	echo $cad;
+}
+
+
 function insertarDetallepedidoaux($serviciosReferencias) {
 $refproductos = $_POST['refproductos'];
 $cantidad = $_POST['cantidad'];
@@ -618,39 +669,44 @@ $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarDetalleventa($id); 
 echo $res; 
 } 
-function insertarPedido($serviciosReferencias) { 
-$idusuario = $_POST['idusuario']; 
-$fechasolicitud = $_POST['fechasolicitud']; 
-$fechaentrega = $_POST['fechaentrega']; 
-$total = $_POST['total']; 
-$estado = $_POST['estado']; 
-$refestadoenvio = $_POST['refestadoenvio']; 
-$res = $serviciosReferencias->insertarPedido($idusuario,$fechasolicitud,$fechaentrega,$total,$estado,$refestadoenvio); 
-if ((integer)$res > 0) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al insertar datos';	
-} 
-} 
-function modificarPedido($serviciosReferencias) { 
-$id = $_POST['id']; 
-$idusuario = $_POST['idusuario']; 
-$fechasolicitud = $_POST['fechasolicitud']; 
-$fechaentrega = $_POST['fechaentrega']; 
-$total = $_POST['total']; 
-$estado = $_POST['estado']; 
-$refestadoenvio = $_POST['refestadoenvio']; 
-$res = $serviciosReferencias->modificarPedido($id,$idusuario,$fechasolicitud,$fechaentrega,$total,$estado,$refestadoenvio); 
-if ($res == true) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al modificar datos'; 
-} 
-} 
-function eliminarPedido($serviciosReferencias) { 
-$id = $_POST['id']; 
-$res = $serviciosReferencias->eliminarPedido($id); 
-echo $res; 
+function insertarPedidos($serviciosReferencias) {
+	
+	$fechasolicitud = date('Y-m-d');
+	$fechaentrega = $_POST['fechaentrega'];
+	
+	$refestados = 1;
+	$referencia = $_POST['referencia'];
+	$observacion = $_POST['observaciones'];
+
+	$res = $serviciosReferencias->insertarPedidos($fechasolicitud,$fechaentrega,0,$refestados,$referencia,$observacion);
+
+	if ((integer)$res > 0) {
+		$serviciosReferencias->insertarDetallepedidoDesdeTemporal($res);
+		$serviciosReferencias->vaciarDetallepedidoaux();
+		echo '';
+	} else {
+		echo 'Huvo un error al insertar datos';
+	}
+}
+function modificarPedidos($serviciosReferencias) {
+$id = $_POST['id'];
+$fechasolicitud = $_POST['fechasolicitud'];
+$fechaentrega = $_POST['fechaentrega'];
+$total = $_POST['total'];
+$refestados = $_POST['refestados'];
+$referencia = $_POST['referencia'];
+$observacion = $_POST['observacion'];
+$res = $serviciosReferencias->modificarPedidos($id,$fechasolicitud,$fechaentrega,$total,$refestados,$referencia,$observacion);
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
+}
+function eliminarPedidos($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarPedidos($id);
+echo $res;
 } 
 function insertarPredio_menu($serviciosReferencias) { 
 $url = $_POST['url']; 

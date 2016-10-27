@@ -270,7 +270,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 	</div>
                 </div>
             </div>
-            <input type="hidden" name="accion" id="accion" value="" />
+            <input type="hidden" name="accion" id="accion" value="insertarPedidos" />
             
             </form>
     	</div>
@@ -294,33 +294,6 @@ if ($_SESSION['refroll_predio'] != 1) {
 $(document).ready(function(){
 	
 	
-	$('#example').dataTable({
-		"order": [[ 0, "asc" ]],
-		"language": {
-			"emptyTable":     "No hay datos cargados",
-			"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-			"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-			"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-			"infoPostFix":    "",
-			"thousands":      ",",
-			"lengthMenu":     "Mostrar _MENU_ filas",
-			"loadingRecords": "Cargando...",
-			"processing":     "Procesando...",
-			"search":         "Buscar:",
-			"zeroRecords":    "No se encontraron resultados",
-			"paginate": {
-				"first":      "Primero",
-				"last":       "Ultimo",
-				"next":       "Siguiente",
-				"previous":   "Anterior"
-			},
-			"aria": {
-				"sortAscending":  ": activate to sort column ascending",
-				"sortDescending": ": activate to sort column descending"
-			}
-		  }
-	} );
-	
 	$('.volver').click(function(event){
 		 
 		url = "index.php";
@@ -328,182 +301,10 @@ $(document).ready(function(){
 	});//fin del boton modificar
 	
 
-	$("#example").on("click",'.varborrar', function(){
-		  usersid =  $(this).attr("id");
-		  if (!isNaN(usersid)) {
-			$("#idEliminar").val(usersid);
-			$("#dialog2").dialog("open");
 
-			
-			//url = "../clienteseleccionado/index.php?idcliente=" + usersid;
-			//$(location).attr('href',url);
-		  } else {
-			alert("Error, vuelva a realizar la acción.");	
-		  }
-	});//fin del boton eliminar
-	
-	$("#example").on("click",'.varmodificar', function(){
-		  usersid =  $(this).attr("id");
-		  if (!isNaN(usersid)) {
-			
-			url = "modificar.php?id=" + usersid;
-			$(location).attr('href',url);
-		  } else {
-			alert("Error, vuelva a realizar la acción.");	
-		  }
-	});//fin del boton modificar
-
-	 $( "#dialog2" ).dialog({
-		 	
-			    autoOpen: false,
-			 	resizable: false,
-				width:600,
-				height:240,
-				modal: true,
-				buttons: {
-				    "Eliminar": function() {
-	
-						$.ajax({
-									data:  {id: $('#idEliminar').val(), accion: '<?php echo $eliminar; ?>'},
-									url:   '../../ajax/ajax.php',
-									type:  'post',
-									beforeSend: function () {
-											
-									},
-									success:  function (response) {
-											url = "index.php";
-											$(location).attr('href',url);
-											
-									}
-							});
-						$( this ).dialog( "close" );
-						$( this ).dialog( "close" );
-							$('html, body').animate({
-	           					scrollTop: '1000px'
-	       					},
-	       					1500);
-				    },
-				    Cancelar: function() {
-						$( this ).dialog( "close" );
-				    }
-				}
-		 
-		 
-	 		}); //fin del dialogo para eliminar
-			
-	<?php 
-		echo $serviciosHTML->validacion($tabla);
-	
-	?>
-	
-	function insertarDetalleAux(idProducto, cantidad, precio, total) {
-		$.ajax({
-				data:  {refproductos: idProducto, 
-						cantidad: cantidad, 
-						precio: precio, 
-						total: total, 
-						accion: 'insertarDetallepedidoaux'},
-				url:   '../../ajax/ajax.php',
-				type:  'post',
-				beforeSend: function () {
-						
-				},
-				success:  function (response) {
-					setTimeout(function() {
-						$("#aviso").fadeOut(1500);
-					},3000);	
-						
-				}
-		});
-	}
-	
-	
-	function eliminarDetalleAux(idProducto) {
-		$.ajax({
-				data:  {id: idProducto, 
-						accion: 'eliminarDetallepedidoaux'},
-				url:   '../../ajax/ajax.php',
-				type:  'post',
-				beforeSend: function () {
-						
-				},
-				success:  function (response) {
-						
-						
-				}
-		});
-	}
-	
 	
 
-	function getProducto(idProd) {
-		$.ajax({
-					data:  {idproducto: idProd,
-							accion: 'traerProductoPorCodigo'},
-					url:   '../../ajax/ajax.php',
-					type:  'post',
-					beforeSend: function () {
-							
-					},
-					success:  function (response) {
-						if(response){
-							//idproducto,codigo,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,idcategoria,tipoimagen,nroserie,codigobarra
-							json = $.parseJSON(response);
-
-							
-							//var producto = [json[0].nombre, json[0].preciocosto];
-							$('#prodNombre').val(json[0].nombre);
-							$('#prodPrecio').val(json[0].preciocosto);
-							monto = parseFloat(json[0].preciocosto) * parseInt($('#cantidadbuscar').val()).toFixed(2);
-							$('.detalle').prepend('<tr><td>'+$('#refproductobuscar').chosen().val()+'</td><td>'+json[0].nombre+'</td><td>'+$('#cantidadbuscar').val()+'</td><td>'+json[0].preciocosto+'</td><td>'+monto.toFixed(2)+'</td><td><button type="button" class="btn btn-danger eliminarfila" id="eliminar" style="margin-left:0px;">Eliminar</button></td></tr>');
-								
-							$('#total').val(SumarTabla());
-							$('#cantidadbuscar').val(1);
-							
-							$("#aviso").show();
-							
-							//inserta en la tabla temperal para que me guarde el pedido por si quiero salir y volver a entrar
-							insertarDetalleAux($('#refproductobuscar').chosen().val(), $('#cantidadbuscar').val(), json[0].preciocosto, monto);
-							
-						} else {
-							//var producto = ['', 0];
-							$('#prodNombre').val('');
-							$('#prodPrecio').val(0);
-						}
-					}
-			});	
-	}
 	
-	
-	$('#agregar').click(function(e) {
-		
-		getProducto($('#refproductobuscar').chosen().val());
-		
-    });
-	
-	
-	function SumarTabla() {
-		var suma = 0;
-		$('.detalle tr').each(function(){
-			
-			suma += parseFloat($(this).find('td').eq(4).text()||0,10); //numero de la celda 3
-		})
-		return suma.toFixed(2);
-
-	  }
-	  
-	//elimina una fila
-	  $(document).on("click",".eliminarfila",function(){
-		var padre = $(this).parents().get(1);
-
-		$(padre).remove();
-		
-		id =  $(this).attr("id");
-		
-		eliminarDetalleAux(id);
-		
-		$('#total').val(SumarTabla());
-	  });
 	  
 	//al enviar el formulario
     $('#cargar').click(function(){
@@ -542,8 +343,10 @@ $(document).ready(function(){
 											
 										});
 										$("#load").html('');
-										url = "index.php";
-										$(location).attr('href',url);
+										$('.detalle').hide(100);
+										$('#suma').val(0);
+										//url = "confirmar.php";
+										//$(location).attr('href',url);
 										
 										
 									} else {

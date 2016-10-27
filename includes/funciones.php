@@ -49,7 +49,7 @@ class Servicios {
 		$lblTask = '';
 		switch ($cantidad) {
 			case 99:
-				$cantidad = 8;
+				$cantidad = 6;
 				$classMod = '';
 				$classEli = 'varborrar';
 				$idresultados = "resultados";
@@ -67,22 +67,22 @@ class Servicios {
 				$idresultados = "resultadosprincipal";
 				break;
 			case 96:
-				$cantidad = 9;
+				$cantidad = 6;
 				$classMod = 'varmodificar';
 				$classVer = 'varver';
-				$lblVer	  = 'Responsables';
+				$lblVer	  = 'Detalle';
 				$classEli = 'varborrar';
 				$idresultados = "resultados";
 				break;
 			case 95:
-				$cantidad = 8;
+				$cantidad = 6;
 				$classMod = 'varmodificar';
-				$classTask	  = 'varpagos';
+				$classVer	  = 'varpagos';
 				$classFinalizar = 'varfinalizar';
 				$classEli = 'varborrar';
 				$classPagar = 'varpagar';
 				$idresultados = "resultados";
-				$lblTask = 'Pagos';
+				$lblVer = 'Detalle';
 				break;
 			case 94:
 				$cantidad = 8;
@@ -160,7 +160,7 @@ class Servicios {
 				
 				if ($classPagar != '') {
 					$cadRows = $cadRows.'		<li>
-											<a href="javascript:void(0)" class="'.$classPagar.'" id="'.$row[0].'"><span class="glyphicon glyphicon-shopping-cart"></span> Pagar</a>
+											<a href="javascript:void(0)" class="'.$classPagar.'" id="'.$row[0].'"><span class="glyphicon glyphicon-shopping-cart"></span> Entrada</a>
 											</li>';	
 				}
 				
