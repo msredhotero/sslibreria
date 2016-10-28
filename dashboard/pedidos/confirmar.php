@@ -197,7 +197,10 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <tbody class="detalle">
                 	<?php
 						$total = 0;
+						
+						$existe = 0;
 						if (mysql_num_rows($pedidosTemporal)>0) {
+							$existe = 1;
 							while ($rowT = mysql_fetch_array($pedidosTemporal)) {
 								$total += $rowT['precio'] * $rowT['cantidad'];
 					?>
@@ -211,6 +214,12 @@ if ($_SESSION['refroll_predio'] != 1) {
                     		</tr>
                     <?php
 							}
+						} else {
+					?>
+                    		<tr>
+                            	<td colspan="6">No hay productos cargados para realizar el pedido.</td>
+                            </tr>
+                    <?php
 						}
 					?>
                 </tbody>
@@ -239,23 +248,25 @@ if ($_SESSION['refroll_predio'] != 1) {
             <div class="form-group col-md-6" style="display:block">
                 <label class="control-label" for="referencia" style="text-align:left">Referencia</label>
                 <div class="input-group col-md-12">
-                    <input id="referencia" class="form-control" name="referencia" placeholder="Referencia..." required="" type="text"/>
+                    <input id="referencia" class="form-control" name="referencia" placeholder="Referencia..." required type="text"/>
                 </div>
             </div>
             
             <div class="form-group col-md-6" style="display:block">
                 <label class="control-label" for="observaciones" style="text-align:left">Observaciones</label>
                 <div class="input-group col-md-12">
-                    <input id="observaciones" class="form-control" name="observaciones" placeholder="Observaciones..." required="" type="text" />
+                    <input id="observaciones" class="form-control" name="observaciones" placeholder="Observaciones..." required type="text" />
                 </div>
             </div>
                     
             <div class="row">
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-left:15px;">
+                	<?php if ($existe == 1) { ?>
                     <li>
                         <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;">Cargar</button>
                     </li>
+                    <?php } ?>
                     <li>
                         <button type="button" class="btn btn-default volver" id="volver" style="margin-left:0px;">Volver</button>
                     </li>
@@ -344,7 +355,7 @@ $(document).ready(function(){
 										});
 										$("#load").html('');
 										$('.detalle').hide(100);
-										$('#suma').val(0);
+										$('#total').val(0);
 										//url = "confirmar.php";
 										//$(location).attr('href',url);
 										

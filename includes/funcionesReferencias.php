@@ -589,6 +589,10 @@ return $res;
 
 
 function eliminarPedidos($id) {
+
+$sqlDel = "delete from dbdetallepedido where refpedidos =".$id;	
+$this->query($sqlDel,0);
+
 $sql = "delete from dbpedidos where idpedido =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -619,6 +623,12 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+function finalizarPedido($id) {
+	$sql = "update dbpedidos set refestados = 3 where idpedido =".$id;
+	$res = $this->query($sql,0);
+	return $res;	
+}
+
 /* Fin */
 /* /* Fin de la Tabla: dbpedidos*/
 
@@ -633,6 +643,15 @@ function insertarDetallepedidoDesdeTemporal($idpedido) {
 					on		p.idproducto = d.refproductos;";	
 				  
 	$res = $this->query($sql,1);
+	
+	$sqlUp = "update dbpedidos
+				set total = (SELECT sum(d.cantidad * p.preciocosto)
+				  FROM dbdetallepedidoaux d
+					inner
+					join	dbproductos p
+					on		p.idproducto = d.refproductos)
+			  where idpedido = ".$idpedido;
+	$res2 = $this->query($sqlUp,0);		  
 	
 	return $res;			  
 }
@@ -691,7 +710,7 @@ d.precio,
 d.total,
 d.falto,
 d.refpedidos,
-d.refproductos,
+d.refproductos
 from dbdetallepedido d
 inner join dbpedidos ped ON ped.idpedido = d.refpedidos
 inner join tbestados es ON es.idestado = ped.refestados

@@ -146,7 +146,12 @@ modificarPedidos($serviciosReferencias);
 break;
 case 'eliminarPedidos':
 eliminarPedidos($serviciosReferencias);
-break; 
+break;
+
+case 'finalizarPedido':
+	finalizarPedido($serviciosReferencias);
+	break;
+ 
 case 'insertarPredio_menu': 
 insertarPredio_menu($serviciosReferencias); 
 break; 
@@ -560,8 +565,11 @@ function traerDetallepedidoPorPedido($serviciosReferencias) {
 	$id		=	$_POST['id'];
 	
 	$res	= $serviciosReferencias->traerDetallepedidoPorPedido($id);
+	$cadRows='';
+	$total = 0;
 	
-	while ($row = mysql_fetch_array($datos)) {
+	while ($row = mysql_fetch_array($res)) {
+		$total += $row['total'];
 			$cadsubRows = '';
 			$cadRows = $cadRows.'
 			
@@ -569,9 +577,9 @@ function traerDetallepedidoPorPedido($serviciosReferencias) {
                         	';
 			
 			
-			for ($i=1;$i<=6;$i++) {
+			for ($i=1;$i<=4;$i++) {
 				
-				$cadsubRows = $cadsubRows.'<td><div style="height:60px;overflow:auto;">'.$row[$i].'</div></td>';	
+				$cadsubRows = $cadsubRows.'<td><div style="height:20px;overflow:auto;">'.$row[$i].'</div></td>';	
 			}
 			
 			$cadRows = $cadRows.'
@@ -595,6 +603,11 @@ function traerDetallepedidoPorPedido($serviciosReferencias) {
 
                 	'.($cadRows).'
                 </tbody>
+				<tfoot>
+					<tr>
+						<td align="right" style="font-size:14px; font-weight: bold;" colspan="4">Total: <span style="color:red;">$'.number_format($total,2,',','.').'</span></td>
+					</tr>
+				</tfoot>
             </table>
 			<div style="margin-bottom:85px; margin-right:60px;"></div>
 		
@@ -669,6 +682,13 @@ $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarDetalleventa($id); 
 echo $res; 
 } 
+
+function finalizarPedido($serviciosReferencias) {
+	$id = $_POST['id'];
+	$res = $serviciosReferencias->finalizarPedido($id);
+	echo $res;	
+}
+
 function insertarPedidos($serviciosReferencias) {
 	
 	$fechasolicitud = date('Y-m-d');

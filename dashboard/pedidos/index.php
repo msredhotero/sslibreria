@@ -386,10 +386,28 @@ if ($_SESSION['refroll_predio'] != 1) {
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Detalle del Pedido</h4>
       </div>
-      <div class="modal-body userasignates">
+      <div class="modal-body detallePedido">
         
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Finalizar Pedido</h4>
+      </div>
+      <div class="modal-body">
+        	<p>¿Desea finalizar el pedido?</p>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary finalizar" data-dismiss="modal" id="finalizar">Finalizar</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
       </div>
     </div>
@@ -457,13 +475,11 @@ $(document).ready(function(){
 
 	$("#example").on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
+		  
 		  if (!isNaN(usersid)) {
 			$("#idEliminar").val(usersid);
 			$("#dialog2").dialog("open");
 
-			
-			//url = "../clienteseleccionado/index.php?idcliente=" + usersid;
-			//$(location).attr('href',url);
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
 		  }
@@ -471,6 +487,7 @@ $(document).ready(function(){
 	
 	$("#example").on("click",'.varmodificar', function(){
 		  usersid =  $(this).attr("id");
+		  
 		  if (!isNaN(usersid)) {
 			
 			url = "modificar.php?id=" + usersid;
@@ -571,6 +588,47 @@ $(document).ready(function(){
 				}
 		});
 	}
+	
+	$("#example").on("click",'.varfinalizar', function(){
+		  
+		  $('.finalizar').attr('id',$(this).attr("id"));
+	});
+	
+	$('#finalizar').click(function(e) {
+        $.ajax({
+				data:  {id: $('.finalizar').attr("id"), 
+						accion: 'finalizarPedido'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+						
+				},
+				success:  function (response) {
+					url = "index.php";
+					$(location).attr('href',url);	
+				}
+		});
+    });
+	
+	$("#example").on("click",'.varpagos', function(){
+		  
+		  $.ajax({
+				data:  {id: $(this).attr("id"), 
+						accion: 'traerDetallepedidoPorPedido'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+						
+				},
+				success:  function (response) {
+					$('.detallePedido').html(response);	
+				}
+		});
+	});
+	
+	$('#finalizar').click(function(e) {
+        
+    });
 	
 	
 

@@ -142,7 +142,7 @@ class Servicios {
 											</li>';
 				if ($classFinalizar != '') {
 					$cadRows = $cadRows.'		<li>
-											<a href="javascript:void(0)" class="'.$classFinalizar.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-ok"></span> Finalizar</a>
+											<a href="javascript:void(0)" class="'.$classFinalizar.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal2"><span class="glyphicon glyphicon-ok"></span> Finalizar</a>
 											</li>';	
 				}						
 				
