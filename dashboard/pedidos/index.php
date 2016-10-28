@@ -496,6 +496,18 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton modificar
+	
+	$("#example").on("click",'.varpagar', function(){
+		  usersid =  $(this).attr("id");
+		  
+		  if (!isNaN(usersid)) {
+			
+			url = "entrada.php?id=" + usersid;
+			$(location).attr('href',url);
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton modificar
 
 	 $( "#dialog2" ).dialog({
 		 	

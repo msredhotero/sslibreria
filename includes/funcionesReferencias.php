@@ -710,7 +710,12 @@ d.precio,
 d.total,
 d.falto,
 d.refpedidos,
-d.refproductos
+d.refproductos,
+pro.stock,
+ped.fechasolicitud,
+ped.fechaentrega,
+ped.referencia,
+ped.observacion
 from dbdetallepedido d
 inner join dbpedidos ped ON ped.idpedido = d.refpedidos
 inner join tbestados es ON es.idestado = ped.refestados

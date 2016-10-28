@@ -24,6 +24,9 @@ $fecha = date('Y-m-d');
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Pedidos",$_SESSION['refroll_predio'],'');
 
+$id	= $_GET['id'];
+
+$resResult	=	$serviciosReferencias->traerDetallepedidoPorPedido($id);
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Pedido";
@@ -197,14 +200,24 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <tbody class="detalle">
                 	<?php
 						$total = 0;
-						if (mysql_num_rows($pedidosTemporal)>0) {
-							while ($rowT = mysql_fetch_array($pedidosTemporal)) {
+						$fechaentrega = '';
+						$fechasolicitud= '';
+						$referencia = '';
+						$observaciones = '';
+						if (mysql_num_rows($resResult)>0) {
+							
+							while ($rowT = mysql_fetch_array($resResult)) {
 								$total += $rowT['precio'] * $rowT['cantidad'];
+								$fechaentrega = $rowT['fechaentrega'];
+								$fechasolicitud = $rowT['fechasolicitud'];
+								$referencia = $rowT['referencia'];
+								$observaciones = $rowT['observacion'];
+								
 					?>
                     		<tr>
                     		<td><?php echo $rowT['refproductos']; ?></td>
                     		<td><?php echo $rowT['nombre']; ?></td>
-                            <td align="center"><?php echo $rowT['cantidad']; ?></td>
+                            <td align="center"><input type="number" id="cantidad" value="<?php echo $rowT['cantidad']; ?>" /></td>
                             <td align="right"><?php echo $rowT['stock']; ?> <span class="text-success">+ <?php echo $rowT['cantidad']; ?></span> = <?php echo $rowT['stock']+$rowT['cantidad']; ?></td>
                             <td align="right"><?php echo $rowT['precio']; ?></td>
                             <td align="right"><?php echo $rowT['precio'] * $rowT['cantidad']; ?></td>
@@ -227,26 +240,33 @@ if ($_SESSION['refroll_predio'] != 1) {
             </table>
             </div>
             
-            <div class="form-group col-md-6">
-                <label for="fechaentrega" class="control-label" style="text-align:left">Fecha de Entrega</label>
-                <div class="input-group date form_date col-md-6" data-date="" data-date-format="dd MM yyyy" data-link-field="fechaentrega" data-link-format="yyyy-mm-dd">
-                    <input class="form-control" size="50" type="text" value="" readonly>
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+            <div class="form-group col-md-3">
+                <label for="fechaentrega" class="control-label" style="text-align:left">Fecha de Solicitud</label>
+                <div class="input-group col-md-12">
+                    <h4><?php echo $fechasolicitud; ?></h4>
                 </div>
-                <input type="hidden" name="fechaentrega" id="fechaentrega" value="" />
+                
+            </div>
+            
+            <div class="form-group col-md-3">
+                <label for="fechaentrega" class="control-label" style="text-align:left">Fecha de Entrega</label>
+                <div class="input-group col-md-12">
+                    <h4><?php echo $fechaentrega; ?></h4>
+                </div>
+                
             </div>
             
             <div class="form-group col-md-6" style="display:block">
                 <label class="control-label" for="referencia" style="text-align:left">Referencia</label>
                 <div class="input-group col-md-12">
-                    <input id="referencia" class="form-control" name="referencia" placeholder="Referencia..." required="" type="text"/>
+                    <h4><?php echo $referencia; ?></h4>
                 </div>
             </div>
             
-            <div class="form-group col-md-6" style="display:block">
+            <div class="form-group col-md-12" style="display:block">
                 <label class="control-label" for="observaciones" style="text-align:left">Observaciones</label>
                 <div class="input-group col-md-12">
-                    <input id="observaciones" class="form-control" name="observaciones" placeholder="Observaciones..." required="" type="text" />
+                    <h4><?php echo $observaciones; ?></h4>
                 </div>
             </div>
                     
