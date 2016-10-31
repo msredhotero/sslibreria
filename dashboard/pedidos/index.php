@@ -80,6 +80,8 @@ $lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosRefere
 
 $lstCargadosProductosFaltantes 	= $serviciosReferencias->traerProductosFaltantes();
 
+$lstProductos =	$serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductos(),5);
+
 $pedidosTemporal = $serviciosReferencias->traerDetallepedidoaux();
 
 if ($_SESSION['refroll_predio'] != 1) {
@@ -167,9 +169,17 @@ if ($_SESSION['refroll_predio'] != 1) {
  <?php echo $resMenu; ?>
 
 <div id="content">
-
-<h3><?php echo $plural; ?></h3>
 	
+    <div class="boxInfoLargo" style="margin-bottom:-15px;">
+        <div id="headBoxInfo">
+        	<p style="color: #fff; font-size:18px; height:16px;">Productos Cargados <span class="glyphicon glyphicon-minus abrir2" style="cursor:pointer; float:right; padding-right:12px;">(Cerrar)</span></p>
+        	
+        </div>
+    	<div class="cuerpoBox filt2">
+        	<?php echo $lstProductos; ?>
+    	</div>
+    </div>
+    
     <div class="boxInfoLargo" style="margin-bottom:-15px;">
         <div id="headBoxInfo">
         	<p style="color: #fff; font-size:18px; height:16px;">Productos Faltantes <span class="glyphicon glyphicon-minus abrir" style="cursor:pointer; float:right; padding-right:12px;">(Cerrar)</span></p>
@@ -443,6 +453,29 @@ $(document).ready(function(){
 	
 	$('.abrir').click(function() {
 		$('.filt').show();
+	});
+	
+	
+	$('.abrir2').click(function() {
+		
+		if ($('.abrir2').text() == '(Abrir)') {
+			$('.filt2').show( "slow" );
+			$('.abrir2').text('(Cerrar)');
+			$('.abrir2').removeClass('glyphicon glyphicon-plus');
+			$('.abrir2').addClass('glyphicon glyphicon-minus');
+		} else {
+			$('.filt2').slideToggle( "slow" );
+			$('.abrir2').text('(Abrir)');
+			$('.abrir2').addClass('glyphicon glyphicon-plus');
+			$('.abrir2').removeClass('glyphicon glyphicon-minus');
+
+		}
+	});
+	
+	$('.abrir2').click();
+	
+	$('.abrir2').click(function() {
+		$('.filt2').show();
 	});
 	
 	$('#example').dataTable({
