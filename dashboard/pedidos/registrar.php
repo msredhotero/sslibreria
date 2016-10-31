@@ -24,9 +24,42 @@ $fecha = date('Y-m-d');
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Pedidos",$_SESSION['refroll_predio'],'');
 
-$id	= $_GET['id'];
+$idPedido	= $_POST['idpedido'];
+$refestado	= $_POST['refestado'];
 
-$resResult	=	$serviciosReferencias->traerDetallepedidoPorPedido($id);
+$numero = count($_POST);
+$tags = array_keys($_POST);// obtiene los nombres de las varibles
+$valores = array_values($_POST);// obtiene los valores de las varibles
+$cantEncontrados = 0;
+
+$lbl = "";
+$lblRes = "";
+$r1 = '';
+if (($refestado == 1) || ($refestado == 2)) {
+	for($i=0;$i<$numero;$i++){
+		
+		if (strpos($tags[$i],"cantidad") !== false) {
+			$id = str_replace("cantidad","",$tags[$i]);
+			//die(var_dump($valores[$i]));
+			//modifico el nuevo stock
+			$r1 = $serviciosReferencias->registrarEntradaPorPedidoProducto($id, $valores[$i]);
+			//echo $r1."<br>";
+			//die(var_dump($r1));
+			//cargo la diferencia
+			$r1 = $serviciosReferencias->registrarFaltantes($id, $valores[$i]);
+		}
+	}
+	//die(var_dump($r1));
+	$lbl = 'success';
+	$lblRes = 'El pedido a sido registrado correctamente';
+	//le pongo el estado al pedido
+	$serviciosReferencias->determinarEstado($idPedido);
+	
+} else {
+	$lbl = 'danger';
+	$lblRes = 'El pedido no ha sido procesado, no se puede procesar un pedido finalizado o cancelado';
+}
+
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Pedido";
@@ -84,6 +117,8 @@ $lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosRefere
 $lstCargadosProductosFaltantes 	= $serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosFaltantes(),5);
 
 $pedidosTemporal = $serviciosReferencias->traerDetallepedidoaux();
+
+$resResult	=	$serviciosReferencias->traerDetallepedidoPorPedido($idPedido);
 
 if ($_SESSION['refroll_predio'] != 1) {
 
@@ -171,31 +206,26 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <div id="content">
 
-<h3><?php echo $plural; ?> <span style="color:#006666;"><span class="glyphicon glyphicon-chevron-right"></span> Confirmar</span></h3>
+<h3><?php echo $plural; ?> <span style="color:#006666;"><span class="glyphicon glyphicon-chevron-right"></span> Confirmar</span> <span class="glyphicon glyphicon-chevron-right"></span> Registrado</span></h3>
     
     <div class="boxInfoLargo">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Confirmar <?php echo $plural; ?></p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Registrar <?php echo $plural; ?></p>
         	
         </div>
     	<div class="cuerpoBox">
-        	<div class="alert alert-info">
-            	<p><span class="glyphicon glyphicon-info-sign"></span> Recuerde cargar la fecha de entrega y una referencia</p>
+        	<div class="alert alert-<?php echo $lbl; ?>">
+            	<p><span class="glyphicon glyphicon-info-sign"></span> <?php echo $lblRes; ?></p>
             </div>
-        	<form class="form-inline formulario" role="form" method="post" action="registrar.php">
-
             
             <div class="col-md-12">
             <table class="table table-striped table-responsive" id="table-6">
                 <thead>
                     <tr>
-                    	<th style="width:8%">Chequeado</th>
                         <th style="width:8%" class="text-center">Codigo</th>
                         <th style="width:30%" class="text-center">Producto</th>
                         <th style="width:12%" class="text-center">Cantidad</th>
-                        <th style="width:15%" class="text-center">Nuevo Stock</th>
-                        <th style="width:12%" class="text-center">Precio</th>
-                        <th style="width:50px;" class="text-center">Sub-Total</th>
+                        <th style="width:15%" class="text-center">Stock</th>
                     </tr>
                 </thead>
                 <tbody class="detalle">
@@ -209,46 +239,26 @@ if ($_SESSION['refroll_predio'] != 1) {
 						if (mysql_num_rows($resResult)>0) {
 							
 							while ($rowT = mysql_fetch_array($resResult)) {
-								$total += $rowT['precio'] * $rowT['cantidad'];
-								$fechaentrega = $rowT['fechaentrega'];
+								$total 			+= $rowT['precio'] * $rowT['cantidad'];
+								$fechaentrega 	= $rowT['fechaentrega'];
 								$fechasolicitud = $rowT['fechasolicitud'];
-								$referencia = $rowT['referencia'];
-								$observaciones = $rowT['observacion'];
-								$estado = $rowT['idestado'];
+								$referencia 	= $rowT['referencia'];
+								$observaciones 	= $rowT['observacion'];
+								$estado			= $rowT['estado'];
 								
 					?>
                     		<tr>
-                            <td align="center"><input class="form-control chequeado" type="checkbox" name="chequeado<?php echo $rowT['iddetallepedido']; ?>" id="<?php echo $rowT['iddetallepedido']; ?>" /></td>
                     		<td><?php echo $rowT['codigo']; ?></td>
                     		<td><?php echo $rowT['nombre']; ?></td>
-                            <td>
-    						
-                            <div class="form-group has-feedback" id="estado<?php echo $rowT['iddetallepedido']; ?>">
-                              <div class="col-sm-11">
-                                <input style="width:110px;" class="form-control canti" type="number" id="cantidad<?php echo $rowT['iddetallepedido']; ?>" name="cantidad<?php echo $rowT['iddetallepedido']; ?>" value="<?php echo $rowT['cantidad']; ?>" >
-                                <span class="glyphicon form-control-feedback" id="estadoicono<?php echo $rowT['iddetallepedido']; ?>"></span>
-                              </div>
-                            </div>
-    						</td>
-                            <td align="right"><span class="stock<?php echo $rowT['iddetallepedido']; ?>"><?php echo $rowT['stock']; ?></span> <span class="text-success">+ <span class="nuevo<?php echo $rowT['iddetallepedido']; ?>"><?php echo $rowT['cantidad']; ?></span></span> = <span class="nuevostock<?php echo $rowT['iddetallepedido']; ?>"><?php echo $rowT['stock']+$rowT['cantidad']; ?></span></td>
-                            <td align="right"><span class="precio<?php echo $rowT['iddetallepedido']; ?>"><?php echo $rowT['precio']; ?></span></td>
-                            <td style="width:50px;" align="right" class="subtotal<?php echo $rowT['iddetallepedido']; ?>"><?php echo $rowT['precio'] * $rowT['cantidad']; ?></td>
+                            <td><?php echo $rowT['cantidad']; ?></td>
+                            <td align="right"><?php echo $rowT['stock']; ?></td>
                     		</tr>
                     <?php
 							}
 						}
 					?>
                 </tbody>
-                <tfoot>
-                    <tr style="background-color:#CCC; font-weight:bold; font-size:18px;">
-                        <td colspan="6" align="right">
-                            Total $
-                        </td>
-                        <td style="width:50px;">
-                            <input type="text" readonly name="total" id="total" value="<?php echo $total; ?>" style="border:none; background-color:#CCC; width:90px;"/>
-                        </td>
-                    </tr>
-                </tfoot>
+
             </table>
             </div>
             
@@ -275,6 +285,13 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
             </div>
             
+            <div class="form-group col-md-6" style="display:block">
+                <label class="control-label" for="referencia" style="text-align:left">Estado</label>
+                <div class="input-group col-md-12">
+                    <h4><?php echo $estado; ?></h4>
+                </div>
+            </div>
+            
             <div class="form-group col-md-12" style="display:block">
                 <label class="control-label" for="observaciones" style="text-align:left">Observaciones</label>
                 <div class="input-group col-md-12">
@@ -286,25 +303,13 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-left:15px;">
                     <li>
-                        <button type="submit" class="btn btn-primary" id="cargar" style="margin-left:0px;">Cargar</button>
-                    </li>
-                    <li>
                         <button type="button" class="btn btn-default volver" id="volver" style="margin-left:0px;">Volver</button>
                     </li>
                 </ul>
                 </div>
             </div>
+
             
-            <div class="row" id="aviso" style="display:none;">
-            	<div class="col-md-12">
-                	<div class='alert alert-info'>
-                		<p>Se guardo temporalmente el pedido para una posterior modificación</p>
-                	</div>
-                </div>
-            </div>
-            <input type="hidden" name="accion" id="accion" value="" />
-            <input type="hidden" name="idpedido" id="idpedido" value="<?php echo $id; ?>" />
-            <input type="hidden" name="refestado" id="refestado" value="<?php echo $estado; ?>" />
             </form>
     	</div>
     </div>
@@ -354,220 +359,13 @@ $(document).ready(function(){
 		  }
 	} );
 	
-	$('.canti').change(function() {
-		usersid =  $(this).attr("id");
-		var str = usersid;
-		var id = str.replace("cantidad", "");
-		
-		if (parseInt($(this).val()) < 0) {
-			$(this).val(0);
-		}
-		
-		$('.nuevo'+id).html($(this).val());
-		$('.nuevostock'+id).html(parseInt($(this).val()) + parseInt($('.stock'+id).html()) );
-		
-		$('.subtotal'+id).html( (parseInt($(this).val()) * (parseFloat($('.precio'+id).html()))).toFixed(2) );
-		
-		$('#total').val(SumarTabla());
-	});
 	
-	$('#total').val(SumarTabla());
-	
-	$('.chequeado').click(function(e) {
-        id =  $(this).attr("id");
-		
-		if ($(this).prop('checked')==true) { 
-			$('#estado'+id).addClass('has-success');
-			$('#estadoicono'+id).addClass('glyphicon-ok');
-		} else {
-			$('#estado'+id).removeClass('has-success');
-			$('#estadoicono'+id).removeClass('glyphicon-ok');
-		}
-    });
 	  
 	$('.volver').click(function(event){
 		 
 		url = "index.php";
 		$(location).attr('href',url);
 	});//fin del boton modificar
-	
-
-	$("#example").on("click",'.varborrar', function(){
-		  usersid =  $(this).attr("id");
-		  if (!isNaN(usersid)) {
-			$("#idEliminar").val(usersid);
-			$("#dialog2").dialog("open");
-
-			
-			//url = "../clienteseleccionado/index.php?idcliente=" + usersid;
-			//$(location).attr('href',url);
-		  } else {
-			alert("Error, vuelva a realizar la acción.");	
-		  }
-	});//fin del boton eliminar
-	
-	$("#example").on("click",'.varmodificar', function(){
-		  usersid =  $(this).attr("id");
-		  if (!isNaN(usersid)) {
-			
-			url = "modificar.php?id=" + usersid;
-			$(location).attr('href',url);
-		  } else {
-			alert("Error, vuelva a realizar la acción.");	
-		  }
-	});//fin del boton modificar
-
-	 $( "#dialog2" ).dialog({
-		 	
-			    autoOpen: false,
-			 	resizable: false,
-				width:600,
-				height:240,
-				modal: true,
-				buttons: {
-				    "Eliminar": function() {
-	
-						$.ajax({
-									data:  {id: $('#idEliminar').val(), accion: '<?php echo $eliminar; ?>'},
-									url:   '../../ajax/ajax.php',
-									type:  'post',
-									beforeSend: function () {
-											
-									},
-									success:  function (response) {
-											url = "index.php";
-											$(location).attr('href',url);
-											
-									}
-							});
-						$( this ).dialog( "close" );
-						$( this ).dialog( "close" );
-							$('html, body').animate({
-	           					scrollTop: '1000px'
-	       					},
-	       					1500);
-				    },
-				    Cancelar: function() {
-						$( this ).dialog( "close" );
-				    }
-				}
-		 
-		 
-	 		}); //fin del dialogo para eliminar
-			
-	<?php 
-		echo $serviciosHTML->validacion($tabla);
-	
-	?>
-	
-	function insertarDetalleAux(idProducto, cantidad, precio, total) {
-		$.ajax({
-				data:  {refproductos: idProducto, 
-						cantidad: cantidad, 
-						precio: precio, 
-						total: total, 
-						accion: 'insertarDetallepedidoaux'},
-				url:   '../../ajax/ajax.php',
-				type:  'post',
-				beforeSend: function () {
-						
-				},
-				success:  function (response) {
-					setTimeout(function() {
-						$("#aviso").fadeOut(1500);
-					},3000);	
-						
-				}
-		});
-	}
-	
-	
-	function eliminarDetalleAux(idProducto) {
-		$.ajax({
-				data:  {id: idProducto, 
-						accion: 'eliminarDetallepedidoaux'},
-				url:   '../../ajax/ajax.php',
-				type:  'post',
-				beforeSend: function () {
-						
-				},
-				success:  function (response) {
-						
-						
-				}
-		});
-	}
-	
-	
-
-	function getProducto(idProd) {
-		$.ajax({
-					data:  {idproducto: idProd,
-							accion: 'traerProductoPorCodigo'},
-					url:   '../../ajax/ajax.php',
-					type:  'post',
-					beforeSend: function () {
-							
-					},
-					success:  function (response) {
-						if(response){
-							//idproducto,codigo,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,idcategoria,tipoimagen,nroserie,codigobarra
-							json = $.parseJSON(response);
-
-							
-							//var producto = [json[0].nombre, json[0].preciocosto];
-							$('#prodNombre').val(json[0].nombre);
-							$('#prodPrecio').val(json[0].preciocosto);
-							monto = parseFloat(json[0].preciocosto) * parseInt($('#cantidadbuscar').val()).toFixed(2);
-							$('.detalle').prepend('<tr><td>'+$('#refproductobuscar').chosen().val()+'</td><td>'+json[0].nombre+'</td><td>'+$('#cantidadbuscar').val()+'</td><td>'+json[0].preciocosto+'</td><td>'+monto.toFixed(2)+'</td><td><button type="button" class="btn btn-danger eliminarfila" id="eliminar" style="margin-left:0px;">Eliminar</button></td></tr>');
-								
-							$('#total').val(SumarTabla());
-							$('#cantidadbuscar').val(1);
-							
-							$("#aviso").show();
-							
-							//inserta en la tabla temperal para que me guarde el pedido por si quiero salir y volver a entrar
-							insertarDetalleAux($('#refproductobuscar').chosen().val(), $('#cantidadbuscar').val(), json[0].preciocosto, monto);
-							
-						} else {
-							//var producto = ['', 0];
-							$('#prodNombre').val('');
-							$('#prodPrecio').val(0);
-						}
-					}
-			});	
-	}
-	
-	
-	$('#agregar').click(function(e) {
-		
-		getProducto($('#refproductobuscar').chosen().val());
-		
-    });
-	
-	
-	function SumarTabla() {
-		var suma = 0;
-		$('.detalle tr').each(function(){
-			
-			suma += parseFloat($(this).find('td').eq(6).text()||0,10); //numero de la celda 3
-		})
-		return suma.toFixed(2);
-
-	  }
-	  
-	//elimina una fila
-	  $(document).on("click",".eliminarfila",function(){
-		var padre = $(this).parents().get(1);
-
-		$(padre).remove();
-		
-		id =  $(this).attr("id");
-		
-		eliminarDetalleAux(id);
-		
-		$('#total').val(SumarTabla());
-	  });
 
 
 });

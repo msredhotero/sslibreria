@@ -715,6 +715,9 @@ pro.stock,
 ped.fechasolicitud,
 ped.fechaentrega,
 ped.referencia,
+pro.codigo,
+es.estado,
+es.idestado,
 ped.observacion
 from dbdetallepedido d
 inner join dbpedidos ped ON ped.idpedido = d.refpedidos
@@ -725,6 +728,41 @@ where	ped.idpedido = ".$idPedido."
 order by 1";
 $res = $this->query($sql,0);
 return $res;
+}
+
+function registrarEntradaPorPedidoProducto($iddetallepedido, $cantidad) {
+	$sql = "update dbproductos 
+				set stock = (stock + ".$cantidad.")
+				where idproducto = (select d.refproductos
+						from dbdetallepedido d
+						inner join dbpedidos ped ON ped.idpedido = d.refpedidos
+						where	d.iddetallepedido = ".$iddetallepedido.");";	
+	$res = $this->query($sql,0);
+	return $sql;
+}
+
+function registrarFaltantes($iddetallepedido, $cantidad) {
+	$sql = "update dbdetallepedido
+				set falto = (cantidad - ".$cantidad.")
+						where	iddetallepedido = ".$iddetallepedido;	
+	$res = $this->query($sql,0);
+	return $res;	
+}
+
+function determinarEstado($idpedido) {
+	$sql = 'SELECT sum(falto) FROM dbdetallepedido where refpedidos ='.$idpedido;
+	$res = $this->query($sql,0);
+	if (mysql_result($res,0,0)== 0) {
+		$sqlUpdate = "update dbpedidos
+						set refestados = 3
+						where	idpedido = ".$idpedido;	
+	
+	} else {
+		$sqlUpdate = "update dbpedidos
+						set refestados = 4
+						where	idpedido = ".$idpedido;	
+	}
+	$resUp = $this->query($sqlUpdate,0);
 }
 
 
