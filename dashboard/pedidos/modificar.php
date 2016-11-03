@@ -22,41 +22,47 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Productos",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Pedidos",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerProductosPorId($id);
+$resResultado = $serviciosReferencias->traerPedidosPorId($id);
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Producto";
+$singular = "Pedido";
 
-$plural = "Productos";
+$plural = "Pedidos";
 
-$eliminar = "eliminarProductos";
+$eliminar = "eliminarPedidos";
 
-$modificar = "modificarProductos";
+$modificar = "modificarPedidos";
 
-$idTabla = "idproducto";
+$idTabla = "idpedido";
 
 $tituloWeb = "Gestión: Libreria";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbproductos";
+$tabla 			= "dbpedidos";
 
-$lblCambio	 	= array("codigobarra","stockmin","preciocosto","precioventa","refcategorias");
-$lblreemplazo	= array("Cod. Barra","Stock Minimo","Precio Costo","Precio Venta","Categoria");
+$lblCambio	 	= array("refestados","fechaentrega","fechasolicitud");
+$lblreemplazo	= array("Estado","Fecha Entrega","Fecha Solicitud");
 
+$estado = mysql_result($resResultado,0,'refestados');
 
-$resCategorias 	= $serviciosReferencias->traerCategorias();
-$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resCategorias,array(1),'',mysql_result($resResultado,0,'refcategorias'));
-    
+if (($estado == 3) || ($estado == 4)) {
+	$resEstados 	= $serviciosReferencias->traerEstadosPorId($estado);
+	$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'',mysql_result($resResultado,0,'refestados'));
+} else {
+	$resEstados 	= $serviciosReferencias->traerEstados();
+	$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'',mysql_result($resResultado,0,'refestados'));
+}
+
 $refdescripcion = array(0 => $cadRef);
-$refCampo 	=  array("refcategorias");
+$refCampo 	=  array("refestados");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -106,7 +112,7 @@ if ($_SESSION['idroll_predio'] != 1) {
 	<link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
-
+	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
 	<style type="text/css">
 		
   
@@ -204,9 +210,17 @@ if ($_SESSION['idroll_predio'] != 1) {
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
 <script src="../../bootstrap/js/dataTables.bootstrap.js"></script>
 
+<script src="../../js/bootstrap-datetimepicker.min.js"></script>
+<script src="../../js/bootstrap-datetimepicker.es.js"></script>
+
 <script type="text/javascript">
 $(document).ready(function(){
-
+	
+	$('#total').attr("readonly","true");
+	
+	
+	$("#fechasolicitud").datepicker("option", "disabled", true);
+	
 	$('.volver').click(function(event){
 		 
 		url = "index.php";
@@ -386,23 +400,20 @@ $(document).ready(function(){
 			});
 		}
     });
-	
-	$('#imagen1').on('change', function(e) {
-	  var Lector,
-		  oFileInput = this;
-	 
-	  if (oFileInput.files.length === 0) {
-		return;
-	  };
-	 
-	  Lector = new FileReader();
-	  Lector.onloadend = function(e) {
-		$('#vistaPrevia1').attr('src', e.target.result);         
-	  };
-	  Lector.readAsDataURL(oFileInput.files[0]);
-	 
-	});
 
+});
+</script>
+<script type="text/javascript">
+$('.form_date').datetimepicker({
+	language:  'es',
+	weekStart: 1,
+	todayBtn:  1,
+	autoclose: 1,
+	todayHighlight: 1,
+	startView: 2,
+	minView: 2,
+	forceParse: 0,
+	format: 'dd/mm/yyyy'
 });
 </script>
 <?php } ?>
