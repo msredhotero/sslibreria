@@ -357,18 +357,42 @@ function existeCodigo($codigo) {
 	return 0;
 }
 
+function traerCantidadProductos() {
+	$sql = "select count(*) from dbproductos where activo = 1";
+	$res = $this->query($sql,0); 
+	return $res; 	
+}
+
+function traerCantidadClientes() {
+	$sql = "select count(*) from dbclientes";
+	$res = $this->query($sql,0); 
+	return $res; 	
+}
+
+function traerCantidadPedidos() {
+	$sql = "select count(*) from dbpedidos where refestados in (1,2)";
+	$res = $this->query($sql,0); 
+	return $res; 	
+}
+
+function traerCantidadVentas() {
+	$sql = "select count(*) from venta";
+	$res = $this->query($sql,0); 
+	return $res; 	
+}
+
 function insertarProductos($codigo,$codigobarra,$nombre,$descripcion,$stock,$stockmin,$preciocosto,$precioventa,$utilidad,$estado,$imagen,$refcategorias,$tipoimagen,$unidades) { 
-$sql = "insert into dbproductos(idproducto,codigo,codigobarra,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,refcategorias,tipoimagen,unidades) 
-values ('','".utf8_decode($codigo)."','".utf8_decode($codigobarra)."','".utf8_decode($nombre)."','".utf8_decode($descripcion)."',".($stock=='' ? 0 : $stock).",".($stockmin == '' ? 0 : $stockmin).",".($preciocosto == '' ?  0 : $preciocosto).",".($precioventa == '' ? 0 : $precioventa).",".$utilidad.",'".utf8_decode($estado)."','".utf8_decode($imagen)."',".$refcategorias.",'".utf8_decode($tipoimagen)."',".($unidades=='' ? 1 : $unidades).")";
+$sql = "insert into dbproductos(idproducto,codigo,codigobarra,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,refcategorias,tipoimagen,unidades, activo) 
+values ('','".utf8_decode($codigo)."','".utf8_decode($codigobarra)."','".utf8_decode($nombre)."','".utf8_decode($descripcion)."',".($stock=='' ? 0 : $stock).",".($stockmin == '' ? 0 : $stockmin).",".($preciocosto == '' ?  0 : $preciocosto).",".($precioventa == '' ? 0 : $precioventa).",".$utilidad.",'".utf8_decode($estado)."','".utf8_decode($imagen)."',".$refcategorias.",'".utf8_decode($tipoimagen)."',".($unidades=='' ? 1 : $unidades).",1)";
 $res = $this->query($sql,1); 
 return $res; 
 } 
 
 
-function modificarProductos($id,$codigo,$codigobarra,$nombre,$descripcion,$stock,$stockmin,$preciocosto,$precioventa,$utilidad,$estado,$imagen,$refcategorias,$tipoimagen,$unidades) { 
+function modificarProductos($id,$codigo,$codigobarra,$nombre,$descripcion,$stock,$stockmin,$preciocosto,$precioventa,$utilidad,$estado,$imagen,$refcategorias,$tipoimagen,$unidades,$activo) { 
 $sql = "update dbproductos 
 set 
-codigo = '".utf8_decode($codigo)."',codigobarra = '".utf8_decode($codigobarra)."',nombre = '".utf8_decode($nombre)."',descripcion = '".utf8_decode($descripcion)."',stock = ".$stock.",stockmin = ".$stockmin.",preciocosto = ".$preciocosto.",precioventa = ".$precioventa.",utilidad = ".$utilidad.",estado = '".utf8_decode($estado)."',imagen = '".utf8_decode($imagen)."',refcategorias = ".$refcategorias.",tipoimagen = '".utf8_decode($tipoimagen)."', unidades = ".($unidades=='' ? 1 : $unidades)."
+codigo = '".utf8_decode($codigo)."',codigobarra = '".utf8_decode($codigobarra)."',nombre = '".utf8_decode($nombre)."',descripcion = '".utf8_decode($descripcion)."',stock = ".$stock.",stockmin = ".$stockmin.",preciocosto = ".$preciocosto.",precioventa = ".$precioventa.",utilidad = ".$utilidad.",estado = '".utf8_decode($estado)."',imagen = '".utf8_decode($imagen)."',refcategorias = ".$refcategorias.",tipoimagen = '".utf8_decode($tipoimagen)."', unidades = ".($unidades=='' ? 1 : $unidades).",activo = ".$activo." 
 where idproducto =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -377,7 +401,7 @@ return $res;
 
 function eliminarProductos($id) { 
 $this->eliminarFotoPorObjeto($id);
-$sql = "delete from dbproductos where idproducto =".$id; 
+$sql = "update dbproductos set activo = 0 where idproducto =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
@@ -404,6 +428,7 @@ p.preciocosto,
 p.tipoimagen
 from dbproductos p 
 inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
+where p.activo = 1
 order by 1"; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -433,7 +458,7 @@ p.descripcion,
 p.tipoimagen
 from dbproductos p 
 inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
-where p.stockmin >= p.stock
+where p.stockmin >= p.stock and p.activo = 1
 order by nombre"; 
 $res = $this->query($sql,0); 
 return $res; 

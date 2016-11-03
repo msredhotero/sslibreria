@@ -93,6 +93,15 @@ class Servicios {
 				$idresultados = "resultados";
 				$lblTask = 'Pagos';
 				break;
+			case 93:
+				$cantidad = 6;
+				$classMod = 'varmodificarpedido';
+				$classVer	  = 'varpagos';
+				$classEli = 'varborrarpedido';
+				$classPagar = 'varpagar';
+				$idresultados = "resultados";
+				$lblVer = 'Detalle';
+				break;
 			default:
 				$classMod = 'varmodificar';
 				$classEli = 'varborrar';

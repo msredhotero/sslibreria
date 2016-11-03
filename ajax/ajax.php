@@ -399,8 +399,13 @@ $imagen = '';
 $refcategorias = $_POST['refcategorias']; 
 $tipoimagen = ''; 
 $unidades = $_POST['unidades'];
+if (isset($_POST['activo'])) {
+$activo = 1;
+} else {
+$activo = 0;
+} 
 	
-	$res = $serviciosReferencias->modificarProductos($id,$codigo,$codigobarra,$nombre,$descripcion,$stock,$stockmin,$preciocosto,$precioventa,$utilidad,$estado,$imagen,$refcategorias,$tipoimagen,$unidades); 
+	$res = $serviciosReferencias->modificarProductos($id,$codigo,$codigobarra,$nombre,$descripcion,$stock,$stockmin,$preciocosto,$precioventa,$utilidad,$estado,$imagen,$refcategorias,$tipoimagen,$unidades,$activo); 
 	
 	if ($res == true) { 
 		$imagenes = array("imagen" => 'imagen');

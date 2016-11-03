@@ -39,19 +39,58 @@ $tituloWeb = "Gestión: Talleres";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 
 /////////////////////// Opciones para la creacion del view  patente,refmodelo,reftipovehiculo,anio/////////////////////
-$cabeceras 		= "	<th>Nro</th>
-					<th>Dueño</th>
-					<th>Vehiculo</th>
-					<th>Fecha</th>
-					<th>Reparación</th>
-					<th>Presup. Aprox.</th>
-					<th>Saldo</th>
-					<th>Estado</th>";
+$cabeceras 		= "	<th>Referencia</th>
+                    <th>Fecha Pedido</th>
+                    <th>Fecha Entrega</th>
+					<th>Total</th>
+					<th>Estado</th>
+                    <th>Obserbaciones</th>";
+
+$cabecerasProductos 		= "<th>Prdoucto</th>
+                    <th>Cantidad</th>
+					<th>Stock</th>
+					<th>Stock Min.</th>
+					<th>Precio</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+$lstPedidos 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPedidos(),93);
+
+$lstCargadosProductosFaltantes 	= $serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosFaltantes(),5);
+
 //$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerOrdenesActivos(),95);
 //$lstCargadosMora 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerOrdenesMora(),94);
+
+$resProductos	=	$serviciosReferencias->traerCantidadProductos();
+$resClientes	=	$serviciosReferencias->traerCantidadClientes();
+$resPedidos		=	$serviciosReferencias->traerCantidadPedidos();
+$resVentas		=	$serviciosReferencias->traerCantidadVentas();
+
+if (mysql_num_rows($resProductos)>0) {
+	$cantProductos			=	mysql_result($resProductos,0,0);
+} else {
+	$cantProductos			=	0;
+}
+
+if (mysql_num_rows($resClientes)>0) {
+	$cantClientes			=	mysql_result($resClientes,0,0);
+} else {
+	$cantClientes			=	0;
+}
+
+if (mysql_num_rows($resPedidos)>0) {
+	$cantPedidos			=	mysql_result($resPedidos,0,0);
+} else {
+	$cantPedidos			=	0;
+}
+
+if (mysql_num_rows($resVentas)>0) {
+	$cantVentas			=	mysql_result($resVentas,0,0);
+} else {
+	$cantVentas			=	0;
+}
+
+
 
 ?>
 
@@ -100,6 +139,9 @@ $cabeceras 		= "	<th>Nro</th>
         $('#navigation').perfectScrollbar();
       });
     </script>
+    
+    <script src="../js/jquery.color.min.js"></script>
+	<script src="../js/jquery.animateNumber.min.js"></script>
 </head>
 
 <body>
@@ -108,12 +150,55 @@ $cabeceras 		= "	<th>Nro</th>
 <?php echo str_replace('..','../dashboard',$resMenu); ?>
 
 <div id="content">
+	
+    <div class="row" style="margin-top:15px;">
+    	<div class="col-md-1">
+        </div>
+        <div class="col-md-10">
+        	<div class="col-md-6">
+            	<div class="col-md-6">
+                    <div align="center">
+                        <img src="../imagenes/lblClientes.png" width="80%"/>
+                        <p><span id="lblCliente" style="color: red;">0</span></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div align="center">
+                        <img src="../imagenes/lblVentas.png" width="80%">
+                        <p><span id="lblVentas" style="color: red;">0</span></p>
+                    </div>
+                </div>
+                
+                
+            </div>
 
-<h3>Bienvenido</h3>
+            <div class="col-md-6">
 
+                <div class="col-md-6">
+                    <div align="center">
+                        <img src="../imagenes/lblProductos.png" width="80%">
+                        <p><span id="lblProductos" style="color: red;">0</span></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div align="center">
+                        <img src="../imagenes/lblPedidos.png" width="80%">
+                        <p><span id="lblPedidos" style="color: red;">0</span></p>
+                    </div>
+                </div>            
+            </div>
+        </div>
+        
+        
+        
+        <div class="col-md-1">
+        </div>
+    </div>
+    
+    
     <div class="boxInfoLargo tile-stats tile-white stat-tile">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Ordenes Cargadas</p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Ventas Actuales</p>
         	
         </div>
     	<div class="cuerpoBox">
@@ -132,7 +217,7 @@ $cabeceras 		= "	<th>Nro</th>
     
     <div class="boxInfoLargo tile-stats tile-white stat-tile">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Mora</p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Productos Faltantes</p>
         	
         </div>
     	<div class="cuerpoBox">
@@ -144,7 +229,26 @@ $cabeceras 		= "	<th>Nro</th>
                 
                 </div>
             </div>
-    		<?php //echo $lstCargadosMora; ?>
+    		<?php echo $lstCargadosProductosFaltantes; ?>
+    	</div>
+    </div>
+    
+    
+    <div class="boxInfoLargo tile-stats tile-white stat-tile">
+        <div id="headBoxInfo">
+        	<p style="color: #fff; font-size:18px; height:16px;">Pedidos</p>
+        	
+        </div>
+    	<div class="cuerpoBox">
+        	<div class='row' style="margin-left:25px; margin-right:25px;">
+                <div class='alert'>
+                
+                </div>
+                <div id='load'>
+                
+                </div>
+            </div>
+    		<?php echo $lstPedidos; ?>
     	</div>
     </div>
     
@@ -160,14 +264,14 @@ $cabeceras 		= "	<th>Nro</th>
 
 
 <!-- Modal -->
-<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Pagos</h4>
+        <h4 class="modal-title" id="myModalLabel">Detalle del Pedido</h4>
       </div>
-      <div class="modal-body userasignates">
+      <div class="modal-body detallePedido">
         
       </div>
       <div class="modal-footer">
@@ -220,6 +324,23 @@ $(document).ready(function(){
 		  }
 	} );
 	
+	$('table.table').on("click",'.varpagos', function(){
+		  
+		  $.ajax({
+				data:  {id: $(this).attr("id"), 
+						accion: 'traerDetallepedidoPorPedido'},
+				url:   '../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+						
+				},
+				success:  function (response) {
+					$('.detallePedido').html(response);	
+				}
+		});
+	});
+	
+	
 
 	$('table.table').on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
@@ -239,7 +360,19 @@ $(document).ready(function(){
 		  usersid =  $(this).attr("id");
 		  if (!isNaN(usersid)) {
 			
-			url = "ordenes/modificar.php?id=" + usersid;
+			url = "productos/modificar.php?id=" + usersid;
+			$(location).attr('href',url);
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton modificar
+	
+	
+	$('table.table').on("click",'.varmodificarpedido', function(){
+		  usersid =  $(this).attr("id");
+		  if (!isNaN(usersid)) {
+			
+			url = "pedidos/modificar.php?id=" + usersid;
 			$(location).attr('href',url);
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
@@ -248,16 +381,16 @@ $(document).ready(function(){
 	
 	
 	$('table.table').on("click",'.varpagar', function(){
-		
 		  usersid =  $(this).attr("id");
+		  
 		  if (!isNaN(usersid)) {
 			
-			url = "pagos/pagar.php?id="+usersid;
+			url = "pedidos/entrada.php?id=" + usersid;
 			$(location).attr('href',url);
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
 		  }
-	});//fin del boton pagos
+	});//fin del boton entradas
 	
 	
 	$('table.table').on("click",'.varpagos', function(){
@@ -375,6 +508,65 @@ $(document).ready(function(){
 
 });
 </script>
+
+<script>
+	  	var percent_number_step = $.animateNumber.numberStepFactories.append('');
+		$('#lblCliente').animateNumber(
+		  {
+			number: <?php echo $cantClientes; ?>,
+			color: 'green',
+			'font-size': '30px',
+		
+			easing: 'easeInQuad',
+		
+			numberStep: percent_number_step
+		  },
+		  1000
+		);
+		
+		
+		$('#lblVentas').animateNumber(
+		  {
+			number: <?php echo $cantVentas; ?>,
+			color: 'green',
+			'font-size': '30px',
+		
+			easing: 'easeInQuad',
+		
+			numberStep: percent_number_step
+		  },
+		  1000
+		);
+		
+		
+		$('#lblProductos').animateNumber(
+		  {
+			number: <?php echo $cantProductos; ?>,
+			color: 'green',
+			'font-size': '30px',
+		
+			easing: 'easeInQuad',
+		
+			numberStep: percent_number_step
+		  },
+		  1000
+		);
+		
+		
+		$('#lblPedidos').animateNumber(
+		  {
+			number: <?php echo $cantPedidos; ?>,
+			color: 'green',
+			'font-size': '30px',
+		
+			easing: 'easeInQuad',
+		
+			numberStep: percent_number_step
+		  },
+		  1000
+		);
+
+	</script>
 <?php } ?>
 </body>
 </html>
