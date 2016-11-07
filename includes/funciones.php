@@ -294,9 +294,9 @@ class Servicios {
 						if (in_array($row[0],$geoposicionamiento)) {
 							$form	=	$form.'
 							
-							<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+							<div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
 								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).'</label>
-								<div class="input-group col-md-12">
+								<div class="input-group col-md-12 col-xs-12">
 									<span class="input-group-addon"><span class="glyphicon glyphicon-map-marker"></span></span>
 									<input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="0" required>
 									
@@ -309,9 +309,9 @@ class Servicios {
 						
 							$form	=	$form.'
 							
-							<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+							<div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
 								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).'</label>
-								<div class="input-group col-md-12">
+								<div class="input-group col-md-12 col-xs-12">
 									<span class="input-group-addon">$</span>
 									<input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="0" required>
 									<span class="input-group-addon">.00</span>
@@ -344,9 +344,9 @@ class Servicios {
 							if (in_array($campo,$autocompletar)) {
 								$form	=	$form.'
 							
-								<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+								<div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
 									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-									<div class="input-group col-md-12">
+									<div class="input-group col-md-12 col-xs-12">
 										
 										<select data-placeholder="selecione el '.$label.'..." id="'.strtolower($campo).'" name="'.strtolower($campo).'" class="chosen-select" tabindex="2">
             								<option value=""></option>
@@ -363,9 +363,9 @@ class Servicios {
 							
 								$form	=	$form.'
 								
-								<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+								<div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
 									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-									<div class="input-group col-md-12">
+									<div class="input-group col-md-12 col-xs-12">
 										<select class="form-control" id="'.strtolower($campo).'" name="'.strtolower($campo).'">
 											';
 								
@@ -386,9 +386,9 @@ class Servicios {
 								
 								$form	=	$form.'
 								
-								<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+								<div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
 									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-									<div class="input-group col-md-12 fontcheck">
+									<div class="input-group col-md-12 fontcheck col-xs-12">
 										<input type="checkbox" class="form-control" id="'.$campo.'" name="'.$campo.'" style="width:50px;" required> <p>Si/No</p>
 									</div>
 								</div>
@@ -405,9 +405,9 @@ class Servicios {
 									if ($row[0] == "fechapago") {
 										$form	=	$form.'
 														
-										<div class="form-group col-md-6">
+										<div class="form-group col-md-6 col-xs-6">
 											<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-											<div class="input-group col-md-6">
+											<div class="input-group col-md-6 col-xs-12">
 												<input class="form-control" type="text" value="" name="'.$campo.'" id="'.$campo.'"/>
 											</div>
 											
@@ -417,9 +417,9 @@ class Servicios {
 									} else {
 										$form	=	$form.'
 										
-										<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+										<div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
 											<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-											<div class="input-group date form_date col-md-6" data-date="" data-date-format="dd MM yyyy" data-link-field="'.$campo.'" data-link-format="yyyy-mm-dd">
+											<div class="input-group date form_date col-md-6 col-xs-6" data-date="" data-date-format="dd MM yyyy" data-link-field="'.$campo.'" data-link-format="yyyy-mm-dd">
 												<input class="form-control" size="50" type="text" value="" readonly>
 												<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 											</div>
@@ -450,9 +450,9 @@ class Servicios {
 										
 										$form	=	$form.'
 										
-										<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+										<div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
 											<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-											<div class="input-group bootstrap-timepicker col-md-6">
+											<div class="input-group bootstrap-timepicker col-md-6 col-xs-6">
 												<input id="timepicker2" name="'.$campo.'" class="form-control">
 												<span class="input-group-addon">
 <span class="glyphicon glyphicon-time"></span>
@@ -470,9 +470,9 @@ class Servicios {
 											
 											$form	=	$form.'
 											
-											<div class="form-group col-md-12" style="display:'.$lblOculta.'">
+											<div class="form-group col-md-12 col-xs-12" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-												<div class="input-group col-md-12">
+												<div class="input-group col-md-12 col-xs-12">
 													<textarea name="'.$campo.'" id="'.$campo.'" rows="200" cols="160">
 														Ingrese la noticia.
 													</textarea>
@@ -492,9 +492,9 @@ class Servicios {
 												
 												$form	=	$form.'
 												
-												<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+												<div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
 													<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-													<div class="input-group col-md-12">
+													<div class="input-group col-md-12 col-xs-12">
 														<textarea type="text" rows="10" cols="6" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required></textarea>
 													</div>
 													
@@ -553,9 +553,9 @@ class Servicios {
 	
 													$form	=	$form.'
 													
-													<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+													<div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
 														<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-														<div class="input-group col-md-12">
+														<div class="input-group col-md-12 col-xs-12">
 															<input type="text" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required>
 														</div>
 													</div>

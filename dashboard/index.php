@@ -156,13 +156,13 @@ if (mysql_num_rows($resVentas)>0) {
         </div>
         <div class="col-md-10">
         	<div class="col-md-6">
-            	<div class="col-md-6">
+            	<div class="col-md-6 col-xs-3">
                     <div align="center">
                         <img src="../imagenes/lblClientes.png" width="80%"/>
                         <p><span id="lblCliente" style="color: red;">0</span></p>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 col-xs-3">
                     <div align="center">
                         <img src="../imagenes/lblVentas.png" width="80%">
                         <p><span id="lblVentas" style="color: red;">0</span></p>
@@ -174,13 +174,13 @@ if (mysql_num_rows($resVentas)>0) {
 
             <div class="col-md-6">
 
-                <div class="col-md-6">
+                <div class="col-md-6 col-xs-3">
                     <div align="center">
                         <img src="../imagenes/lblProductos.png" width="80%">
                         <p><span id="lblProductos" style="color: red;">0</span></p>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 col-xs-3">
                     <div align="center">
                         <img src="../imagenes/lblPedidos.png" width="80%">
                         <p><span id="lblPedidos" style="color: red;">0</span></p>
