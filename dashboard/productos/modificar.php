@@ -206,7 +206,14 @@ if ($_SESSION['idroll_predio'] != 1) {
 
 <script type="text/javascript">
 $(document).ready(function(){
-
+	
+	if (<?php echo mysql_result($resResultado,0,'activo'); ?> == 1) {
+		$('#activo').prop('checked',true);	
+	} else {
+		$('#activo').prop('checked',false);	
+	}
+	
+	
 	$('.volver').click(function(event){
 		 
 		url = "index.php";

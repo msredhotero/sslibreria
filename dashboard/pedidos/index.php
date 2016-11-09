@@ -69,6 +69,7 @@ $cabecerasProductos 		= "<th>Prdoucto</th>
 					<th>Stock</th>
 					<th>Stock Min.</th>
 					<th>Precio</th>";
+					
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -80,7 +81,7 @@ $lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosRefere
 
 $lstCargadosProductosFaltantes 	= $serviciosReferencias->traerProductosFaltantes();
 
-$lstProductos =	$serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductos(),5);
+$lstProductos =	$serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosPorOrden(),5);
 
 $pedidosTemporal = $serviciosReferencias->traerDetallepedidoaux();
 
@@ -478,7 +479,7 @@ $(document).ready(function(){
 		$('.filt2').show();
 	});
 	
-	$('#example').dataTable({
+	$('table.table').dataTable({
 		"order": [[ 0, "asc" ]],
 		"language": {
 			"emptyTable":     "No hay datos cargados",
@@ -506,7 +507,7 @@ $(document).ready(function(){
 	} );
 	
 
-	$("#example").on("click",'.varborrar', function(){
+	$("table.table").on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
 		  
 		  if (!isNaN(usersid)) {
@@ -518,7 +519,19 @@ $(document).ready(function(){
 		  }
 	});//fin del boton eliminar
 	
-	$("#example").on("click",'.varmodificar', function(){
+	$("table.table").on("click",'.varmodificar', function(){
+		  usersid =  $(this).attr("id");
+		  
+		  if (!isNaN(usersid)) {
+			
+			url = "../productos/modificar.php?id=" + usersid;
+			$(location).attr('href',url);
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton modificar
+	
+	$("table.table").on("click",'.varmodificarpedidos', function(){
 		  usersid =  $(this).attr("id");
 		  
 		  if (!isNaN(usersid)) {
@@ -530,7 +543,7 @@ $(document).ready(function(){
 		  }
 	});//fin del boton modificar
 	
-	$("#example").on("click",'.varpagar', function(){
+	$("table.table").on("click",'.varpagar', function(){
 		  usersid =  $(this).attr("id");
 		  
 		  if (!isNaN(usersid)) {
@@ -634,7 +647,7 @@ $(document).ready(function(){
 		});
 	}
 	
-	$("#example").on("click",'.varfinalizar', function(){
+	$("table.table").on("click",'.varfinalizar', function(){
 		  
 		  $('.finalizar').attr('id',$(this).attr("id"));
 	});
@@ -655,7 +668,7 @@ $(document).ready(function(){
 		});
     });
 	
-	$("#example").on("click",'.varpagos', function(){
+	$("table.table").on("click",'.varpagos', function(){
 		  
 		  $.ajax({
 				data:  {id: $(this).attr("id"), 
@@ -671,9 +684,6 @@ $(document).ready(function(){
 		});
 	});
 	
-	$('#finalizar').click(function(e) {
-        
-    });
 	
 	
 

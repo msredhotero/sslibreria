@@ -434,6 +434,31 @@ $res = $this->query($sql,0);
 return $res; 
 } 
 
+function traerProductosPorOrden() { 
+$sql = "select 
+p.idproducto,
+p.nombre,
+(p.stock * p.unidades) as cantidad,
+p.stock,
+p.stockmin,
+p.precioventa,
+
+p.imagen,
+cat.descripcion,
+p.unidades,
+p.refcategorias,
+p.estado,
+p.utilidad,
+p.preciocosto,
+p.tipoimagen
+from dbproductos p 
+inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
+where p.activo = 1
+order by 1"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
 
 function traerProductosFaltantes() { 
 $sql = "select 
@@ -466,7 +491,7 @@ return $res;
 
 
 function traerProductosPorId($id) { 
-$sql = "select idproducto,codigo,codigobarra,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,refcategorias,tipoimagen from dbproductos where idproducto =".$id; 
+$sql = "select idproducto,codigo,codigobarra,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,refcategorias,tipoimagen, (case when activo=1 then '1' else '0' end) as activo from dbproductos where idproducto =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
 } 

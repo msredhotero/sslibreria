@@ -76,10 +76,10 @@ class Servicios {
 				break;
 			case 95:
 				$cantidad = 6;
-				$classMod = 'varmodificar';
+				$classMod = 'varmodificarpedidos';
 				$classVer	  = 'varpagos';
 				$classFinalizar = 'varfinalizar';
-				$classEli = 'varborrar';
+				$classEli = 'varborrarpedidos';
 				$classPagar = 'varpagar';
 				$idresultados = "resultados";
 				$lblVer = 'Detalle';
@@ -720,7 +720,7 @@ class Servicios {
 								$campo = strtolower($row[0]);
 								
 								$activo = '';
-								if (mysql_result($resMod,0,$row[0])==1){
+								if (mysql_result($resMod,0,$row[0])=='1'){
 									$activo = 'checked';
 								}
 								

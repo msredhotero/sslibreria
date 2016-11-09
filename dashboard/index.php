@@ -44,7 +44,7 @@ $cabeceras 		= "	<th>Referencia</th>
                     <th>Fecha Entrega</th>
 					<th>Total</th>
 					<th>Estado</th>
-                    <th>Obserbaciones</th>";
+                    <th>Observaciones</th>";
 
 $cabecerasProductos 		= "<th>Prdoucto</th>
                     <th>Cantidad</th>
