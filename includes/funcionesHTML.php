@@ -40,10 +40,11 @@ function menu($usuario,$titulo,$rol,$empresa) {
 	
 	
 	$menu = '
-		<div style="background-color:#012A2A; position:absolute; top:0;left:0; height:35px; width:100%; color:#FFF; padding-top:7px;" align="right">
+		<div style="background-color:#012A2A; position:absolute; top:0;left:0; height:35px; width:100%; color:#FFF; padding-top:7px;">
 			
-			<ul class="list-inline">
-				<li><span class="glyphicon glyphicon-user"></span> '.$usuario.'</li>
+			<ul class="list-inline" style="margin-left:12px;">
+				<li style="margin-left:20%;"><span class="glyphicon glyphicon-list" id="colapsarMenu" style="cursor:pointer;"> </span></li>
+				<li class="navbar-right"><span class="glyphicon glyphicon-user"></span> '.$usuario.'</li>
 
 			</ul>
 		</div>

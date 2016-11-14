@@ -46,6 +46,7 @@ $tablasAr	= array("clientes"        => "dbclientes",
 "categorias"    => "tbcategorias",
 "compras"       => "dbcompras",
 "pedidos"       => "dbpedidos",
+"ventas"       => "dbventas",
 "detallepedido" => "dbdetallepedido",
 "tipopago"        => "tbtipopago");
 

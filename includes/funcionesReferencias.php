@@ -438,8 +438,8 @@ function traerProductosPorOrden() {
 $sql = "select 
 p.idproducto,
 p.nombre,
-(p.stock * p.unidades) as cantidad,
-p.stock,
+p.stock as cantidad,
+(p.stock / p.unidades) as stock,
 p.stockmin,
 p.precioventa,
 
@@ -1133,6 +1133,153 @@ return $res;
 
 /* Fin */
 /* /* Fin de la Tabla: tbroles*/
+
+
+
+
+/* Para la parte de Ventas   **************************** VENTAS  ************************************* */
+/* PARA Ventas */
+
+function generarNroVenta() {
+	$sql = "select max(idventa) as id from dbventas";	
+	$res = $this->query($sql,0);
+	
+	if (mysql_num_rows($res)>0) {
+		$nro = 'TC'.str_pad(mysql_result($res,0,0)+1, 8, "0", STR_PAD_LEFT);
+	} else {
+		$nro = 'TC00000001';
+	}
+	
+	return $nro;
+}
+
+
+function insertarVentas($reftipopago,$numero,$totalventa,$refestados,$usuacrea,$fechacrea,$usuamodi,$fechamodi,$observacion) {
+$sql = "insert into dbventas(idventa,reftipopago,numero,totalventa,refestados,usuacrea,fechacrea,usuamodi,fechamodi,observacion)
+values ('',".$reftipopago.",'".utf8_decode($numero)."',".$totalventa.",".$refestados.",'".utf8_decode($usuacrea)."','".utf8_decode($fechacrea)."','".utf8_decode($usuamodi)."','".utf8_decode($fechamodi)."','".utf8_decode($observacion)."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarVentas($id,$reftipopago,$numero,$totalventa,$refestados,$usuacrea,$fechacrea,$usuamodi,$fechamodi,$observacion) {
+$sql = "update dbventas
+set
+reftipopago = ".$reftipopago.",numero = '".utf8_decode($numero)."',totalventa = ".$totalventa.",refestados = ".$refestados.",usuacrea = '".utf8_decode($usuacrea)."',fechacrea = '".utf8_decode($fechacrea)."',usuamodi = '".utf8_decode($usuamodi)."',fechamodi = '".utf8_decode($fechamodi)."',observacion = '".utf8_decode($observacion)."'
+where idventa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarVentas($id) {
+$sql = "delete from dbventas where idventa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentas() {
+$sql = "select
+v.idventa,
+v.reftipopago,
+v.numero,
+v.totalventa,
+v.refestados,
+v.usuacrea,
+v.fechacrea,
+v.usuamodi,
+v.fechamodi,
+v.observacion
+from dbventas v
+inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join tbestados est ON est.idestado = v.refestados
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentasPorId($id) {
+$sql = "select idventa,reftipopago,numero,totalventa,refestados,usuacrea,fechacrea,usuamodi,fechamodi,observacion from dbventas where idventa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+
+
+/* PARA Detalleventas */
+
+function insertarDetalleventas($refventas,$refproductos,$producto,$cantidad,$precio,$total) {
+$sql = "insert into dbdetalleventas(iddetallecompra,refventas,refproductos,producto,cantidad,precio,total)
+values ('',".$refventas.",".$refproductos.",'".utf8_decode($producto)."',".$cantidad.",".$precio.",".$total.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarDetalleventas($id,$refventas,$refproductos,$producto,$cantidad,$precio,$total) {
+$sql = "update dbdetalleventas
+set
+refventas = ".$refventas.",refproductos = ".$refproductos.",producto = '".utf8_decode($producto)."',cantidad = ".$cantidad.",precio = ".$precio.",total = ".$total."
+where iddetallecompra =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarDetalleventas($id) {
+$sql = "delete from dbdetalleventas where iddetallecompra =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerDetalleventas() {
+$sql = "select
+d.iddetallecompra,
+d.refventas,
+d.refproductos,
+d.producto,
+d.cantidad,
+d.precio,
+d.total
+from dbdetalleventas d
+inner join dbventas ven ON ven.idventa = d.refventas
+inner join tbtipopago ti ON ti.idtipopago = ven.reftipopago
+inner join tbestados es ON es.idestado = ven.refestados
+inner join dbproductos pro ON pro.idproducto = d.refproductos
+inner join tbcategorias ca ON ca.idcategoria = pro.refcategorias
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerDetalleventasPorId($id) {
+$sql = "select iddetallecompra,refventas,refproductos,producto,cantidad,precio,total from dbdetalleventas where iddetallecompra =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbdetalleventas*/
+/* Fin */
+/* /* Fin de la Tabla: dbventas*/
+
+
+
+
+
+/* FIN parte de VENTAS */
+
+
+
+
+
+
+
 
 
 
