@@ -429,7 +429,7 @@ p.tipoimagen
 from dbproductos p 
 inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
 where p.activo = 1
-order by 1"; 
+order by p.nombre"; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
@@ -454,10 +454,89 @@ p.tipoimagen
 from dbproductos p 
 inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
 where p.activo = 1
-order by 1"; 
+order by 1
+limit 100"; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
+
+function buscarProductos($tipobusqueda,$busqueda) {
+		switch ($tipobusqueda) {
+			case '1':
+				$sql = "select 
+							p.idproducto,
+							p.nombre,
+							p.codigobarra,
+							p.precioventa,
+							p.stock,
+							p.stockmin,
+							
+							
+							p.imagen,
+							cat.descripcion,
+							p.unidades,
+							p.refcategorias,
+							p.estado,
+							p.utilidad,
+							p.preciocosto,
+							p.tipoimagen
+						from dbproductos p 
+						inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
+						where p.activo = 1 and p.nombre like '%".$busqueda."%'
+						order by p.nombre
+						limit 100";
+				break;
+			case '2':
+				$sql = "select 
+							p.idproducto,
+							p.nombre,
+							p.precioventa,
+							p.stock,
+							p.stockmin,
+							
+							
+							p.imagen,
+							cat.descripcion,
+							p.unidades,
+							p.refcategorias,
+							p.estado,
+							p.utilidad,
+							p.preciocosto,
+							p.tipoimagen
+						from dbproductos p 
+						inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
+						where p.activo = 1 and p.codigobarra like '%".$busqueda."%'
+						order by p.nombre
+						limit 100";
+				break;
+			case '3':
+				$sql = "select 
+							p.idproducto,
+							p.nombre,
+							p.precioventa,
+							p.stock,
+							p.stockmin,
+							
+							
+							p.imagen,
+							cat.descripcion,
+							p.unidades,
+							p.refcategorias,
+							p.estado,
+							p.utilidad,
+							p.preciocosto,
+							p.tipoimagen
+						from dbproductos p 
+						inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
+						where p.activo = 1 and p.codigo like '%".$busqueda."%'
+						order by p.nombre
+						limit 100";
+				break;
+			
+		
+		}
+		return $this->query($sql,0);
+	}
 
 
 function traerProductosFaltantes() { 

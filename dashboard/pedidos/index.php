@@ -81,7 +81,7 @@ $lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosRefere
 
 $lstCargadosProductosFaltantes 	= $serviciosReferencias->traerProductosFaltantes();
 
-$lstProductos =	$serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosPorOrden(),5);
+//$lstProductos =	$serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosPorOrden(),5);
 
 $pedidosTemporal = $serviciosReferencias->traerDetallepedidoaux();
 
@@ -177,7 +177,57 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="cuerpoBox filt2">
-        	<?php echo $lstProductos; ?>
+        	<!--<form class="form-inline formulario" role="form">-->
+            	
+                <div class="row">
+                    
+                    
+                    <div class="form-group col-md-6">
+                     <label class="control-label" style="text-align:left" for="torneo">Tipo de Busqueda</label>
+                        <div class="input-group col-md-12">
+                            <select id="tipobusqueda" class="form-control" name="tipobusqueda">
+                                <option value="0">--Seleccione--</option>
+                                <option value="1">Nombre</option>
+                                <option value="2">Codigo Barra</option>
+                                <option value="3">Codigo</option>
+                                
+                            </select>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="form-group col-md-6">
+                     <label class="control-label" style="text-align:left" for="torneo">Busqueda</label>
+                        <div class="input-group col-md-12">
+                            <input type="text" name="busqueda" id="busqueda" class="form-control">
+                        </div>
+
+                    </div>
+                    
+                    <div class="form-group col-md-12">
+                    	 <ul class="list-inline" style="margin-top:15px;">
+                            <li>
+                             <button id="buscar" class="btn btn-primary" style="margin-left:0px;" type="button">Buscar</button>
+                            </li>
+                        </ul>
+
+                    </div>
+                    
+                    <div class="form-group col-md-12">
+                    	<div class="cuerpoBox" id="resultados">
+        
+       		 			</div>
+					</div>
+                
+                </div>
+                
+                <div class="row">
+                    <div class="alert"> </div>
+                    <div id="load"> </div>
+                </div>
+
+            
+            <!--</form>-->
     	</div>
     </div>
     
@@ -242,14 +292,14 @@ if ($_SESSION['refroll_predio'] != 1) {
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form" method="post" action="confirmar.php">
         	<div class="row">
-            	<div class="form-group col-md-1" style="display:block">
+            	<div class="form-group col-md-2" style="display:block">
                 	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
                     <div class="input-group col-md-12">
 	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required type="number" value="1">
                     </div>
                 </div>
                 
-				<div class="form-group col-md-8" style="display:block">
+				<div class="form-group col-md-7" style="display:block">
                 	<label class="control-label" for="producto" style="text-align:left">Lista de Productos</label>
                 	<div class="input-group col-md-12">
                 		<select data-placeholder="selecione el producto..." id="refproductobuscar" name="refproductobuscar" class="chosen-select" tabindex="2" style="z-index:9999999; width:100%;">
@@ -433,6 +483,24 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <script type="text/javascript">
 $(document).ready(function(){
+	
+	$('#buscar').click(function(e) {
+        $.ajax({
+				data:  {busqueda: $('#busqueda').val(),
+						tipobusqueda: $('#tipobusqueda').val(),
+						accion: 'buscarProductos'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+						
+				},
+				success:  function (response) {
+						$('#resultados').html(response);
+						
+				}
+		});
+		
+	});
 	
 	$('.abrir').click(function() {
 		

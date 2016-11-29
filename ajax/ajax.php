@@ -70,7 +70,11 @@ break;
 case 'eliminarProductos': 
 eliminarProductos($serviciosReferencias); 
 break;
- 
+
+case 'buscarProductos':
+		buscarProductos($serviciosReferencias);
+		break;
+		
 case 'eliminarFoto':
 	eliminarFoto($serviciosReferencias);
 	break;
@@ -345,6 +349,74 @@ function traerProductoPorCodigo($servicios) {
 	$res = $servicios->traerProductosPorId($codigo);
 	
 	echo json_encode(toArray($res));
+}
+
+
+function buscarProductos($serviciosReferencias) {
+	$tipobusqueda	= $_POST['tipobusqueda'];
+	$busqueda		= $_POST['busqueda'];
+	
+	$res = $serviciosReferencias->buscarProductos($tipobusqueda,$busqueda);
+	
+	$cad3 = '';
+	//////////////////////////////////////////////////////busquedajugadores/////////////////////
+	$cad3 = $cad3.'
+				<div class="col-md-12">
+				<div class="panel panel-info">
+                                <div class="panel-heading">
+                                	<h3 class="panel-title">Resultado de la Busqueda</h3>
+                                	
+                                </div>
+                                <div class="panel-body-predio" style="padding:5px 20px;">
+                                	';
+	$cad3 = $cad3.'
+	<div class="row">
+                	<table id="example" class="table table-responsive table-striped" style="font-size:0.8em; padding:2px;">
+						<thead>
+                        <tr>
+                        	<th align="left">Nombre</th>
+							<th align="left">Cod.Barra</th>
+                            <th align="left">Precio</th>
+                            <th align="center">Stock</th>
+							<th align="center">StockMin</th>
+							<th>Acciones</th>
+                        </tr>
+						</thead>
+						<tbody>';
+	while ($rowJ = mysql_fetch_array($res)) {
+		$cad3 .= '<tr>
+					<td>'.utf8_encode($rowJ[1]).'</td>
+					<td>'.utf8_encode($rowJ[2]).'</td>
+					<td>'.utf8_encode($rowJ[3]).'</td>
+					<td>'.utf8_encode($rowJ[4]).'</td>
+					<td>'.utf8_encode($rowJ[5]).'</td>
+					<td>
+								
+							<div class="btn-group">
+								<button class="btn btn-success" type="button">Acciones</button>
+								
+								<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
+								<span class="caret"></span>
+								<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								
+								<ul class="dropdown-menu" role="menu">
+									<li>
+									<a href="modificar.php?id='.$rowJ[0].'" class="varmodificar" id="'.$rowJ[0].'">Modificar</a>
+									</li>
+
+									
+								</ul>
+							</div>
+						</td>';
+	}
+	
+	$cad3 = $cad3.'</tbody>
+                                </table></div>
+                            </div>
+						</div>';
+						
+	echo $cad3;
 }
 
 
