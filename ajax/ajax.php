@@ -81,7 +81,10 @@ case 'eliminarFoto':
 case 'traerProductoPorCodigo':
 	traerProductoPorCodigo($serviciosReferencias);
 	break;
-		
+case 'traerProductoPorCodigoBarra':
+	traerProductoPorCodigoBarra($serviciosReferencias);
+	break;
+			
 case 'insertarProveedores': 
 insertarProveedores($serviciosReferencias); 
 break; 
@@ -347,6 +350,14 @@ function traerProductoPorCodigo($servicios) {
 	$codigo		= $_POST['idproducto'];
 	
 	$res = $servicios->traerProductosPorId($codigo);
+	
+	echo json_encode(toArray($res));
+}
+
+function traerProductoPorCodigoBarra($servicios) {
+	$codigo		= $_POST['idproducto'];
+	
+	$res = $servicios->traerProductoPorCodigoBarra($codigo);
 	
 	echo json_encode(toArray($res));
 }

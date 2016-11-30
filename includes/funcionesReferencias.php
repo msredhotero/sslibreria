@@ -575,6 +575,12 @@ $res = $this->query($sql,0);
 return $res; 
 } 
 
+function traerProductoPorCodigoBarra($id) { 
+$sql = "select idproducto,codigo,codigobarra,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,refcategorias,tipoimagen, (case when activo=1 then '1' else '0' end) as activo from dbproductos where codigobarra ='".$id."'"; 
+$res = $this->query($sql,0); 
+return $res; 
+}
+
 /* Fin */
 /* /* Fin de la Tabla: dbproductos*/
 

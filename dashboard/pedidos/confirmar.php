@@ -47,8 +47,6 @@ $lblreemplazo	= array();
 
 $cadRef 	= '';
 
-$resProductos	=	$serviciosReferencias->traerProductos();
-
 $refdescripcion = array();
 $refCampo 	=  array();
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -75,8 +73,6 @@ $cabecerasProductos 		= "<th>Prdoucto</th>
 
 
 //$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerProductos(),10);
 
 $lstCargadosProductosFaltantes 	= $serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosFaltantes(),5);
 

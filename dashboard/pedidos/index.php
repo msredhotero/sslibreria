@@ -290,16 +290,10 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="cuerpoBox">
-        	<form class="form-inline formulario" role="form" method="post" action="confirmar.php">
+        	<form name="forma" class="form-inline formulario" role="form" method="post" action="confirmar.php">
         	<div class="row">
-            	<div class="form-group col-md-2" style="display:block">
-                	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
-                    <div class="input-group col-md-12">
-	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required type="number" value="1">
-                    </div>
-                </div>
-                
-				<div class="form-group col-md-7" style="display:block">
+            	
+                <div class="form-group col-md-12" style="display:block">
                 	<label class="control-label" for="producto" style="text-align:left">Lista de Productos</label>
                 	<div class="input-group col-md-12">
                 		<select data-placeholder="selecione el producto..." id="refproductobuscar" name="refproductobuscar" class="chosen-select" tabindex="2" style="z-index:9999999; width:100%;">
@@ -307,13 +301,30 @@ if ($_SESSION['refroll_predio'] != 1) {
                             <?php 
 								while ($row = mysql_fetch_array($resProductos)) {
 							?>
-                            	<option value="<?php echo $row[0]; ?>"><?php echo "Prod: ".$row['nombre']." - Stock: ".$row['stock']." - Stock Min.: ".$row['stockmin']." - Precio: $".number_format($row['preciocosto'],2,',','.'); ?></option>
+                            	<option value="<?php echo $row[0]; ?>"><?php echo "Prod: ".$row['nombre']." - Codigo Barra: ".$row['codigobarra']." - Stock: ".$row['stock']." - Stock Min.: ".$row['stockmin']." - Precio: $".number_format($row['preciocosto'],2,',','.'); ?></option>
                             <?php
 								}
 							?>
                         </select>
                 	</div>
                 </div>
+                
+                
+            	<div class="form-group col-md-2" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
+                    <div class="input-group col-md-12">
+	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required type="number" value="1">
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-7" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Codigo de Barras</label>
+                    <div class="input-group col-md-12">
+	                    <input id="codigobarrabuscar" class="form-control" name="codigobarrabuscar" placeholder="Codigo de Barras..." type="number">
+                    </div>
+                </div>
+                
+				
                 
                 <div class="form-group col-md-3" style="display:block">
                 	<label class="control-label text-right" for="producto" style="text-align:right"></label>
@@ -390,7 +401,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-left:15px;">
                     <li>
-                        <button type="submit" class="btn btn-primary" id="cargar" style="margin-left:0px;">Confirmar</button>
+                        <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;" onclick="forma.submit()">Confirmar</button>
                     </li>
                 </ul>
                 </div>
@@ -574,6 +585,12 @@ $(document).ready(function(){
 		  }
 	} );
 	
+	
+	$('#codigobarrabuscar').keypress(function(e) {
+		if(e.which == 13) {
+			getProducto($('#codigobarrabuscar').val(), $('#cantidadbuscar').val(), 'traerProductoPorCodigoBarra');
+		}
+	});
 
 	$("table.table").on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
@@ -661,10 +678,6 @@ $(document).ready(function(){
 		 
 	 		}); //fin del dialogo para eliminar
 			
-	<?php 
-		echo $serviciosHTML->validacion($tabla);
-	
-	?>
 	
 	function insertarDetalleAux(idProducto, cantidad, precio, total, json) {
 		var id = 0;
@@ -755,15 +768,16 @@ $(document).ready(function(){
 	
 	
 
-	function getProducto(idProd, cantidad) {
+	function getProducto(idProd, cantidad, accion) {
 		$.ajax({
 					data:  {idproducto: idProd,
-							accion: 'traerProductoPorCodigo'},
+							accion: accion},
 					url:   '../../ajax/ajax.php',
 					type:  'post',
 					beforeSend: function () {
 						$('#agregar').hide();
 						$('#agregarfila').hide();	
+						$('#codigobarrabuscar').val('');
 					},
 					success:  function (response) {
 						if(response){
@@ -771,7 +785,7 @@ $(document).ready(function(){
 							json = $.parseJSON(response);
 							
 							monto = parseFloat(json[0].preciocosto) * parseInt(cantidad);
-							var idRetornado = insertarDetalleAux(idProd, cantidad, json[0].preciocosto, monto, json);
+							var idRetornado = insertarDetalleAux(json[0].idproducto, cantidad, json[0].preciocosto, monto, json);
 							
 						} else {
 							//var producto = ['', 0];
@@ -788,7 +802,7 @@ $(document).ready(function(){
 	
 	$('#agregar').click(function(e) {
 		
-		getProducto($('#refproductobuscar').chosen().val(), $('#cantidadbuscar').val());
+		getProducto($('#refproductobuscar').chosen().val(), $('#cantidadbuscar').val(), 'traerProductoPorCodigo');
 		
     });
 	
