@@ -181,14 +181,8 @@ if ($_SESSION['refroll_predio'] != 1) {
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form" method="post" action="confirmar.php">
         	<div class="row">
-            	<div class="form-group col-md-3" style="display:block">
-                	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
-                    <div class="input-group col-md-12">
-	                    <input id="refproductobuscarbarra" class="form-control" name="refproductobuscarbarra" placeholder="Cod.Barra..." required type="text" >
-                    </div>
-                </div>
-                
-				<div class="form-group col-md-5" style="display:block">
+            	
+                <div class="form-group col-md-12" style="display:block">
                 	<label class="control-label" for="producto" style="text-align:left">Lista de Productos</label>
                 	<div class="input-group col-md-12">
                 		<select data-placeholder="selecione el producto..." id="refproductobuscar" name="refproductobuscar" class="chosen-select" tabindex="2" style="z-index:9999999; width:100%;">
@@ -196,7 +190,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                             <?php 
 								while ($row = mysql_fetch_array($resProductos)) {
 							?>
-                            	<option value="<?php echo $row[0]; ?>"><?php echo "Prod: ".$row['nombre']." - Stock: ".$row['stock']." - Stock Min.: ".$row['stockmin']." - Precio: $".number_format($row['preciocosto'],2,',','.'); ?></option>
+                            	<option value="<?php echo $row[0]; ?>"><?php echo "Prod: ".$row['nombre']." - Codigo Barra: ".$row['codigobarra']." - Stock: ".$row['stock']." - Stock Min.: ".$row['stockmin']." - Precio: $".number_format($row['preciocosto'],2,',','.'); ?></option>
                             <?php
 								}
 							?>
@@ -205,12 +199,21 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
                 
                 
-                <div class="form-group col-md-1" style="display:block">
+            	<div class="form-group col-md-2" style="display:block">
                 	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
                     <div class="input-group col-md-12">
 	                    <input id="cantidadbuscar" class="form-control" name="cantidadbuscar" placeholder="Cantidad..." required type="number" value="1">
                     </div>
                 </div>
+                
+                <div class="form-group col-md-7" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Codigo de Barras</label>
+                    <div class="input-group col-md-12">
+	                    <input id="codigobarrabuscar" class="form-control" name="codigobarrabuscar" placeholder="Codigo de Barras..." type="number">
+                    </div>
+                </div>
+                
+				
                 
                 <div class="form-group col-md-3" style="display:block">
                 	<label class="control-label text-right" for="producto" style="text-align:right"></label>
@@ -226,17 +229,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
                 
             </div>
-
-            
-            <div class='row' style="margin-left:25px; margin-right:25px;">
-                <div class='alert'>
-                
-                </div>
-                <div id='load'>
-                
-                </div>
-            </div>
-            
+			
             <div class="col-md-12">
             <table class="table table-striped" id="table-6">
                 <thead>
@@ -250,24 +243,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                     </tr>
                 </thead>
                 <tbody class="detalle">
-                	<?php
-						$total = 0;
-						if (mysql_num_rows($pedidosTemporal)>0) {
-							while ($rowT = mysql_fetch_array($pedidosTemporal)) {
-								$total += $rowT['precio'] * $rowT['cantidad'];
-					?>
-                    		<tr>
-                    		<td align="center"><?php echo $rowT['refproductos']; ?></td>
-                    		<td><?php echo $rowT['nombre']; ?></td>
-                            <td align="center"><?php echo $rowT['cantidad']; ?></td>
-                            <td align="right"><?php echo $rowT['precio']; ?></td>
-                            <td align="right"><?php echo $rowT['precio'] * $rowT['cantidad']; ?></td>
-                    		<td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="<?php echo $rowT['iddetallepedidoaux']; ?>" style="margin-left:0px;">Eliminar</button></td>
-                    		</tr>
-                    <?php
-							}
-						}
-					?>
+                	
                 </tbody>
                 <tfoot>
                     <tr style="background-color:#CCC; font-weight:bold; font-size:18px;">
@@ -275,11 +251,24 @@ if ($_SESSION['refroll_predio'] != 1) {
                             Total $
                         </td>
                         <td>
-                            <input type="text" readonly name="total" id="total" value="<?php echo $total; ?>" style="border:none; background-color:#CCC;"/>
+                            <input type="text" readonly name="total" id="total" value="0" style="border:none; background-color:#CCC;"/>
                         </td>
                     </tr>
                 </tfoot>
             </table>
+            </div>
+            
+            <div class='row' style="margin-left:25px; margin-right:25px;">
+                <div class='alert'>
+                
+                </div>
+                <div id='load'>
+                
+                </div>
+            </div>
+            
+            <div class="col-md-12">
+            
             </div>
             
                     
@@ -313,7 +302,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="cuerpoBox">
-        	<?php echo $lstCargados; ?>
+        	
     	</div>
     </div>
     
@@ -544,10 +533,6 @@ $(document).ready(function(){
 		 
 	 		}); //fin del dialogo para eliminar
 			
-	<?php 
-		echo $serviciosHTML->validacion($tabla);
-	
-	?>
 	
 	function insertarDetalleAux(idProducto, cantidad, precio, total, json) {
 		var id = 0;
