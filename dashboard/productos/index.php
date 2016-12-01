@@ -71,12 +71,10 @@ $cabeceras 		= "	<th>Codigo</th>
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-
+$resCategoriasModi 	= $serviciosReferencias->traerCategorias();
 
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerProductos(),10);
 
 
 
@@ -119,7 +117,7 @@ if ($_SESSION['refroll_predio'] != 1) {
 	<link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
-
+	<link rel="stylesheet" href="../../css/chosen.css">
 	<style type="text/css">
 		
   
@@ -147,12 +145,12 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <h3><?php echo $plural; ?></h3>
 
-    <div class="boxInfoLargo">
-        <div id="headBoxInfo">
+    <div class="panel panel-success">
+        <div class="panel-heading" id="headBoxInfo">
         	<p style="color: #fff; font-size:18px; height:16px;">Carga de <?php echo $plural; ?></p>
         	
         </div>
-    	<div class="cuerpoBox">
+    	<div class="panel-body">
         	<form class="form-inline formulario" role="form">
         	<div class="row">
 			<?php echo $formulario; ?>
@@ -178,15 +176,42 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
             </div>
             </form>
+            <hr>
+            
+            <div class='row' style="margin-left:25px; margin-right:25px;">
+            	<h4>Seleccione una categoria para modificar los precios masivamente</h4>
+                <div class="form-group col-md-6">
+                 <label class="control-label" style="text-align:left" for="torneo">Categorias</label>
+                    <div class="input-group col-md-12" style="display:block">
+                    	<select data-placeholder="selecione el producto..." id="categoriamodificar" name="categoriamodificar" class="chosen-select" tabindex="2" style="z-index:9999999; width:100%;">
+                        
+                            <option value="0">--Seleccione--</option>
+                            <?php echo $cadRef; ?>
+                            
+                        </select>
+                    </div>
+                    
+                </div>
+                
+                <div class="form-group col-md-6">
+                	<label class="control-label" style="text-align:left" for="torneo"></label>
+                     <ul class="list-inline" style="margin-top:5px;">
+                        <li>
+                         <button id="modificarmasivo" class="btn btn-warning" style="margin-left:0px;" type="button">Modificar</button>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
     	</div>
     </div>
     
-    <div class="boxInfoLargo">
-        <div id="headBoxInfo">
+    <div class="panel panel-success" style="margin-top:10px;">
+        <div class="panel-heading" id="headBoxInfo">
         	<p style="color: #fff; font-size:18px; height:16px;"><?php echo $plural; ?> Cargados</p>
         	
         </div>
-    	<div class="cuerpoBox">
+    	<div class="panel-body" style="z-index:1;">
         	<form class="form-inline formulario" role="form">
             	
                 <div class="row">
@@ -338,6 +363,11 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton modificar
+	
+	$('#modificarmasivo').click(function() {
+		url = "modificarprecios.php?idcategoria=" + $('#categoriamodificar').chosen().val();
+		$(location).attr('href',url);
+	});
 
 	 $( "#dialog2" ).dialog({
 		 	
@@ -461,6 +491,19 @@ $(document).ready(function(){
 
 });
 </script>
+<script src="../../js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+  </script>
 <?php } ?>
 </body>
 </html>

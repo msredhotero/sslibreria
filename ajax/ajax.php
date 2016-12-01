@@ -84,6 +84,10 @@ case 'traerProductoPorCodigo':
 case 'traerProductoPorCodigoBarra':
 	traerProductoPorCodigoBarra($serviciosReferencias);
 	break;
+
+case 'modificarprecios':
+	modificarprecios($serviciosReferencias);
+	break;
 			
 case 'insertarProveedores': 
 insertarProveedores($serviciosReferencias); 
@@ -428,6 +432,24 @@ function buscarProductos($serviciosReferencias) {
 						</div>';
 						
 	echo $cad3;
+}
+
+function modificarprecios($serviciosReferencias) {
+	
+	$idCategoria	=	$_POST['idcategoria'];
+	$porcentaje		=	$_POST['porcentaje'];
+	
+	$resCategorias = $serviciosReferencias->traerProductosPorCategoria($idCategoria);
+	
+	$cad = 'prod';
+	
+	while ($rowFS = mysql_fetch_array($resCategorias)) {
+		if (isset($_POST[$cad.$rowFS[0]])) {
+			$serviciosReferencias->modificarprecios($rowFS[0], $porcentaje);
+		}
+	}
+	
+	echo '';	
 }
 
 

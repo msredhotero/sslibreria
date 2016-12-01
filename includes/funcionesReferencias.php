@@ -460,6 +460,34 @@ $res = $this->query($sql,0);
 return $res; 
 } 
 
+
+function traerProductosPorCategoria($categoria) { 
+$sql = "select 
+p.idproducto,
+p.codigo,
+p.codigobarra,
+p.nombre,
+p.descripcion,
+p.stock,
+p.stockmin,
+p.precioventa,
+
+p.imagen,
+cat.descripcion,
+p.unidades,
+p.refcategorias,
+p.estado,
+p.utilidad,
+p.preciocosto,
+p.tipoimagen
+from dbproductos p 
+inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
+where p.activo = 1 and cat.idcategoria = ".$categoria."
+order by p.nombre"; 
+$res = $this->query($sql,0); 
+return $res; 
+} 
+
 function buscarProductos($tipobusqueda,$busqueda) {
 		switch ($tipobusqueda) {
 			case '1':
@@ -538,6 +566,15 @@ function buscarProductos($tipobusqueda,$busqueda) {
 		return $this->query($sql,0);
 	}
 
+function modificarprecios($idProducto, $porcentaje) {
+	if ($porcentaje > 0) {
+		$sql	=	"update dbproductos set precioventa = (preciocosto + (preciocosto * ".$porcentaje." / 100)) where idproducto =".$idProducto;
+		$res = $this->query($sql,0); 
+		return $res; 	
+	} else {
+		return '';	
+	}
+}
 
 function traerProductosFaltantes() { 
 $sql = "select 
