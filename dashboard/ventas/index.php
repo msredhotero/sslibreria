@@ -276,19 +276,12 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-left:15px;">
                     <li>
-                        <button type="submit" class="btn btn-primary" id="cargar" style="margin-left:0px;">Confirmar</button>
+                        <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;" onclick="forma.submit()">Confirmar</button>
                     </li>
                 </ul>
                 </div>
             </div>
             
-            <div class="row" id="aviso" style="display:none;">
-            	<div class="col-md-12">
-                	<div class='alert alert-info'>
-                		<p>Se guardo temporalmente el pedido para una posterior modificación</p>
-                	</div>
-                </div>
-            </div>
             <input type="hidden" name="prodNombre" id="prodNombre" value="" />
             <input type="hidden" name="prodPrecio" id="prodPrecio" value="" />
             
@@ -446,6 +439,11 @@ $(document).ready(function(){
 		  }
 	} );
 	
+	$('#codigobarrabuscar').keypress(function(e) {
+		if(e.which == 13) {
+			getProducto($('#codigobarrabuscar').val(), $('#cantidadbuscar').val(), 'traerProductoPorCodigoBarra');
+		}
+	});
 
 	$("table.table").on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
@@ -623,15 +621,16 @@ $(document).ready(function(){
 	
 	
 
-	function getProducto(idProd, cantidad) {
+	function getProducto(idProd, cantidad, accion) {
 		$.ajax({
 					data:  {idproducto: idProd,
-							accion: 'traerProductoPorCodigo'},
+							accion: accion},
 					url:   '../../ajax/ajax.php',
 					type:  'post',
 					beforeSend: function () {
 						$('#agregar').hide();
 						$('#agregarfila').hide();	
+						$('#codigobarrabuscar').val('');
 					},
 					success:  function (response) {
 						if(response){
@@ -639,7 +638,7 @@ $(document).ready(function(){
 							json = $.parseJSON(response);
 							
 							monto = parseFloat(json[0].preciocosto) * parseInt(cantidad);
-							var idRetornado = insertarDetalleAux(idProd, cantidad, json[0].preciocosto, monto, json);
+							var idRetornado = insertarDetalleAux(json[0].idproducto, cantidad, json[0].preciocosto, monto, json);
 							
 						} else {
 							//var producto = ['', 0];
@@ -656,7 +655,7 @@ $(document).ready(function(){
 	
 	$('#agregar').click(function(e) {
 		
-		getProducto($('#refproductobuscar').chosen().val(), $('#cantidadbuscar').val());
+		getProducto($('#refproductobuscar').chosen().val(), $('#cantidadbuscar').val(), 'traerProductoPorCodigo');
 		
     });
 	
