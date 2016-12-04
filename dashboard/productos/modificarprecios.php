@@ -152,9 +152,13 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </ul>
             </div>
         	<div class='row' style="margin-left:25px; margin-right:25px;">
-            	<div class="col-md-12" style="margin-bottom:15px;">
-                	<h4>Ingrese el porcentaje a aplicar</h4>
-                    <input type="number" class="form-control" id="porcentaje" name="porcentaje" value="70">
+            	<div class="col-md-6" style="margin-bottom:15px;">
+                	<h4>Ingrese el nuevo Precio</h4>
+                    <input type="number" class="form-control" id="precio" name="precio" value="0">
+                </div>
+                <div class="col-md-6" style="margin-bottom:15px;">
+                	<h4>Ingrese el porcentaje a aplicar a la Venta</h4>
+                    <input type="number" class="form-control" id="porcentaje" name="porcentaje" value="0">
                 </div>
             	<div class="col-md-12">
 				<table class="table table-bordered table-responsive table-striped">

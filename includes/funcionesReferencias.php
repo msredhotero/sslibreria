@@ -566,7 +566,12 @@ function buscarProductos($tipobusqueda,$busqueda) {
 		return $this->query($sql,0);
 	}
 
-function modificarprecios($idProducto, $porcentaje) {
+function modificarprecios($idProducto, $precio, $porcentaje) {
+	if ($precio > 0) {
+		$sql	=	"update dbproductos set preciocosto = ".$precio." where idproducto =".$idProducto;
+		$res = $this->query($sql,0); 	
+	} 
+	
 	if ($porcentaje > 0) {
 		$sql	=	"update dbproductos set precioventa = (preciocosto + (preciocosto * ".$porcentaje." / 100)) where idproducto =".$idProducto;
 		$res = $this->query($sql,0); 

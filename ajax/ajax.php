@@ -370,6 +370,7 @@ function traerProductoPorCodigoBarra($servicios) {
 function buscarProductos($serviciosReferencias) {
 	$tipobusqueda	= $_POST['tipobusqueda'];
 	$busqueda		= $_POST['busqueda'];
+	$tipo			= $_POST['tipo'];
 	
 	$res = $serviciosReferencias->buscarProductos($tipobusqueda,$busqueda);
 	
@@ -397,18 +398,18 @@ function buscarProductos($serviciosReferencias) {
 							<th>Acciones</th>
                         </tr>
 						</thead>
-						<tbody>';
+						<tbody id="resultadosProd">';
 	while ($rowJ = mysql_fetch_array($res)) {
 		$cad3 .= '<tr>
 					<td>'.utf8_encode($rowJ[1]).'</td>
-					<td>'.utf8_encode($rowJ[2]).'</td>
-					<td>'.utf8_encode($rowJ[3]).'</td>
-					<td>'.utf8_encode($rowJ[4]).'</td>
-					<td>'.utf8_encode($rowJ[5]).'</td>
+					<td>'.($rowJ[2]).'</td>
+					<td>'.($tipo == 'Pedido' ? $rowJ['preciocosto'] : $rowJ['precioventa']).'</td>
+					<td>'.($rowJ[4]).'</td>
+					<td>'.($rowJ[5]).'</td>
 					<td>
 								
 							<div class="btn-group">
-								<button class="btn btn-success" type="button">Acciones</button>
+								<button class="btn btn-default" type="button">Acciones</button>
 								
 								<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
 								<span class="caret"></span>
@@ -417,12 +418,16 @@ function buscarProductos($serviciosReferencias) {
 								
 								<ul class="dropdown-menu" role="menu">
 									<li>
-									<a href="modificar.php?id='.$rowJ[0].'" class="varmodificar" id="'.$rowJ[0].'">Modificar</a>
+									<a href="../productos/modificar.php?id='.$rowJ[0].'" class="varmodificar" id="'.$rowJ[0].'">Modificar</a>
 									</li>
-
+									<li>
+									<a href="javascript:void(0);" class="agregarProd" id="'.$rowJ[0].'"><span class="glyphicon glyphicon-plus"></span> Agregar</a>
+									</li>
 									
 								</ul>
 							</div>
+							<button id="'.$rowJ[0].'" class="btn btn-success agregarProd" style="margin-left:0px;" type="button">Agregar</button>
+							
 						</td>';
 	}
 	
@@ -438,6 +443,7 @@ function modificarprecios($serviciosReferencias) {
 	
 	$idCategoria	=	$_POST['idcategoria'];
 	$porcentaje		=	$_POST['porcentaje'];
+	$precio		=	$_POST['precio'];
 	
 	$resCategorias = $serviciosReferencias->traerProductosPorCategoria($idCategoria);
 	
@@ -445,7 +451,7 @@ function modificarprecios($serviciosReferencias) {
 	
 	while ($rowFS = mysql_fetch_array($resCategorias)) {
 		if (isset($_POST[$cad.$rowFS[0]])) {
-			$serviciosReferencias->modificarprecios($rowFS[0], $porcentaje);
+			$serviciosReferencias->modificarprecios($rowFS[0], $precio, $porcentaje);
 		}
 	}
 	

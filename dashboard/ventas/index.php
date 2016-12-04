@@ -47,8 +47,6 @@ $lblreemplazo	= array();
 
 $cadRef 	= '';
 
-$resProductos	=	$serviciosReferencias->traerProductos();
-
 $refdescripcion = array();
 $refCampo 	=  array();
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -77,13 +75,6 @@ $cabecerasProductos 		= "<th>Prdoucto</th>
 
 //$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPedidos(),95);
-
-$lstCargadosProductosFaltantes 	= $serviciosReferencias->traerProductosFaltantes();
-
-$lstProductos =	$serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosPorOrden(),5);
-
-$pedidosTemporal = $serviciosReferencias->traerDetallepedidoaux();
 
 if ($_SESSION['refroll_predio'] != 1) {
 
@@ -171,7 +162,64 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <div id="content">
 	
-    
+    <div class="boxInfoLargo" style="margin-bottom:-15px;">
+        <div id="headBoxInfo">
+        	<p style="color: #fff; font-size:18px; height:16px;">Productos Cargados <span class="glyphicon glyphicon-minus abrir2" style="cursor:pointer; float:right; padding-right:12px;">(Cerrar)</span></p>
+        	
+        </div>
+    	<div class="cuerpoBox filt2">
+        	<!--<form class="form-inline formulario" role="form">-->
+            	
+                <div class="row">
+                    
+                    
+                    <div class="form-group col-md-6">
+                     <label class="control-label" style="text-align:left" for="torneo">Tipo de Busqueda</label>
+                        <div class="input-group col-md-12">
+                            <select id="tipobusqueda" class="form-control" name="tipobusqueda">
+                                <option value="1">Nombre</option>
+                                <option value="2">Codigo Barra</option>
+                                <option value="3">Codigo</option>
+                                
+                            </select>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="form-group col-md-6">
+                     <label class="control-label" style="text-align:left" for="torneo">Busqueda</label>
+                        <div class="input-group col-md-12">
+                            <input type="text" name="busqueda" id="busqueda" class="form-control">
+                        </div>
+
+                    </div>
+                    
+                    <div class="form-group col-md-12">
+                    	 <ul class="list-inline" style="margin-top:15px;">
+                            <li>
+                             <button id="buscar" class="btn btn-primary" style="margin-left:0px;" type="button">Buscar</button>
+                            </li>
+                        </ul>
+
+                    </div>
+                    
+                    <div class="form-group col-md-12">
+                    	<div class="cuerpoBox" id="resultados">
+        
+       		 			</div>
+					</div>
+                
+                </div>
+                
+                <div class="row">
+                    <div class="alert"> </div>
+                    <div id="load"> </div>
+                </div>
+
+            
+            <!--</form>-->
+    	</div>
+    </div>
     
     <div class="boxInfoLargo tile-stats tile-white stat-tile">
         <div id="headBoxInfo" style="background-color:#C30;">
@@ -181,24 +229,7 @@ if ($_SESSION['refroll_predio'] != 1) {
     	<div class="cuerpoBox">
         	<form class="form-inline formulario" role="form" method="post" action="confirmar.php">
         	<div class="row">
-            	
-                <div class="form-group col-md-12" style="display:block">
-                	<label class="control-label" for="producto" style="text-align:left">Lista de Productos</label>
-                	<div class="input-group col-md-12">
-                		<select data-placeholder="selecione el producto..." id="refproductobuscar" name="refproductobuscar" class="chosen-select" tabindex="2" style="z-index:9999999; width:100%;">
-            				<option value=""></option>
-                            <?php 
-								while ($row = mysql_fetch_array($resProductos)) {
-							?>
-                            	<option value="<?php echo $row[0]; ?>"><?php echo "Prod: ".$row['nombre']." - Codigo Barra: ".$row['codigobarra']." - Stock: ".$row['stock']." - Stock Min.: ".$row['stockmin']." - Precio: $".number_format($row['preciocosto'],2,',','.'); ?></option>
-                            <?php
-								}
-							?>
-                        </select>
-                	</div>
-                </div>
-                
-                
+
             	<div class="form-group col-md-2" style="display:block">
                 	<label class="control-label" for="codigobarra" style="text-align:left">Cantidad</label>
                     <div class="input-group col-md-12">
@@ -365,6 +396,25 @@ $(document).ready(function(){
 	
 	$('#refproductobuscarbarra').focus();
 	
+	$('#buscar').click(function(e) {
+        $.ajax({
+				data:  {busqueda: $('#busqueda').val(),
+						tipobusqueda: $('#tipobusqueda').val(),
+						tipo: 'Venta',
+						accion: 'buscarProductos'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+						
+				},
+				success:  function (response) {
+						$('#resultados').html(response);
+						
+				}
+		});
+		
+	});
+	
 	$('.abrir').click(function() {
 		
 		if ($('.abrir').text() == '(Abrir)') {
@@ -388,21 +438,19 @@ $(document).ready(function(){
 	});
 	
 	
-	$('#colapsarMenu').click(function() {
+	$('.abrir2').click(function() {
 		
-		if ($(this).attr('class') == 'glyphicon glyphicon-list') {
-			$('#navigation').slideToggle( "slow" );
-			$('#content').css({ marginLeft : "5%" });
-			
-			$(this).removeClass('glyphicon glyphicon-list');
-			$(this).addClass('glyphicon glyphicon-align-justify');
+		if ($('.abrir2').text() == '(Abrir)') {
+			$('.filt2').show( "slow" );
+			$('.abrir2').text('(Cerrar)');
+			$('.abrir2').removeClass('glyphicon glyphicon-plus');
+			$('.abrir2').addClass('glyphicon glyphicon-minus');
 		} else {
-			$('#navigation').show( "slow" );
-			$('#content').css({ marginLeft : "21%" });
-			
-			$(this).removeClass('glyphicon glyphicon-align-justify');
-			$(this).addClass('glyphicon glyphicon-list');
-			
+			$('.filt2').slideToggle( "slow" );
+			$('.abrir2').text('(Abrir)');
+			$('.abrir2').addClass('glyphicon glyphicon-plus');
+			$('.abrir2').removeClass('glyphicon glyphicon-minus');
+
 		}
 	});
 	
@@ -444,7 +492,16 @@ $(document).ready(function(){
 			getProducto($('#codigobarrabuscar').val(), $('#cantidadbuscar').val(), 'traerProductoPorCodigoBarra');
 		}
 	});
-
+	
+	$(document).on("click",'.agregarProd', function(){
+		usersid =  $(this).attr("id");
+		getProducto(usersid, $('#cantidadbuscar').val(), 'traerProductoPorCodigo');
+		$('.filt2').slideToggle();
+		$('.abrir2').text('(Abrir)');
+		$('.abrir2').addClass('glyphicon glyphicon-plus');
+		$('.abrir2').removeClass('glyphicon glyphicon-minus');
+	});
+	
 	$("table.table").on("click",'.varborrar', function(){
 		  usersid =  $(this).attr("id");
 		  
@@ -469,29 +526,7 @@ $(document).ready(function(){
 		  }
 	});//fin del boton modificar
 	
-	$("table.table").on("click",'.varmodificarpedidos', function(){
-		  usersid =  $(this).attr("id");
-		  
-		  if (!isNaN(usersid)) {
-			
-			url = "modificar.php?id=" + usersid;
-			$(location).attr('href',url);
-		  } else {
-			alert("Error, vuelva a realizar la acción.");	
-		  }
-	});//fin del boton modificar
-	
-	$("table.table").on("click",'.varpagar', function(){
-		  usersid =  $(this).attr("id");
-		  
-		  if (!isNaN(usersid)) {
-			
-			url = "entrada.php?id=" + usersid;
-			$(location).attr('href',url);
-		  } else {
-			alert("Error, vuelva a realizar la acción.");	
-		  }
-	});//fin del boton modificar
+
 
 	 $( "#dialog2" ).dialog({
 		 	
@@ -551,9 +586,9 @@ $(document).ready(function(){
 					},3000);	
 					
 					$('#prodNombre').val(json[0].nombre);
-					$('#prodPrecio').val(json[0].preciocosto);
+					$('#prodPrecio').val(json[0].precioventa);
 					
-					$('.detalle').prepend('<tr><td align="center">'+idProducto+'</td><td>'+json[0].nombre+'</td><td align="center">'+cantidad+'</td><td align="right">'+json[0].preciocosto+'</td><td align="right">'+monto.toFixed(2)+'</td><td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="'+response+'" style="margin-left:0px;">Eliminar</button></td></tr>');
+					$('.detalle').prepend('<tr><td align="center">'+idProducto+'</td><td>'+json[0].nombre+'</td><td align="center">'+cantidad+'</td><td align="right">'+json[0].precioventa+'</td><td align="right">'+monto.toFixed(2)+'</td><td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="'+response+'" style="margin-left:0px;">Eliminar</button></td></tr>');
 					
 					$('#cantidadbuscar').val(1);
 							
@@ -637,8 +672,8 @@ $(document).ready(function(){
 							//idproducto,codigo,nombre,descripcion,stock,stockmin,preciocosto,precioventa,utilidad,estado,imagen,idcategoria,tipoimagen,nroserie,codigobarra
 							json = $.parseJSON(response);
 							
-							monto = parseFloat(json[0].preciocosto) * parseInt(cantidad);
-							var idRetornado = insertarDetalleAux(json[0].idproducto, cantidad, json[0].preciocosto, monto, json);
+							monto = parseFloat(json[0].precioventa) * parseInt(cantidad);
+							var idRetornado = insertarDetalleAux(json[0].idproducto, cantidad, json[0].precioventa, monto, json);
 							
 						} else {
 							//var producto = ['', 0];
@@ -652,12 +687,6 @@ $(document).ready(function(){
 			});	
 	}
 	
-	
-	$('#agregar').click(function(e) {
-		
-		getProducto($('#refproductobuscar').chosen().val(), $('#cantidadbuscar').val(), 'traerProductoPorCodigo');
-		
-    });
 	
 	$('.agregarfila').click(function(e) {
 		id =  $(this).attr("id");
@@ -757,7 +786,7 @@ $(document).ready(function(){
 		}
     });
     
-
+	$('#refproductobuscarbarra').focus();
 
 });
 </script>
