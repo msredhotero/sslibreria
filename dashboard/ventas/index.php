@@ -67,14 +67,23 @@ $cabecerasProductos 		= "<th>Prdoucto</th>
 					<th>Stock</th>
 					<th>Stock Min.</th>
 					<th>Precio</th>";
-					
+
+$cabeceras2 		= "	<th>Numero</th>
+                    <th>Fecha</th>
+                    <th>Tipo Pago</th>
+					<th>Total</th>
+					<th>Cliente</th>
+                    <th>Cancelada</th>";				
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-
+$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),6);
 
 
 //$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
+$lstClientes = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerClientes(),array(1),'');
+
+$lstTipoPago = $serviciosFunciones->devolverSelectBox( $serviciosReferencias->traerTipopago(),array(1),'');
 
 if ($_SESSION['refroll_predio'] != 1) {
 
@@ -227,7 +236,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="cuerpoBox">
-        	<form class="form-inline formulario" role="form" method="post" action="confirmar.php">
+        	<form class="form-inline formulario" role="form">
         	<div class="row">
 
             	<div class="form-group col-md-2" style="display:block">
@@ -240,7 +249,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <div class="form-group col-md-7" style="display:block">
                 	<label class="control-label" for="codigobarra" style="text-align:left">Codigo de Barras</label>
                     <div class="input-group col-md-12">
-	                    <input id="codigobarrabuscar" class="form-control" name="codigobarrabuscar" placeholder="Codigo de Barras..." type="number">
+	                    <input id="codigobarrabuscar" class="form-control" name="codigobarrabuscar" placeholder="Codigo de Barras..." type="text">
                     </div>
                 </div>
                 
@@ -259,18 +268,40 @@ if ($_SESSION['refroll_predio'] != 1) {
                     </div>
                 </div>
                 
+                
+                <div class="form-group col-md-6" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Seleccione el Cliente</label>
+                    <div class="input-group col-md-12">
+	                    <select data-placeholder="selecione el Cliente..." id="refclientes" name="refclientes" class="chosen-select" tabindex="2" style="width:100%;">
+                            
+                            <?php echo $lstClientes; ?>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6" style="display:block">
+                	<label class="control-label" for="codigobarra" style="text-align:left">Seleccione el Tipo Pago</label>
+                    <div class="input-group col-md-12">
+	                    <select data-placeholder="selecione el Tipo de Pago..." id="reftipopago" name="reftipopago" class="chosen-select" tabindex="2" style="width:100%;">
+                            
+                            <?php echo $lstTipoPago; ?>
+                        </select>
+                    </div>
+                </div>
+                
             </div>
-			
+			<hr>
+         <div class='row' style="margin-left:25px; margin-right:25px;">
             <div class="col-md-12">
             <table class="table table-striped" id="table-6">
                 <thead>
                     <tr>
                         <th class="text-center">Id</th>
-                        <th class="text-center">Producto</th>
+                        <th style="width:260px;" class="text-center">Producto</th>
                         <th class="text-center">Cantidad</th>
                         <th class="text-center">Precio</th>
                         <th class="text-center">Sub-Total</th>
-                        <th class="text-center">Acciones</th>
+                        <th style="width:120px;" class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="detalle">
@@ -288,7 +319,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </tfoot>
             </table>
             </div>
-            
+         </div>   
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
                 
@@ -307,14 +338,16 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <div class="col-md-12">
                 <ul class="list-inline" style="margin-left:15px;">
                     <li>
-                        <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;" onclick="forma.submit()">Confirmar</button>
+                        <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;">Confirmar</button>
                     </li>
                 </ul>
                 </div>
             </div>
             
-            <input type="hidden" name="prodNombre" id="prodNombre" value="" />
-            <input type="hidden" name="prodPrecio" id="prodPrecio" value="" />
+            <input type="hidden" name="proNombre" id="proNombre" value="" />
+            <input type="hidden" name="proPrecio" id="proPrecio" value="" />
+            <input type="hidden" name="accion" id="accion" value="insertarVentas" />
+            <input type="hidden" name="usuario" id="usuario" value="<?php echo utf8_encode($_SESSION['nombre_predio']); ?>" />
             
             </form>
     	</div>
@@ -322,11 +355,11 @@ if ($_SESSION['refroll_predio'] != 1) {
     
     <div class="boxInfoLargo">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;"><?php echo $plural; ?> Cargados</p>
+        	<p style="color: #fff; font-size:18px; height:16px;"><?php echo $plural; ?> Cargadas</p>
         	
         </div>
     	<div class="cuerpoBox">
-        	
+        	<?php echo $lstVentas; ?>
     	</div>
     </div>
     
@@ -519,7 +552,7 @@ $(document).ready(function(){
 		  
 		  if (!isNaN(usersid)) {
 			
-			url = "../productos/modificar.php?id=" + usersid;
+			url = "modificar.php?id=" + usersid;
 			$(location).attr('href',url);
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
@@ -588,7 +621,7 @@ $(document).ready(function(){
 					$('#prodNombre').val(json[0].nombre);
 					$('#prodPrecio').val(json[0].precioventa);
 					
-					$('.detalle').prepend('<tr><td align="center">'+idProducto+'</td><td>'+json[0].nombre+'</td><td align="center">'+cantidad+'</td><td align="right">'+json[0].precioventa+'</td><td align="right">'+monto.toFixed(2)+'</td><td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="'+response+'" style="margin-left:0px;">Eliminar</button></td></tr>');
+					$('.detalle').prepend('<tr><td align="center"><input type="checkbox" name="prod'+idProducto+'" id="prod'+idProducto+'" checked /></td><td>'+json[0].nombre+'</td><td align="center">'+cantidad+'</td><td align="right">'+json[0].precioventa+'</td><td align="right">'+monto.toFixed(2)+'</td><td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="'+response+'" style="margin-left:0px;">Eliminar</button></td></tr>');
 					
 					$('#cantidadbuscar').val(1);
 							
@@ -673,8 +706,18 @@ $(document).ready(function(){
 							json = $.parseJSON(response);
 							
 							monto = parseFloat(json[0].precioventa) * parseInt(cantidad);
-							var idRetornado = insertarDetalleAux(json[0].idproducto, cantidad, json[0].precioventa, monto, json);
+							//var idRetornado = insertarDetalleAux(json[0].idproducto, cantidad, json[0].precioventa, monto, json);
 							
+							$('#prodNombre').val(json[0].nombre);
+							$('#prodPrecio').val(json[0].precioventa);
+							
+							$('.detalle').prepend('<tr><td align="center"><input type="checkbox" name="prod'+json[0].idproducto+'" id="prod'+json[0].idproducto+'" checked /></td><td><input type="text" name="nombre'+json[0].idproducto+'" id="nombre'+json[0].idproducto+'" value="'+json[0].nombre+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: center;" /></td><td align="center"><input type="text" name="cant'+json[0].idproducto+'" id="cant'+json[0].idproducto+'" value="'+cantidad+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: center;" /></td><td align="right"><input type="text" name="precio'+json[0].idproducto+'" id="precio'+json[0].idproducto+'" value="'+json[0].precioventa+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: right; width:70px;" /></td><td align="right">'+monto.toFixed(2)+'</td><td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="'+json[0].idproducto+'" style="margin-left:0px;">Eliminar</button></td></tr>');
+							
+							$('#cantidadbuscar').val(1);
+									
+							$("#aviso").show();
+									
+							$('#total').val(SumarTabla());
 						} else {
 							//var producto = ['', 0];
 							$('#prodNombre').val('');
@@ -729,10 +772,8 @@ $(document).ready(function(){
 	  });
 	  
 	//al enviar el formulario
-    $('#cargar44').click(function(){
+    $('#cargar').click(function(){
 		
-		if (validador() == "")
-        {
 			//información del formulario
 			var formData = new FormData($(".formulario")[0]);
 			var message = "";
@@ -755,27 +796,22 @@ $(document).ready(function(){
 				success: function(data){
 
 					if (data == '') {
-                                            $(".alert").removeClass("alert-danger");
-											$(".alert").removeClass("alert-info");
-                                            $(".alert").addClass("alert-success");
-                                            $(".alert").html('<strong>Ok!</strong> Se cargo exitosamente el <strong><?php echo $singular; ?></strong>. ');
-											$(".alert").delay(3000).queue(function(){
-												/*aca lo que quiero hacer 
-												  después de los 2 segundos de retraso*/
-												$(this).dequeue(); //continúo con el siguiente ítem en la cola
-												
-											});
-											$("#load").html('');
-											url = "index.php";
-											$(location).attr('href',url);
-                                            
-											
-                                        } else {
-                                        	$(".alert").removeClass("alert-danger");
-                                            $(".alert").addClass("alert-danger");
-                                            $(".alert").html('<strong>Error!</strong> '+data);
-                                            $("#load").html('');
-                                        }
+						$(".alert").removeClass("alert-danger");
+						$(".alert").removeClass("alert-info");
+						$(".alert").addClass("alert-success");
+						$(".alert").html('<strong>Ok!</strong> Se cargo exitosamente el <strong><?php echo $singular; ?></strong>. ');
+
+						$("#load").html('');
+						url = "index.php";
+						$(location).attr('href',url);
+						
+						
+					} else {
+						$(".alert").removeClass("alert-danger");
+						$(".alert").addClass("alert-danger");
+						$(".alert").html('<strong>Error!</strong> '+data);
+						$("#load").html('');
+					}
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -783,7 +819,7 @@ $(document).ready(function(){
                     $("#load").html('');
 				}
 			});
-		}
+		
     });
     
 	$('#refproductobuscarbarra').focus();

@@ -22,52 +22,56 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Pedidos",$_SESSION['refroll_predio'],'');
+$resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Ventas",$_SESSION['refroll_predio'],'');
 
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerPedidosPorId($id);
-
+$resResultado = $serviciosReferencias->traerVentasPorId($id);
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Pedido";
+$singular = "Venta";
 
-$plural = "Pedidos";
+$plural = "Ventas";
 
-$eliminar = "eliminarPedidos";
+$eliminar = "eliminarVentas";
 
-$modificar = "modificarPedidos";
+$modificar = "modificarVentas";
 
-$idTabla = "idpedido";
+$idTabla = "idventa";
 
 $tituloWeb = "Gestión: Libreria";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbpedidos";
+$tabla 			= "dbventas";
 
-$lblCambio	 	= array("refestados","fechaentrega","fechasolicitud");
-$lblreemplazo	= array("Estado","Fecha Entrega","Fecha Solicitud");
+$lblCambio	 	= array("reftipopago","refclientes");
+$lblreemplazo	= array("Tipo Pago","Cliente");
 
-$estado = mysql_result($resResultado,0,'refestados');
 
-if (($estado == 3) || ($estado == 4)) {
-	$resEstados 	= $serviciosReferencias->traerEstadosPorId($estado);
-	$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'',mysql_result($resResultado,0,'refestados'));
-} else {
-	$resEstados 	= $serviciosReferencias->traerEstados();
-	$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'',mysql_result($resResultado,0,'refestados'));
-}
-
-$refdescripcion = array(0 => $cadRef);
-$refCampo 	=  array("refestados");
+$resTipoPago 	= $serviciosReferencias->traerTipopago();
+$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resTipoPago,array(1),'',mysql_result($resResultado,0,'reftipopago'));
+    
+$resClientes 	= $serviciosReferencias->traerClientes();
+$cadRef2 	= $serviciosFunciones->devolverSelectBoxActivo($resClientes,array(1),'',mysql_result($resResultado,0,'refclientes'));
+   
+	
+$refdescripcion = array(0 => $cadRef,1=>$cadRef2);
+$refCampo 	=  array("reftipopago","refclientes");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+/////////////// cabeceras para el detalle ////////////////////////////////////////////////////
 
+$cabeceras	= "<th>Producto</th>
+			   <th>Cantidad</th>
+			   <th>Precio</th>
+			   <th>SubTotal</th>";
 
+//////////////////////////////////////////////////////////////////////////////////////////////
 
+$lstVentas	= $serviciosFunciones->camposTablaViewSinAction($cabeceras, $serviciosReferencias->traerDetalleventasPorVenta($id),4);
 
 
 $formulario 	= $serviciosFunciones->camposTablaModificar($id, $idTabla, $modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
@@ -112,7 +116,7 @@ if ($_SESSION['idroll_predio'] != 1) {
 	<link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <!-- Latest compiled and minified JavaScript -->
     <script src="../../bootstrap/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="../../css/bootstrap-datetimepicker.min.css">
+
 	<style type="text/css">
 		
   
@@ -152,6 +156,20 @@ if ($_SESSION['idroll_predio'] != 1) {
 			<?php echo $formulario; ?>
             </div>
             
+            <div class='row' style="margin-left:25px; margin-right:25px;">
+            	
+                <div class="col-md-12">
+                	<div class="panel panel-info">
+                    	<div class="panel-heading">Detalle de la Venta</div>
+                        <div class="panel-body">
+							<?php echo $lstVentas; ?>
+                        </div>
+                        <div class="panel-footer" style="color: #D00;">
+                        	* Importante: Si cancela la venta se devolvera el stock de los productos vendidos. Y no se podra volver atras.
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
@@ -210,16 +228,25 @@ if ($_SESSION['idroll_predio'] != 1) {
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
 <script src="../../bootstrap/js/dataTables.bootstrap.js"></script>
 
-<script src="../../js/bootstrap-datetimepicker.min.js"></script>
-<script src="../../js/bootstrap-datetimepicker.es.js"></script>
-
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	$('#total').attr("readonly","true");
+	if (<?php echo mysql_result($resResultado,0,'cancelado'); ?> == 1) {
+		$('#cancelado').prop('checked',true);	
+		$('#cancelado').prop('readonly',true);
+	} else {
+		$('#cancelado').prop('checked',false);	
+	}
 	
 	
-	$("#fechasolicitud").datepicker("option", "disabled", true);
+	
+	$('#total').prop('readonly', true);
+	
+	$('#fecha').prop('readonly', true);
+	
+	$('#usuario').prop('readonly', true);
+	
+	$('#numero').prop('readonly', true);
 	
 	$('.volver').click(function(event){
 		 
@@ -400,20 +427,23 @@ $(document).ready(function(){
 			});
 		}
     });
+	
+	$('#imagen1').on('change', function(e) {
+	  var Lector,
+		  oFileInput = this;
+	 
+	  if (oFileInput.files.length === 0) {
+		return;
+	  };
+	 
+	  Lector = new FileReader();
+	  Lector.onloadend = function(e) {
+		$('#vistaPrevia1').attr('src', e.target.result);         
+	  };
+	  Lector.readAsDataURL(oFileInput.files[0]);
+	 
+	});
 
-});
-</script>
-<script type="text/javascript">
-$('.form_date').datetimepicker({
-	language:  'es',
-	weekStart: 1,
-	todayBtn:  1,
-	autoclose: 1,
-	todayHighlight: 1,
-	startView: 2,
-	minView: 2,
-	forceParse: 0,
-	format: 'dd/mm/yyyy'
 });
 </script>
 <?php } ?>
