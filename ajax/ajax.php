@@ -84,7 +84,10 @@ case 'traerProductoPorCodigo':
 case 'traerProductoPorCodigoBarra':
 	traerProductoPorCodigoBarra($serviciosReferencias);
 	break;
-
+case 'traerProductosPorId':
+	traerProductosPorId($serviciosReferencias);
+	break;
+	
 case 'modificarprecios':
 	modificarprecios($serviciosReferencias);
 	break;
@@ -228,7 +231,6 @@ case 'eliminarVentas':
 eliminarVentas($serviciosReferencias);
 break; 
 
-
 }
 
 /* Fin */
@@ -236,6 +238,49 @@ break;
 
 /* PARA Venta */
 
+function traerProductosPorId($serviciosReferencias) {
+	$id	=	$_POST['id'];
+	$res	=	$serviciosReferencias->traerProductoPorCodigoBarra($id);
+	
+	$cad3 = '';
+	//////////////////////////////////////////////////////busquedajugadores/////////////////////
+	$cad3 = $cad3.'
+				<div class="col-md-12">
+				<div class="panel panel-info">
+                                <div class="panel-heading">
+                                	<h3 class="panel-title">Resultado de la Busqueda</h3>
+                                	
+                                </div>
+                                <div class="panel-body-predio" style="padding:5px 20px;">
+                                	';
+	$cad3 = $cad3.'
+	<div class="row">
+                	<table id="example" class="table table-responsive table-striped" style="font-size:0.8em; padding:2px;">
+						<thead>
+                        <tr>
+                        	<th align="left">Producto</th>
+							<th align="left">Codigo Barra</th>
+                            <th align="left">Precio</th>
+                            <th align="center">Stock</th>
+                        </tr>
+						</thead>
+						<tbody id="resultadosProd">';
+	while ($rowJ = mysql_fetch_array($res)) {
+		$cad3 .= '<tr>
+					<td>'.utf8_encode($rowJ['nombre']).'</td>
+					<td>'.($rowJ['codigobarra']).'</td>
+					<td>'.$rowJ['precioventa'].'</td>
+					<td>'.($rowJ['stock']).'</td>
+				 </tr>';
+	}
+	
+	$cad3 = $cad3.'</tbody>
+                                </table></div>
+                            </div>
+						</div>';
+						
+	echo $cad3;
+}
 
 function insertarVentas($serviciosReferencias) {
 	$reftipopago = $_POST['reftipopago'];
@@ -516,7 +561,8 @@ function buscarProductos($serviciosReferencias) {
 							</div>
 							<button id="'.$rowJ[0].'" class="btn btn-success agregarProd" style="margin-left:0px;" type="button">Agregar</button>
 							
-						</td>';
+						</td>
+					</tr>';
 	}
 	
 	$cad3 = $cad3.'</tbody>

@@ -76,7 +76,7 @@ $cabeceras2 		= "	<th>Numero</th>
                     <th>Cancelada</th>";				
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),6);
+$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),96);
 
 
 //$formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
@@ -171,7 +171,7 @@ if ($_SESSION['refroll_predio'] != 1) {
 
 <div id="content">
 	
-    <div class="boxInfoLargo" style="margin-bottom:-15px;">
+    <div class="boxInfoLargo tile-stats tile-white stat-tile" style="margin-bottom:-15px;">
         <div id="headBoxInfo">
         	<p style="color: #fff; font-size:18px; height:16px;">Productos Cargados <span class="glyphicon glyphicon-minus abrir2" style="cursor:pointer; float:right; padding-right:12px;">(Cerrar)</span></p>
         	
@@ -252,18 +252,13 @@ if ($_SESSION['refroll_predio'] != 1) {
 	                    <input id="codigobarrabuscar" class="form-control" name="codigobarrabuscar" placeholder="Codigo de Barras..." type="text">
                     </div>
                 </div>
-                
-				
-                
+
                 <div class="form-group col-md-3" style="display:block">
                 	<label class="control-label text-right" for="producto" style="text-align:right"></label>
                     <div class="input-group col-md-12 text-right">
 	                    <ul class="list-inline">
                         <li>
-                        	<button type="button" class="btn btn-success" id="agregar" style="margin-left:0px;"><span class="glyphicon glyphicon-plus"></span> Agregar</button>
-                        </li>
-                        <li>
-                        	<button type="button" class="btn btn-info" id="ver" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Ver</button>
+                        	<button type="button" class="btn btn-info" id="ver" data-toggle="modal" data-target="#myModal" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Ver</button>
                         </li>
                     </div>
                 </div>
@@ -377,7 +372,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
             ¿Esta seguro que desea eliminar el <?php echo $singular; ?>?.<span id="proveedorEli"></span>
         </p>
-        <p><strong>Importante: </strong>Si elimina el <?php echo $singular; ?> se perderan todos los datos de este</p>
+        <p><strong>Importante: </strong>La venta no se eliminara, solo se cancelara y se reintegrara el stock y no se tendra en cuenta para las cuentas.</p>
         <input type="hidden" value="" id="idEliminar" name="idEliminar">
 </div>
 
@@ -388,7 +383,7 @@ if ($_SESSION['refroll_predio'] != 1) {
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Detalle del Pedido</h4>
+        <h4 class="modal-title" id="myModalLabel">Detalle de la Venta</h4>
       </div>
       <div class="modal-body detallePedido">
         
@@ -400,23 +395,7 @@ if ($_SESSION['refroll_predio'] != 1) {
   </div>
 </div>
 
-<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Finalizar Pedido</h4>
-      </div>
-      <div class="modal-body">
-        	<p>¿Desea finalizar el pedido?</p>
-      </div>
-      <div class="modal-footer">
-      	<button type="button" class="btn btn-primary finalizar" data-dismiss="modal" id="finalizar">Finalizar</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 
 <script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
@@ -495,7 +474,7 @@ $(document).ready(function(){
 	});
 	
 	$('table.table').dataTable({
-		"order": [[ 0, "asc" ]],
+		"order": [[ 0, "desc" ]],
 		"language": {
 			"emptyTable":     "No hay datos cargados",
 			"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -527,6 +506,8 @@ $(document).ready(function(){
 		}
 	});
 	
+	
+	
 	$(document).on("click",'.agregarProd', function(){
 		usersid =  $(this).attr("id");
 		getProducto(usersid, $('#cantidadbuscar').val(), 'traerProductoPorCodigo');
@@ -534,6 +515,10 @@ $(document).ready(function(){
 		$('.abrir2').text('(Abrir)');
 		$('.abrir2').addClass('glyphicon glyphicon-plus');
 		$('.abrir2').removeClass('glyphicon glyphicon-minus');
+		$('html, body').animate({
+			scrollTop: '100px'
+		},
+		10);
 	});
 	
 	$("table.table").on("click",'.varborrar', function(){
@@ -671,11 +656,11 @@ $(document).ready(function(){
 		});
     });
 	
-	$("table.table").on("click",'.varpagos', function(){
+	$("#ver").click( function(){
 		  
 		  $.ajax({
-				data:  {id: $(this).attr("id"), 
-						accion: 'traerDetallepedidoPorPedido'},
+				data:  {id: $('#codigobarrabuscaraux').val(), 
+						accion: 'traerProductosPorId'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {

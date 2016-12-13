@@ -1471,7 +1471,7 @@ from dbventas v
 inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
 inner join dbclientes cli ON cli.idcliente = v.refclientes
 where	fecha = '".$fecha."'
-order by 1";
+order by 1 desc";
 $res = $this->query($sql,0);
 return $res;
 }
