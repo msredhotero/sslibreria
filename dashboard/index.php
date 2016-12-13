@@ -64,7 +64,7 @@ $lstCargadosProductosFaltantes 	= $serviciosFunciones->camposTablaView($cabecera
 $resProductos	=	$serviciosReferencias->traerCantidadProductos();
 $resClientes	=	$serviciosReferencias->traerCantidadClientes();
 $resPedidos		=	$serviciosReferencias->traerCantidadPedidos();
-$resVentas		=	$serviciosReferencias->traerCantidadVentas();
+$resVentas		=	$serviciosReferencias->traerCantidadVentas(date('Y-m-d'));
 
 if (mysql_num_rows($resProductos)>0) {
 	$cantProductos			=	mysql_result($resProductos,0,0);
@@ -90,7 +90,15 @@ if (mysql_num_rows($resVentas)>0) {
 	$cantVentas			=	0;
 }
 
+$cabeceras2 		= "	<th>Numero</th>
+                    <th>Fecha</th>
+                    <th>Tipo Pago</th>
+					<th>Total</th>
+					<th>Cliente</th>
+                    <th>Cancelada</th>";				
+//////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+$lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferencias->traerVentasPorDia(date('Y-m-d')),6);
 
 ?>
 
@@ -210,7 +218,7 @@ if (mysql_num_rows($resVentas)>0) {
                 
                 </div>
             </div>
-    		<?php // echo $lstCargados; ?>
+    		<?php echo $lstVentas; ?>
     	</div>
     </div>
     

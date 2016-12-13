@@ -13,6 +13,24 @@ function menu($usuario,$titulo,$rol,$empresa) {
 	$cadmenu = "";
 	$cadhover= "";
 	
+	$js = "<script>
+		$(document).ready(function(){
+			$('#colapsarMenu').click(function() {
+			if ($('#colapsarMenu').attr('class') == 'glyphicon glyphicon-list') {
+			$('#content').css( { marginLeft : '1%' } );
+			$('#navigation').hide();
+			$('#colapsarMenu').removeClass('glyphicon glyphicon-list');
+			$('#colapsarMenu').addClass('glyphicon glyphicon-align-justify');
+			} else {
+			$('#content').css( { marginLeft : '21%' } );
+			$('#navigation').show();			
+			$('#colapsarMenu').removeClass('glyphicon glyphicon-align-justify');
+			$('#colapsarMenu').addClass('glyphicon glyphicon-list');
+			}
+			});
+		});
+		</script>";
+	
 	$cant = 1;
 	while ($row = mysql_fetch_array($res)) {
 		if ($titulo == $row['nombre']) {
@@ -66,7 +84,8 @@ function menu($usuario,$titulo,$rol,$empresa) {
 				
 			 </div>
 
-		</div>';
+		</div>
+		'.$js;
 	
 	return $menu;
 	

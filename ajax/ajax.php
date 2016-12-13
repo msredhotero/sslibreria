@@ -218,12 +218,100 @@ case 'eliminarVenta':
 eliminarVenta($serviciosReferencias); 
 break; 
 
+case 'insertarVentas':
+insertarVentas($serviciosReferencias);
+break;
+case 'modificarVentas':
+modificarVentas($serviciosReferencias);
+break;
+case 'eliminarVentas':
+eliminarVentas($serviciosReferencias);
+break; 
+
+
 }
 
 /* Fin */
 /*
 
 /* PARA Venta */
+
+
+function insertarVentas($serviciosReferencias) {
+	$reftipopago = $_POST['reftipopago'];
+	$numero = $serviciosReferencias->generarNroVenta();
+	$fecha = date('Y-m-d');
+	$total = $_POST['total'];
+	$usuario = $_POST['usuario'];
+
+	$cancelado = 0;
+
+	$refclientes = $_POST['refclientes'];
+	
+	$res = $serviciosReferencias->insertarVentas($reftipopago,$numero,$fecha,$total,$usuario,$cancelado,$refclientes);
+	
+	$numero = count($_POST);
+	$tags = array_keys($_POST);// obtiene los nombres de las varibles
+	$valores = array_values($_POST);// obtiene los valores de las varibles
+	$cantEncontrados = 0;
+	$cantidad = 1;
+	$idProducto = 0;
+	
+	if ((integer)$res > 0) {
+		
+		for($i=0;$i<$numero;$i++){
+			if (strpos($tags[$i],"prod") !== false) {
+				if (isset($valores[$i])) {
+					$idProducto = str_replace("prod","",$tags[$i]);
+					$cantidad	= $_POST['cant'.$idProducto];
+					$precio		= $_POST['precio'.$idProducto];
+					$nombre		= $_POST['nombre'.$idProducto];
+					$total		= $cantidad * $precio;
+					$nombreProducto = $serviciosReferencias->descontarStock($idProducto, $cantidad);
+					$serviciosReferencias->insertarDetalleventas($res,$idProducto,$cantidad,0,$precio,$total,$nombreProducto);
+					
+				}
+			}
+		}
+		
+		echo '';
+	} else {
+		echo 'Huvo un error al insertar datos';
+	}
+}
+
+function modificarVentas($serviciosReferencias) {
+	$id = $_POST['id'];
+	$reftipopago = $_POST['reftipopago'];
+	$numero = $_POST['numero'];
+	$fecha = $_POST['fecha'];
+	$total = $_POST['total'];
+	$usuario = $_POST['usuario'];
+	if (isset($_POST['cancelado'])) {
+	$cancelado = 1;
+	} else {
+	$cancelado = 0;
+	}
+	$refclientes = $_POST['refclientes'];
+
+	$res = $serviciosReferencias->modificarVentas($id,$reftipopago,$numero,$fecha,$total,$usuario,$cancelado,$refclientes);
+	if ($res == true) {
+		echo '';
+	} else {
+		echo 'Huvo un error al modificar datos';
+	}
+}
+
+
+function eliminarVentas($serviciosReferencias) {
+	$id = $_POST['id'];
+	$res = $serviciosReferencias->eliminarVentas($id);
+	echo $res;
+}
+
+
+
+
 
 function insertarClientes($serviciosReferencias) { 
 $nombrecompleto = $_POST['nombrecompleto']; 

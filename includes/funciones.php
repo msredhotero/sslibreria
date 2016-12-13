@@ -240,6 +240,53 @@ class Servicios {
 	}
 	
 	
+	function camposTablaViewSinAction($cabeceras,$datos,$cantidad) {
+		$cadRows = '';
+		$cadsubRows = '';
+		$idresultados = 'resultados';
+		$cadView = '';
+		
+		while ($row = mysql_fetch_array($datos)) {
+			$cadsubRows = '';
+			$cadRows = $cadRows.'
+			
+					<tr class="'.$row[0].'">
+                        	';
+			
+			
+			for ($i=1;$i<=$cantidad;$i++) {
+				
+				$cadsubRows = $cadsubRows.'<td><div style="height:60px;overflow:auto;">'.$row[$i].'</div></td>';	
+			}
+			
+			$cadRows = $cadsubRows.$cadRows.'</tr>';
+			
+		}
+		
+		//'.utf8_encode($cadRows).' verificar al subir al servidor
+		
+		$cadView = $cadView.'
+			<table class="table table-striped table-responsive" id="example">
+            	<thead>
+                	<tr>
+                    	'.$cabeceras.'
+                        
+                    </tr>
+                </thead>
+                <tbody id="'.$idresultados.'">
+
+                	'.($cadRows).'
+                </tbody>
+            </table>
+			<div style="margin-bottom:85px; margin-right:60px;"></div>
+		
+		';	
+		
+		
+		return $cadView;
+	}
+	
+	
 	
 	function camposTabla($accion,$tabla,$lblcambio,$lblreemplazo,$refdescripcion,$refCampo) {
 		$sql	=	"show columns from ".$tabla;

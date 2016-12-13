@@ -293,6 +293,7 @@ $(document).ready(function(){
         $.ajax({
 				data:  {busqueda: $('#busqueda').val(),
 						tipobusqueda: $('#tipobusqueda').val(),
+						tipo: 'Pedido',
 						accion: 'buscarProductos'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',

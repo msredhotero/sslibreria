@@ -233,7 +233,7 @@ $(document).ready(function(){
 	
 	if (<?php echo mysql_result($resResultado,0,'cancelado'); ?> == 1) {
 		$('#cancelado').prop('checked',true);	
-		$('#cancelado').prop('readonly',true);
+		$('#cancelado').prop('disabled',true);
 	} else {
 		$('#cancelado').prop('checked',false);	
 	}
@@ -408,8 +408,8 @@ $(document).ready(function(){
 												
 											});
 											$("#load").html('');
-											//url = "index.php";
-											//$(location).attr('href',url);
+											url = "modificar.php?id=<?php echo $id; ?>";
+											$(location).attr('href',url);
                                             
 											
                                         } else {
