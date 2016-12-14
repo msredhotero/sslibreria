@@ -233,7 +233,7 @@ $pdf->SetFont('Arial','',13);
 
 $nombreTurno = "rptFacturacionGeneral-".$fecha.".pdf";
 
-$pdf->Output($nombreTurno,'I');
+$pdf->Output($nombreTurno,'D');
 
 /*
 require('fpdf.php');
