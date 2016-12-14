@@ -33,6 +33,16 @@ switch ($accion) {
         break;
 
 
+case 'insertarConfiguracion':
+insertarConfiguracion($serviciosReferencias);
+break;
+case 'modificarConfiguracion':
+modificarConfiguracion($serviciosReferencias);
+break;
+case 'eliminarConfiguracion':
+eliminarConfiguracion($serviciosReferencias);
+break; 
+
 
 case 'insertarClientes': 
 insertarClientes($serviciosReferencias); 
@@ -1164,6 +1174,54 @@ echo $res;
 } 
 
 /* Fin */
+
+
+
+
+
+
+
+
+
+
+
+
+function insertarConfiguracion($serviciosReferencias) {
+$empresa = $_POST['empresa'];
+$cuit = $_POST['cuit'];
+$direccion = $_POST['direccion'];
+$telefono = $_POST['telefono'];
+$email = $_POST['email'];
+$localidad = $_POST['localidad'];
+$codigopostal = $_POST['codigopostal'];
+$res = $serviciosReferencias->insertarConfiguracion($empresa,$cuit,$direccion,$telefono,$email,$localidad,$codigopostal);
+if ((integer)$res > 0) {
+echo '';
+} else {
+echo 'Huvo un error al insertar datos';
+}
+}
+function modificarConfiguracion($serviciosReferencias) {
+$id = $_POST['id'];
+$empresa = $_POST['empresa'];
+$cuit = $_POST['cuit'];
+$direccion = $_POST['direccion'];
+$telefono = $_POST['telefono'];
+$email = $_POST['email'];
+$localidad = $_POST['localidad'];
+$codigopostal = $_POST['codigopostal'];
+$res = $serviciosReferencias->modificarConfiguracion($id,$empresa,$cuit,$direccion,$telefono,$email,$localidad,$codigopostal);
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
+}
+function eliminarConfiguracion($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarConfiguracion($id);
+echo $res;
+} 
 
 ////////////////////////// FIN DE TRAER DATOS ////////////////////////////////////////////////////////////
 

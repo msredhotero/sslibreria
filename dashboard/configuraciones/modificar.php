@@ -35,9 +35,9 @@ $singular = "Configuracion";
 
 $plural = "Configuraciones";
 
-$eliminar = "eliminarConfiguraciones";
+$eliminar = "eliminarConfiguracion";
 
-$modificar = "modificarConfiguraciones";
+$modificar = "modificarConfiguracion";
 
 $idTabla = "idconfiguracion";
 

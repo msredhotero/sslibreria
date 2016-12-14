@@ -1548,6 +1548,84 @@ return $res;
 
 
 
+
+
+
+
+
+
+/* PARA Configuracion */
+
+function insertarConfiguracion($empresa,$cuit,$direccion,$telefono,$email,$localidad,$codigopostal) {
+$sql = "insert into tbconfiguracion(idconfiguracion,empresa,cuit,direccion,telefono,email,localidad,codigopostal)
+values ('','".utf8_decode($empresa)."','".utf8_decode($cuit)."','".utf8_decode($direccion)."','".utf8_decode($telefono)."','".utf8_decode($email)."','".utf8_decode($localidad)."','".utf8_decode($codigopostal)."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarConfiguracion($id,$empresa,$cuit,$direccion,$telefono,$email,$localidad,$codigopostal) {
+$sql = "update tbconfiguracion
+set
+empresa = '".utf8_decode($empresa)."',cuit = '".utf8_decode($cuit)."',direccion = '".utf8_decode($direccion)."',telefono = '".utf8_decode($telefono)."',email = '".utf8_decode($email)."',localidad = '".utf8_decode($localidad)."',codigopostal = '".utf8_decode($codigopostal)."'
+where idconfiguracion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarConfiguracion($id) {
+$sql = "delete from tbconfiguracion where idconfiguracion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerConfiguracion() {
+$sql = "select
+c.idconfiguracion,
+c.empresa,
+c.cuit,
+c.direccion,
+c.telefono,
+c.email,
+c.localidad,
+c.codigopostal
+from tbconfiguracion c
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerConfiguracionUltima() {
+$sql = "select
+c.idconfiguracion,
+c.empresa,
+c.cuit,
+c.direccion,
+c.telefono,
+c.email,
+c.localidad,
+c.codigopostal
+from tbconfiguracion c
+order by 1 desc
+limit 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerConfiguracionPorId($id) {
+$sql = "select idconfiguracion,empresa,cuit,direccion,telefono,email,localidad,codigopostal from tbconfiguracion where idconfiguracion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: tbconfiguracion*/
+
+
 function query($sql,$accion) {
 		
 		
