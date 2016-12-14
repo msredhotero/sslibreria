@@ -1500,6 +1500,80 @@ return $res;
 /* /* Fin de la Tabla: dbventas*/
 
 
+/* PARA Pagos */
+
+function insertarPagos($refclientes,$pago,$fechapago,$observaciones) {
+$sql = "insert into dbpagos(idpago,refclientes,pago,fechapago,observaciones)
+values ('',".$refclientes.",".$pago.",'".utf8_decode($fechapago)."','".utf8_decode($observaciones)."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarPagos($id,$refclientes,$pago,$fechapago,$observaciones) {
+$sql = "update dbpagos
+set
+refclientes = ".$refclientes.",pago = ".$pago.",fechapago = '".utf8_decode($fechapago)."',observaciones = '".utf8_decode($observaciones)."'
+where idpago =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarPagos($id) {
+$sql = "delete from dbpagos where idpago =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerPagos() {
+$sql = "select
+p.idpago,
+cli.nombrecompleto,
+p.pago,
+p.fechapago,
+p.observaciones,
+p.refclientes
+from dbpagos p
+inner join dbclientes cli ON cli.idcliente = p.refclientes
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerPagosPorCliente($idCliente) {
+$sql = "select
+coalesce(coalesce(sum(p.pago),0) - coalesce(sum(v.total),0),0) as cuenta
+from dbventas v
+inner join dbclientes cli ON v.refclientes = cli.idcliente
+left join dbpagos p ON cli.idcliente = p.refclientes
+where v.reftipopago = 5 and cli.idcliente = ".$idCliente."
+order by 1";
+$res = $this->query($sql,0);
+
+	if (mysql_num_rows($res)>0) {
+		return mysql_result($res,0,0);
+	}
+	
+	return 0;
+}
+
+
+function traerPagosPorId($id) {
+$sql = "select idpago,refclientes,pago,fechapago,observaciones from dbpagos where idpago =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dbpagos*/
+
+
+
+
+
 
 
 /* PARA Audit */

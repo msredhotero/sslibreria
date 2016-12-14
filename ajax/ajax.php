@@ -53,6 +53,11 @@ break;
 case 'eliminarClientes': 
 eliminarClientes($serviciosReferencias); 
 break; 
+
+case 'traerPagosPorCliente':
+	traerPagosPorCliente($serviciosReferencias);
+	break;
+
 case 'insertarCompras': 
 insertarCompras($serviciosReferencias); 
 break; 
@@ -241,6 +246,17 @@ case 'eliminarVentas':
 eliminarVentas($serviciosReferencias);
 break; 
 
+case 'insertarPagos':
+insertarPagos($serviciosReferencias);
+break;
+case 'modificarPagos':
+modificarPagos($serviciosReferencias);
+break;
+case 'eliminarPagos':
+eliminarPagos($serviciosReferencias);
+break; 
+
+
 }
 
 /* Fin */
@@ -403,7 +419,19 @@ function eliminarClientes($serviciosReferencias) {
 $id = $_POST['id']; 
 $res = $serviciosReferencias->eliminarClientes($id); 
 echo $res; 
-} 
+}
+
+function traerPagosPorCliente($serviciosReferencias) {
+	$id = $_POST['id'];
+	
+	$res = $serviciosReferencias->traerPagosPorCliente($id);
+	
+	echo $res;
+	
+}
+
+
+ 
 function insertarCompras($serviciosReferencias) { 
 $reftipopago = $_POST['reftipopago']; 
 $refproveedores = $_POST['refproveedores']; 
@@ -1175,6 +1203,36 @@ echo $res;
 
 /* Fin */
 
+function insertarPagos($serviciosReferencias) {
+$refclientes = $_POST['refclientes'];
+$pago = $_POST['pago'];
+$fechapago = $_POST['fechapago'];
+$observaciones = $_POST['observaciones'];
+$res = $serviciosReferencias->insertarPagos($refclientes,$pago,$fechapago,$observaciones);
+if ((integer)$res > 0) {
+echo '';
+} else {
+echo 'Huvo un error al insertar datos';
+}
+}
+function modificarPagos($serviciosReferencias) {
+$id = $_POST['id'];
+$refclientes = $_POST['refclientes'];
+$pago = $_POST['pago'];
+$fechapago = $_POST['fechapago'];
+$observaciones = $_POST['observaciones'];
+$res = $serviciosReferencias->modificarPagos($id,$refclientes,$pago,$fechapago,$observaciones);
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
+}
+function eliminarPagos($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarPagos($id);
+echo $res;
+} 
 
 
 

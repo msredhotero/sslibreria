@@ -41,22 +41,22 @@ $modificar = "modificarPagos";
 
 $idTabla = "idpago";
 
-$tituloWeb = "Gestión: Talleres";
+$tituloWeb = "Gestión: Libreria";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbpagos";
 
-$lblCambio	 	= array("refordenes","fechapago");
-$lblreemplazo	= array("Orden","Fecha Pago");
+$lblCambio	 	= array("refclientes","fechapago");
+$lblreemplazo	= array("Cliente","Fecha Pago");
 
 
-$resOrden 	= $serviciosReferencias->traerOrdenes();
-$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resOrden,array(1,2,3),' - ', mysql_result($resResultado,0,'refordenes'));
+$resClientes 	= $serviciosReferencias->traerClientes();
+$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resClientes,array(1),'', mysql_result($resResultado,0,'refclientes'));
 
 $refdescripcion = array(0 => $cadRef);
-$refCampo 	=  array("refordenes");
+$refCampo 	=  array("refclientes");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -146,6 +146,9 @@ if ($_SESSION['idroll_predio'] != 1) {
 			<?php echo $formulario; ?>
             </div>
             
+            <div class='row' style="margin-left:25px; margin-right:25px;">
+            	<h4>Saldo: <span class="glyphicon glyphicon-usd"></span> <span class="cuenta">0</span></h4>
+            </div>
             
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
@@ -215,7 +218,34 @@ $(document).ready(function(){
 			alert("Error, vuelva a realizar la acción.");	
 		  }
 	});//fin del boton eliminar
-
+	
+	function Cuenta(id) {
+		$.ajax({
+			data:  {id: id, 
+					accion: 'traerPagosPorCliente'},
+			url:   '../../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+					
+			},
+			success:  function (response) {
+					$('.cuenta').html(response);
+					if (response < 0) {
+						$('.cuenta').css({'color' : '#F00'});
+					} else {
+						$('.cuenta').css({'color' : '#000'});
+					}
+					
+			}
+		});
+	}
+	
+	$('#refclientes').change(function() {
+		Cuenta($('#refclientes').val());
+	});
+	
+	Cuenta($('#refclientes').val());
+	
 	 $( "#dialog2" ).dialog({
 		 	
 			    autoOpen: false,

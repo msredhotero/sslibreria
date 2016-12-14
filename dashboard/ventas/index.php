@@ -286,7 +286,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 
             </div>
 			<hr>
-         <div class='row' style="margin-left:25px; margin-right:25px;">
+         <div class='row' style="margin-left:25px; margin-right:25px;" id="tabla">
             <div class="col-md-12">
             <table class="table table-striped" id="table-6">
                 <thead>
@@ -322,10 +322,6 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <div id='load'>
                 
                 </div>
-            </div>
-            
-            <div class="col-md-12">
-            
             </div>
             
                     
@@ -545,6 +541,19 @@ $(document).ready(function(){
 		  }
 	});//fin del boton modificar
 	
+	
+	$("table.table").on("click",'.varpdf', function(){
+		  usersid =  $(this).attr("id");
+		  
+		  if (!isNaN(usersid)) {
+			
+			url = "../../reportes/rptFactura.php?id=" + usersid;
+			$(location).attr('href',url);
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton modificar
+	
 
 
 	 $( "#dialog2" ).dialog({
@@ -659,7 +668,7 @@ $(document).ready(function(){
 	$("#ver").click( function(){
 		  
 		  $.ajax({
-				data:  {id: $('#codigobarrabuscaraux').val(), 
+				data:  {id: $('#codigobarrabuscar').val(), 
 						accion: 'traerProductosPorId'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',
@@ -697,7 +706,43 @@ $(document).ready(function(){
 							$('#prodNombre').val(json[0].nombre);
 							$('#prodPrecio').val(json[0].precioventa);
 							
-							$('.detalle').prepend('<tr><td align="center"><input type="checkbox" name="prod'+json[0].idproducto+'" id="prod'+json[0].idproducto+'" checked /></td><td><input type="text" name="nombre'+json[0].idproducto+'" id="nombre'+json[0].idproducto+'" value="'+json[0].nombre+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: center;" /></td><td align="center"><input type="text" name="cant'+json[0].idproducto+'" id="cant'+json[0].idproducto+'" value="'+cantidad+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: center;" /></td><td align="right"><input type="text" name="precio'+json[0].idproducto+'" id="precio'+json[0].idproducto+'" value="'+json[0].precioventa+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: right; width:70px;" /></td><td align="right">'+monto.toFixed(2)+'</td><td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="'+json[0].idproducto+'" style="margin-left:0px;">Eliminar</button></td></tr>');
+							/*
+							$('.detalle tr').each(function(){
+								
+							});
+							*/
+							
+							$("#tabla tbody tr").each(function (index) {
+								var cantidadNueva, subtotalNuevo;
+								
+								if ($(this).find('td').eq(0).children("input").attr('id') == 'prod'+json[0].idproducto) {
+									
+									cantidadNueva = parseInt(cantidad) + parseInt($(this).find('td').eq(2).children("input").val());
+									subtotalNuevo = parseFloat(monto) + parseFloat($(this).find('td').eq(4).text());
+									
+									$(this).remove();
+									
+									$('.detalle').prepend('<tr><td align="center"><input type="checkbox" name="prod'+json[0].idproducto+'" id="prod'+json[0].idproducto+'" checked  onclick="this.checked=!this.checked"/></td><td><input type="text" name="nombre'+json[0].idproducto+'" id="nombre'+json[0].idproducto+'" value="'+json[0].nombre+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: center;" /></td><td align="center"><input type="text" name="cant'+json[0].idproducto+'" id="cant'+json[0].idproducto+'" value="'+cantidadNueva+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: center;" /></td><td align="right"><input type="text" name="precio'+json[0].idproducto+'" id="precio'+json[0].idproducto+'" value="'+json[0].precioventa+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: right; width:70px;" /></td><td align="right">'+subtotalNuevo.toFixed(2)+'</td><td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="'+json[0].idproducto+'" style="margin-left:0px;">Eliminar</button></td></tr>');
+									
+									return false;
+								} else {
+									$('.detalle').prepend('<tr id="'+json[0].idproducto+'"><td align="center"><input type="checkbox" name="prod'+json[0].idproducto+'" id="prod'+json[0].idproducto+'" checked  onclick="this.checked=!this.checked"/></td><td><input type="text" name="nombre'+json[0].idproducto+'" id="nombre'+json[0].idproducto+'" value="'+json[0].nombre+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: center;" /></td><td align="center"><input type="text" name="cant'+json[0].idproducto+'" id="cant'+json[0].idproducto+'" value="'+cantidad+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: center;" /></td><td align="right"><input type="text" name="precio'+json[0].idproducto+'" id="precio'+json[0].idproducto+'" value="'+json[0].precioventa+'" readonly style="background-color:transparent; border:none;cursor:default;text-align: right; width:70px;" /></td><td align="right">'+monto.toFixed(2)+'</td><td class="text-center"><button type="button" class="btn btn-danger eliminarfila" id="'+json[0].idproducto+'" style="margin-left:0px;">Eliminar</button></td></tr>');
+									return false;
+								}
+								/*
+								$(this).children("td").each(function (index2) {
+									if (index2 == 0) {
+										if ($(this).children("input").attr('id') == 'prod'+json[0].idproducto) {
+		
+										}
+									}
+								});
+								*/
+							});
+					
+							
+							
+							
 							
 							$('#cantidadbuscar').val(1);
 									
@@ -750,10 +795,7 @@ $(document).ready(function(){
 
 		$(padre).remove();
 		
-		id =  $(this).attr("id");
-		
-		eliminarDetalleAux(id);
-		
+		$('#total').val(SumarTabla());
 		
 	  });
 	  
