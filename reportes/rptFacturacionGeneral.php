@@ -5,23 +5,14 @@ date_default_timezone_set('America/Buenos_Aires');
 include ('../includes/funcionesUsuarios.php');
 include ('../includes/funciones.php');
 include ('../includes/funcionesHTML.php');
-include ('../includes/funcionesClientes.php');
-include ('../includes/funcionesEmpresas.php');
-include ('../includes/funcionesEmpresaClientes.php');
-include ('../includes/funcionesFacturas.php');
-include ('../includes/funcionesPagos.php');
-include ('../includes/funcionesReportes.php');
+include ('../includes/funcionesReferencias.php');
 
 
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
 $serviciosHTML				= new ServiciosHTML();
-$serviciosClientes 			= new ServiciosClientes();
-$serviciosEmpresas			= new ServiciosEmpresas();
-$serviciosEmpresaClientes 	= new ServiciosEmpresaClientes();
-$serviciosFacturas			= new ServiciosFacturas();
-$serviciosPagos				= new ServiciosPagos();
-$serviciosReportes			= new ServiciosReportes();
+$serviciosReferencias 		= new ServiciosReferencias();
+//$serviciosReportes			= new ServiciosReportes();
 
 $fecha = date('Y-m-d');
 
@@ -31,11 +22,11 @@ require('fpdf.php');
 
 $id				=	$_GET['id'];
 
-$resEmpresa		=	$serviciosEmpresas->traerEmpresasPorId($id);
+//$resEmpresa		=	$serviciosEmpresas->traerEmpresasPorId($id);
 
-$empresa		=	mysql_result($resEmpresa,0,1);
+$empresa		=	'C y C';
 
-$datos			=	$serviciosReportes->rptFacturacionGeneralPorEmpresa($id);
+$datos			=	$serviciosReferencias->traerDetalleventasPorVenta($id);
 
 $TotalIngresos = 0;
 $TotalEgresos = 0;
@@ -43,7 +34,7 @@ $Totales = 0;
 $Caja = 0;
 
 
-
+/*
 class PDF extends FPDF
 {
 // Cargar los datos
@@ -68,7 +59,7 @@ function ingresosFacturacion($header, $data, &$TotalIngresos)
 	
 	
     // Cabecera
-    $w = array(20,75,60,22,30,30,30);
+    $w = array(80,30,30,30);
     for($i=0;$i<count($header);$i++)
         $this->Cell($w[$i],6,$header[$i],1,0,'C',true);
     $this->Ln();
@@ -87,18 +78,13 @@ function ingresosFacturacion($header, $data, &$TotalIngresos)
 	$this->SetFont('Arial','',9);
     while ($row = mysql_fetch_array($data))
     {
-		$total = $total + $row[4];
+		$total = $total + $row['total'];
 		$totalcant = $totalcant + 1;
-		$sumSaldos = $sumSaldos + $row[6];
-		$sumAbonos = $sumAbonos + $row[5];
 		
-        $this->Cell($w[0],5,$row[0],'LR',0,'L',$fill);
-		$this->Cell($w[1],5,substr($row[1],0,60),'LR',0,'L',$fill);
-        $this->Cell($w[2],5,substr($row[2],0,45),'LR',0,'L',$fill);
-		$this->Cell($w[3],5,$row[3],'LR',0,'C',$fill);
-		$this->Cell($w[4],5,number_format($row[4],2,',','.'),'LR',0,'R',$fill);
-		$this->Cell($w[5],5,number_format($row[5],2,',','.'),'LR',0,'R',$fill);
-		$this->Cell($w[6],5,number_format($row[6],2,',','.'),'LR',0,'R',$fill);
+        $this->Cell($w[0],5,$row['nombre'],'LR',0,'L',$fill);
+		$this->Cell($w[1],5,$row['cantidad'],'LR',0,'C',$fill);
+		$this->Cell($w[2],5,number_format($row['precio'],2,',','.'),'LR',0,'R',$fill);
+		$this->Cell($w[3],5,number_format($row['total'],2,',','.'),'LR',0,'R',$fill);
         $this->Ln();
         
 		
@@ -122,10 +108,9 @@ function ingresosFacturacion($header, $data, &$TotalIngresos)
 		}
     }
 	
-	$this->Cell($w[0]+$w[1]+$w[2]+$w[3],5,'Totales:','LRT',0,'L',$fill);
-	$this->Cell($w[4],5,number_format($total,2,',','.'),'LRT',0,'R',$fill);
-	$this->Cell($w[5],5,number_format($sumAbonos,2,',','.'),'LRT',0,'R',$fill);
-	$this->Cell($w[6],5,number_format($sumSaldos,2,',','.'),'LRT',0,'R',$fill);
+	$this->Cell($w[0]+$w[1]+$w[2],5,'Totales:','LRT',0,'L',$fill);
+	$this->Cell($w[3],5,number_format($total,2,',','.'),'LRT',0,'R',$fill);
+
 	$fill = !$fill;
 	$this->Ln();
     // Línea de cierre
@@ -141,18 +126,18 @@ function ingresosFacturacion($header, $data, &$TotalIngresos)
 }
 
 }
+*/
 
 
 
 
 
-
-$pdf = new PDF("L");
+$pdf = new FPDF("L");
 
 
 // Títulos de las columnas
 
-$headerFacturacion = array("Factura", "Cliente", "Referencia","Fecha", "Importe", "Abonos", "Saldo");
+$headerFacturacion = array("Detalle", "Cantidad", "Precio","SubTotal");
 // Carga de datos
 
 $pdf->AddPage();
@@ -167,8 +152,10 @@ $pdf->Cell(260,7,'Fecha: '.date('Y-m-d'),0,0,'C',false);
 $pdf->Ln();
 
 $pdf->SetFont('Arial','',10);
-
+/*
 $pdf->ingresosFacturacion($headerFacturacion,$datos,$TotalFacturacion);
+*/
+
 
 $pdf->Ln();
 
@@ -178,6 +165,14 @@ $nombreTurno = "rptFacturacionGeneral-".$fecha.".pdf";
 
 $pdf->Output($nombreTurno,'D');
 
+/*
+require('fpdf.php');
 
+$pdf = new FPDF();
+$pdf->AddPage();
+$pdf->SetFont('Arial','B',16);
+$pdf->Cell(40,10,'¡Hola, Mundo!');
+$pdf->Output();
+*/
 ?>
 
