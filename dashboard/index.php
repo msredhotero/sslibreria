@@ -253,30 +253,30 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
                     
                     <div class="detalleCliente" style="display:none;">
                     <div class='row' style="margin-left:25px; margin-right:25px;">
-                    	<h4>Compras</h4>
+                    	<h4><span class="glyphicon glyphicon-chevron-right"></span> Compras</h4>
                         <div class="col-md-12" id="compras">
                         
                         </div>
                     </div>
                     
                     <div class='row' style="margin-left:25px; margin-right:25px;">
-                    	<h4>Compras a Cuenta</h4>
+                    	<h4><span class="glyphicon glyphicon-chevron-right"></span> Compras a Cuenta</h4>
                         <div class="col-md-12" id="comprascuentas">
                         
                         </div>
                     </div>
                     
                     <div class='row' style="margin-left:25px; margin-right:25px;">
-                    	<h4>Pagos</h4>
+                    	<h4><span class="glyphicon glyphicon-chevron-right"></span> Pagos</h4>
                         <div class="col-md-12" id="pagos">
                         
                         </div>
                     </div>
                     
                     <div class='row' style="margin-left:25px; margin-right:25px;">
-                    	<h4>Cuenta</h4>
-                        <div class="col-md-12">
-                        	<h4>Saldo: <span class="glyphicon glyphicon-usd"></span> <span class="cuenta">0</span></h4>
+                    	<h4><span class="glyphicon glyphicon-chevron-right"></span> Cuenta</h4>
+                        <div class="col-md-12" style="margin-left:-15px;">
+                        	<h4><span class="glyphicon glyphicon-credit-card"></span> Saldo: <span class="glyphicon glyphicon-usd"></span> <span class="cuenta">0</span></h4>
                         </div>
                     </div>
 					</div><!-- fin del contenedor detalle -->
@@ -592,8 +592,112 @@ $(document).ready(function(){
 		 
 		 
 	 		}); //fin del dialogo para eliminar
-
 	
+	
+	function traerVentasPorCliente(idCliente) {
+		$.ajax({
+			data:  {id: idCliente, 
+					accion: 'traerVentasPorCliente'},
+			url:   '../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+				
+			},
+			success:  function (response) {
+				
+				$('#compras').html(response);
+					
+					
+			}
+		});
+	}
+	
+	
+	function traerVentasPorClienteACuenta(idCliente) {
+		$.ajax({
+			data:  {id: idCliente, 
+					accion: 'traerVentasPorClienteACuenta'},
+			url:   '../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+
+			},
+			success:  function (response) {
+
+				$('#comprascuentas').html(response);
+	
+			}
+		});
+	}
+	
+	
+	function traerDetallePagosPorCliente(idCliente) {
+		$.ajax({
+			data:  {id: idCliente, 
+					accion: 'traerDetallePagosPorCliente'},
+			url:   '../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+
+			},
+			success:  function (response) {
+				
+				$('#pagos').html(response);
+					
+			}
+		});
+	}
+	
+	function traerSaldo(idCliente) {
+		$.ajax({
+			data:  {id: idCliente, 
+					accion: 'traerPagosPorCliente'},
+			url:   '../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+				$('.detalleCliente').hide(200);	
+			},
+			success:  function (response) {
+				
+				
+				
+					$('.cuenta').html(response);
+					if (response < 0) {
+						$('.cuenta').css({'color' : '#F00'});
+					} else {
+						$('.cuenta').css({'color' : '#000'});
+					}
+					
+			}
+		});
+	}
+	
+	$('#refclientes').change(function() {
+		$('.detalleCliente').hide(200);	
+	});
+	/* para la parte de clientes */
+	$('#buscarCliente').click(function() {
+		traerVentasPorCliente($('#refclientes').val());
+		traerVentasPorClienteACuenta($('#refclientes').val());
+		traerDetallePagosPorCliente($('#refclientes').val());
+		traerSaldo($('#refclientes').val());
+		$('.detalleCliente').show(300);
+	});
+	
+	
+	/* fin */
+	
+	$(document).on('click', '.varGenerarFactura', function(e){
+		  usersid =  $(this).attr("id");
+		  
+		  if (!isNaN(usersid)) {
+			
+			url = "../reportes/rptFactura.php?id=" + usersid;
+			$(location).attr('href',url);
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton modificar
 
 
 });

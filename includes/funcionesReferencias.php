@@ -1607,6 +1607,23 @@ return $res;
 }
 
 
+function traerDetallePagosPorCliente($idCliente) {
+$sql = "select
+p.idpago,
+cli.nombrecompleto,
+p.pago,
+p.fechapago,
+p.observaciones,
+p.refclientes
+from dbpagos p
+inner join dbclientes cli ON cli.idcliente = p.refclientes
+where cli.idcliente = ".$idCliente."
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
 function traerPagosPorCliente($idCliente) {
 $sql = "select
 coalesce(coalesce(sum(p.pago),0) - coalesce(sum(v.total),0),0) as cuenta
