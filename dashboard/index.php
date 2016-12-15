@@ -47,17 +47,18 @@ $cabeceras 		= "	<th>Referencia</th>
                     <th>Observaciones</th>";
 
 $cabecerasProductos 		= "<th>Prdoucto</th>
-                    <th>Cantidad</th>
+                    <th>A Pedir</th>
 					<th>Stock</th>
 					<th>Stock Min.</th>
 					<th>Precio</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$lstPedidos 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPedidos(),93);
+$lstPedidos 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPedidosActivos(),93);
 
 $lstCargadosProductosFaltantes 	= $serviciosFunciones->camposTablaView($cabecerasProductos,$serviciosReferencias->traerProductosFaltantes(),5);
 
+$lstClientes	= $serviciosFunciones->devolverSelectBox($serviciosReferencias->traerClientes(),array(1),'');
 //$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerOrdenesActivos(),95);
 //$lstCargadosMora 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerOrdenesMora(),94);
 
@@ -131,7 +132,7 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
 	<link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <!-- Latest compiled and minified JavaScript -->
     <script src="../bootstrap/js/bootstrap.min.js"></script>
-
+	<link rel="stylesheet" href="../css/chosen.css">
 
 
 
@@ -203,32 +204,98 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
         </div>
     </div>
     
+
     
-    <div class="boxInfoLargo tile-stats tile-white stat-tile">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Ventas Actuales</p>
-        	
-        </div>
-    	<div class="cuerpoBox">
-        	<div class='row' style="margin-left:25px; margin-right:25px;">
-                <div class='alert'>
-                
-                </div>
-                <div id='load'>
-                
-                </div>
+    <div class="row" style="margin-right:15px;">
+    <div class="col-md-12">
+    <div class="panel" style="border-color:#006666;">
+				<div class="panel-heading" style="background-color:#006666; color:#FFF; ">
+					<h3 class="panel-title">Ventas Actuales</h3>
+					<span class="pull-right clickable panel-collapsed" style="margin-top:-15px; cursor:pointer;"><i class="glyphicon glyphicon-chevron-down"></i></span>
+				</div>
+                <div class="panel-body collapse">
+            		<?php echo $lstVentas; ?>
+								
+				</div>
             </div>
-    		<?php echo $lstVentas; ?>
-    	</div>
+    
+    </div>
     </div>
     
     
-    <div class="boxInfoLargo tile-stats tile-white stat-tile">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Productos Faltantes</p>
-        	
+    <div class="row" style="margin-right:15px;">
+    <div class="col-md-12">
+    <div class="panel" style="border-color:#006666;">
+				<div class="panel-heading" style="background-color:#006666; color:#FFF; ">
+					<h3 class="panel-title">Clientes</h3>
+					<span class="pull-right clickable panel-collapsed" style="margin-top:-15px; cursor:pointer;"><i class="glyphicon glyphicon-chevron-up"></i></span>
+				</div>
+                    <div class="panel-body">
+                    	<div class="row">
+                        <div class="form-group col-md-6" style="display:block">
+                        <label class="control-label" for="codigobarra" style="text-align:left">Seleccione el Cliente</label>
+                        <div class="input-group col-md-12">
+                            <select data-placeholder="selecione el Cliente..." id="refclientes" name="refclientes" class="chosen-select" tabindex="2" style="width:100%;">
+                                
+                                <?php echo $lstClientes; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                    	<div class="form-group col-md-6" style="display:block">
+                            <label class="control-label" for="codigobarra" style="text-align:left">Buscar Compras y Pagos</label>
+                            <div class="input-group col-md-12">
+                                <button type="button" class="btn btn-primary" id="buscarCliente" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    
+                    <div class="detalleCliente" style="display:none;">
+                    <div class='row' style="margin-left:25px; margin-right:25px;">
+                    	<h4>Compras</h4>
+                        <div class="col-md-12" id="compras">
+                        
+                        </div>
+                    </div>
+                    
+                    <div class='row' style="margin-left:25px; margin-right:25px;">
+                    	<h4>Compras a Cuenta</h4>
+                        <div class="col-md-12" id="comprascuentas">
+                        
+                        </div>
+                    </div>
+                    
+                    <div class='row' style="margin-left:25px; margin-right:25px;">
+                    	<h4>Pagos</h4>
+                        <div class="col-md-12" id="pagos">
+                        
+                        </div>
+                    </div>
+                    
+                    <div class='row' style="margin-left:25px; margin-right:25px;">
+                    	<h4>Cuenta</h4>
+                        <div class="col-md-12">
+                        	<h4>Saldo: <span class="glyphicon glyphicon-usd"></span> <span class="cuenta">0</span></h4>
+                        </div>
+                    </div>
+					</div><!-- fin del contenedor detalle -->
+                    		
+				</div>
+            </div>
+    
+    </div>
+    </div>
+    
+    
+    <div class="row" style="margin-right:15px;">
+    <div class="col-md-12">
+    <div class="panel" style="border-color:#006666;">
+				<div class="panel-heading" style="background-color:#006666; color:#FFF; ">
+					<h3 class="panel-title">Productos Faltantes</h3>
+        			<span class="pull-right clickable panel-collapsed" style="margin-top:-15px; cursor:pointer;"><i class="glyphicon glyphicon-chevron-down"></i></span>
         </div>
-    	<div class="cuerpoBox">
+    	<div class="panel-body collapse">
         	<div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
                 
@@ -240,14 +307,17 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
     		<?php echo $lstCargadosProductosFaltantes; ?>
     	</div>
     </div>
+    </div>
+    </div>
     
-    
-    <div class="boxInfoLargo tile-stats tile-white stat-tile">
-        <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Pedidos</p>
-        	
+    <div class="row" style="margin-right:15px;">
+    <div class="col-md-12">
+    <div class="panel" style="border-color:#006666;">
+				<div class="panel-heading" style="background-color:#006666; color:#FFF; ">
+					<h3 class="panel-title">Pedidos</h3>
+        			<span class="pull-right clickable panel-collapsed" style="margin-top:-15px; cursor:pointer;"><i class="glyphicon glyphicon-chevron-down"></i></span>
         </div>
-    	<div class="cuerpoBox">
+    	<div class="panel-body collapse">
         	<div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
                 
@@ -259,7 +329,8 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
     		<?php echo $lstPedidos; ?>
     	</div>
     </div>
-    
+    </div>
+    </div>
     
     
     
@@ -303,7 +374,18 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	
+	$(document).on('click', '.panel-heading span.clickable', function(e){
+		var $this = $(this);
+		if(!$this.hasClass('panel-collapsed')) {
+			$this.parents('.panel').find('.panel-body').slideUp();
+			$this.addClass('panel-collapsed');
+			$this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+		} else {
+			$this.parents('.panel').find('.panel-body').slideDown();
+			$this.removeClass('panel-collapsed');
+			$this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+		}
+	});
 	
 	$('table.table').dataTable({
 		"order": [[ 0, "asc" ]],
@@ -575,6 +657,20 @@ $(document).ready(function(){
 		);
 
 	</script>
+    
+    <script src="../js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+  </script>
 <?php } ?>
 </body>
 </html>

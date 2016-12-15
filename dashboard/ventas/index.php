@@ -827,7 +827,7 @@ $(document).ready(function(){
 						$(".alert").removeClass("alert-danger");
 						$(".alert").removeClass("alert-info");
 						$(".alert").addClass("alert-success");
-						$(".alert").html('<strong>Ok!</strong> Se cargo exitosamente el <strong><?php echo $singular; ?></strong>. ');
+						$(".alert").html('<strong>Ok!</strong> Se cargo exitosamente la <strong><?php echo $singular; ?></strong>. ');
 
 						$("#load").html('');
 						url = "index.php";

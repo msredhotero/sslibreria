@@ -812,6 +812,24 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+function traerPedidosActivos() {
+$sql = "select
+p.idpedido,
+p.referencia,
+p.fechasolicitud,
+p.fechaentrega,
+p.total,
+est.estado,
+p.observacion,
+p.refestados
+from dbpedidos p
+inner join tbestados est ON est.idestado = p.refestados
+where p.refestados in (1,2)
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
 
 function traerPedidosPorId($id) {
 $sql = "select idpedido,fechasolicitud,fechaentrega,total,refestados,referencia,observacion from dbpedidos where idpedido =".$id;
@@ -1492,6 +1510,52 @@ return $res;
 
 function traerVentasPorId($id) {
 $sql = "select idventa,reftipopago,numero,fecha,total,usuario,cancelado,refclientes from dbventas where idventa =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentasPorClientesACuenta($idCliente) {
+	$sql = "select
+v.idventa,
+
+v.numero,
+v.fecha,
+tip.descripcion,
+v.total,
+cli.nombrecompleto,
+(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+v.reftipopago,
+v.usuario,
+v.refclientes
+from dbventas v
+inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbclientes cli ON cli.idcliente = v.refclientes
+where	v.refclientes = ".$idCliente." and tip.idtipopago = 5
+order by 1 desc";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentasPorClientes($idCliente) {
+	$sql = "select
+v.idventa,
+
+v.numero,
+v.fecha,
+tip.descripcion,
+v.total,
+cli.nombrecompleto,
+(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+v.reftipopago,
+v.usuario,
+v.refclientes
+from dbventas v
+inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbclientes cli ON cli.idcliente = v.refclientes
+where	v.refclientes = ".$idCliente." and tip.idtipopago <> 5
+order by 1 desc";
 $res = $this->query($sql,0);
 return $res;
 }
