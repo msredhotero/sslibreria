@@ -27,9 +27,6 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Pagos",
 
 $id = $_GET['id'];
 
-$resResultado = $serviciosReferencias->traerOrdenesPorId($id);
-
-
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Pago";
 
@@ -39,37 +36,35 @@ $eliminar = "eliminarPagos";
 
 $insertar = "insertarPagos";
 
-$tituloWeb = "Gestión: Talleres";
+$tituloWeb = "Gestión: Libreria";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbpagos";
 
-$lblCambio	 	= array("refordenes","fechapago");
-$lblreemplazo	= array("Orden","Fecha Pago");
+$lblCambio	 	= array("refclientes","fechapago");
+$lblreemplazo	= array("Cliente","Fecha Pago");
 
 
-$resOrden 	= $serviciosReferencias->traerOrdenes();
-$cadRef 	= $serviciosFunciones->devolverSelectBoxActivo($resOrden,array(1,2,3),' - ', mysql_result($resResultado,0,'idorden'));
+$resCliente 	= $serviciosReferencias->traerClientesPorId($id);
+$cadRef 	= $serviciosFunciones->devolverSelectBox($resCliente,array(1),'');
 
 $refdescripcion = array(0 => $cadRef);
-$refCampo 	=  array("refordenes");
+$refCampo 	=  array("refclientes");
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 /////////////////////// Opciones para la creacion del view  patente,refmodelo,reftipovehiculo,anio/////////////////////
 $cabeceras 		= "	<th>Cliente</th>
-					<th>Vehiculo</th>
-					<th>Orden</th>
 					<th>Pago</th>
 					<th>Fecha</th>
-					<th>Estado</th>";
+					<th>Observaciones</th>";
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 $formulario 	= $serviciosFunciones->camposTabla($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerPagosPorOrden($id),6);
+$lstCargados 	= $serviciosFunciones->camposTablaView($cabeceras,$serviciosReferencias->traerDetallePagosPorCliente($id),4);
 
 
 if ($_SESSION['idroll_predio'] != 1) {
@@ -151,6 +146,9 @@ if ($_SESSION['idroll_predio'] != 1) {
 			<?php echo $formulario; ?>
             </div>
             
+            <div class='row' style="margin-left:25px; margin-right:25px;">
+            	<h4>Saldo: <span class="glyphicon glyphicon-usd"></span> <span class="cuenta">0</span></h4>
+            </div>
             
             <div class='row' style="margin-left:25px; margin-right:25px;">
                 <div class='alert'>
@@ -213,6 +211,30 @@ $(document).ready(function(){
 		url = "index.php";
 		$(location).attr('href',url);
 	});//fin del boton modificar
+	
+	
+	function traerSaldo(id) {
+		$.ajax({
+			data:  {id: id, 
+					accion: 'traerPagosPorCliente'},
+			url:   '../../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+					
+			},
+			success:  function (response) {
+					$('.cuenta').html(response);
+					if (response < 0) {
+						$('.cuenta').css({'color' : '#F00'});
+					} else {
+						$('.cuenta').css({'color' : '#000'});
+					}
+					
+			}
+		});	
+	}
+	
+	traerSaldo($('#refclientes').val());
 	
 	$('.varborrar').click(function(event){
 		  usersid =  $(this).attr("id");

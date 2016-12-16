@@ -243,9 +243,16 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
                     </div>
                     <div class="col-md-6">
                     	<div class="form-group col-md-6" style="display:block">
-                            <label class="control-label" for="codigobarra" style="text-align:left">Buscar Compras y Pagos</label>
+                            <label class="control-label" for="codigobarra" style="text-align:left">Buscar Compras y Pagos | Pagar</label>
                             <div class="input-group col-md-12">
-                                <button type="button" class="btn btn-primary" id="buscarCliente" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+                                <ul class="list-inline">
+                                	<li>
+                                    	<button type="button" class="btn btn-primary" id="buscarCliente" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+                                    </li>
+                                    <li>
+                                    	<button type="button" class="btn btn-warning" id="pagarCliente" style="margin-left:0px;"><span class="glyphicon glyphicon-credit-card"></span> Pagar</button>
+                                    </li>    
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -343,14 +350,14 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
 
 
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
+<div class="modal fade" id="myModal" tabindex="1" style="z-index:500000;" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Detalle del Pedido</h4>
+        <h4 class="modal-title" id="myModalLabel">Detalle de Venta</h4>
       </div>
-      <div class="modal-body detallePedido">
+      <div class="modal-body detalleVentas">
         
       </div>
       <div class="modal-footer">
@@ -648,6 +655,24 @@ $(document).ready(function(){
 		});
 	}
 	
+	
+	function traerDetalleVentaPorCliente(idVenta) {
+		$.ajax({
+			data:  {id: idVenta, 
+					accion: 'traerDetalleVentaPorCliente'},
+			url:   '../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+
+			},
+			success:  function (response) {
+				
+				$('.detalleVentas').html(response);
+					
+			}
+		});
+	}
+	
 	function traerSaldo(idCliente) {
 		$.ajax({
 			data:  {id: idCliente, 
@@ -684,6 +709,11 @@ $(document).ready(function(){
 		$('.detalleCliente').show(300);
 	});
 	
+	$('#pagarCliente').click(function() {
+		url = "pagos/pagar.php?id=" + $('#refclientes').val();
+		$(location).attr('href',url);
+	});
+	
 	
 	/* fin */
 	
@@ -697,6 +727,11 @@ $(document).ready(function(){
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
 		  }
+	});//fin del boton modificar
+	
+	
+	$(document).on('click', '.varVerDetalle', function(e){
+		  traerDetalleVentaPorCliente($(this).attr("id"));
 	});//fin del boton modificar
 
 

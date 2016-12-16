@@ -267,9 +267,9 @@ $(document).ready(function(){
 	});//fin del boton modificar
 	
 	
-	$('#refclientes').change(function() {
+	function traerSaldo(id) {
 		$.ajax({
-			data:  {id: $('#refclientes').val(), 
+			data:  {id: id, 
 					accion: 'traerPagosPorCliente'},
 			url:   '../../ajax/ajax.php',
 			type:  'post',
@@ -285,7 +285,13 @@ $(document).ready(function(){
 					}
 					
 			}
-		});
+		});	
+	}
+	
+	traerSaldo($('#refclientes').val());
+	
+	$('#refclientes').change(function() {
+		traerSaldo($('#refclientes').val());
 	});
 	
 	 $( "#dialog2" ).dialog({

@@ -256,6 +256,10 @@ case 'eliminarVentas':
 eliminarVentas($serviciosReferencias);
 break; 
 
+case 'traerDetalleVentaPorCliente':
+	traerDetalleVentaPorCliente($serviciosReferencias);
+	break;
+
 case 'insertarPagos':
 insertarPagos($serviciosReferencias);
 break;
@@ -391,6 +395,57 @@ function eliminarVentas($serviciosReferencias) {
 }
 
 
+function traerDetalleVentaPorCliente($serviciosReferencias) {
+	$id	=	$_POST['id'];
+	$res	=	$serviciosReferencias->traerDetalleventasPorVenta($id);
+	
+	$total = 0;
+	$cad3 = '';
+	//////////////////////////////////////////////////////busquedajugadores/////////////////////
+	$cad3 = $cad3.'
+				<div class="col-md-12">
+				<div class="panel panel-info">
+                                <div class="panel-heading">
+                                	<h3 class="panel-title">Resultado de la Busqueda</h3>
+                                	
+                                </div>
+                                <div class="panel-body-predio" style="padding:5px 20px;">
+                                	';
+	$cad3 = $cad3.'
+	<div class="row">
+                	<table id="example" class="table table-responsive table-striped" style="padding:2px;">
+						<thead>
+                        <tr>
+                        	<th align="left">Producto</th>
+							<th align="left">Cantidad</th>
+                            <th align="left">Precio</th>
+                            <th align="center">SubTotal</th>
+                        </tr>
+						</thead>
+						<tbody id="resultadosProd">';
+	while ($rowJ = mysql_fetch_array($res)) {
+		$total += $rowJ['total'];
+		$cad3 .= '<tr>
+					<td>'.utf8_encode($rowJ['producto']).'</td>
+					<td>'.($rowJ['cantidad']).'</td>
+					<td>'.$rowJ['precio'].'</td>
+					<td>'.($rowJ['total']).'</td>
+				 </tr>';
+	}
+	
+	$cad3 = $cad3.'</tbody>
+				   <tfoot>
+				   	  <td colspan="3">Total: </td>
+					  <td>$ '.$total.'</td>
+				   </tfoot>
+                                </table></div>
+                            </div>
+						</div>';
+						
+	echo $cad3;
+}
+
+
 
 
 
@@ -474,7 +529,7 @@ function traerVentasPorCliente($serviciosReferencias) {
 					<td>'.utf8_encode($rowJ['numero']).'</td>
 					<td>'.($rowJ['fecha']).'</td>
 					<td>'.$rowJ['total'].'</td>
-					<td><img src="../imagenes/verIco.png" style="cursor:pointer;" id="'.$rowJ[0].'" class="varVerDetalle"></td>
+					<td><img src="../imagenes/verIco.png" style="cursor:pointer;" id="'.$rowJ[0].'" data-toggle="modal" data-target="#myModal" class="varVerDetalle"></td>
 					<td><img src="../imagenes/pdf.png" style="cursor:pointer;" id="'.$rowJ[0].'" class="varGenerarFactura"></td>
 				 </tr>';
 	}
@@ -522,7 +577,7 @@ function traerVentasPorClienteACuenta($serviciosReferencias) {
 					<td>'.utf8_encode($rowJ['numero']).'</td>
 					<td>'.($rowJ['fecha']).'</td>
 					<td>'.$rowJ['total'].'</td>
-					<td><img src="../imagenes/verIco.png" style="cursor:pointer;" id="'.$rowJ[0].'" class="varVerDetalleC"></td>
+					<td><img src="../imagenes/verIco.png" style="cursor:pointer;" id="'.$rowJ[0].'" data-toggle="modal" data-target="#myModal" class="varVerDetalle"></td>
 					<td><img src="../imagenes/pdf.png" style="cursor:pointer;" id="'.$rowJ[0].'" class="varGenerarFactura"></td>
 				 </tr>';
 	}
