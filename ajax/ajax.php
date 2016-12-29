@@ -778,10 +778,10 @@ function buscarProductos($serviciosReferencias) {
 	while ($rowJ = mysql_fetch_array($res)) {
 		$cad3 .= '<tr>
 					<td>'.utf8_encode($rowJ[1]).'</td>
-					<td>'.($rowJ[2]).'</td>
+					<td>'.($rowJ['codigobarra']).'</td>
 					<td>'.($tipo == 'Pedido' ? $rowJ['preciocosto'] : $rowJ['precioventa']).'</td>
-					<td>'.($rowJ[4]).'</td>
-					<td>'.($rowJ[5]).'</td>
+					<td>'.($rowJ['stock']).'</td>
+					<td>'.($rowJ['stockmin']).'</td>
 					<td>
 								
 							<div class="btn-group">

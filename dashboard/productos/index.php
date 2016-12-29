@@ -212,7 +212,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="panel-body" style="z-index:1;">
-        	<form class="form-inline formulario" role="form">
+        	
             	
                 <div class="row">
                     
@@ -262,7 +262,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
 
             
-            </form>
+            
     	</div>
     </div>
     

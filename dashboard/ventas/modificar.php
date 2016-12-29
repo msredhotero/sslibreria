@@ -76,6 +76,8 @@ $lstVentas	= $serviciosFunciones->camposTablaViewSinAction($cabeceras, $servicio
 
 $formulario 	= $serviciosFunciones->camposTablaModificar($id, $idTabla, $modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
+$cancelado =  mysql_result($resResultado,0,'cancelado');
+
 
 if ($_SESSION['idroll_predio'] != 1) {
 
@@ -231,7 +233,7 @@ if ($_SESSION['idroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	if (<?php echo mysql_result($resResultado,0,'cancelado'); ?> == 1) {
+	if ('<?php echo $cancelado; ?>' == 'Si') {
 		$('#cancelado').prop('checked',true);	
 		$('#cancelado').prop('disabled',true);
 	} else {

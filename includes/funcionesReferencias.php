@@ -537,11 +537,11 @@ function buscarProductos($tipobusqueda,$busqueda) {
 				$sql = "select 
 							p.idproducto,
 							p.nombre,
+							p.codigobarra,
 							p.precioventa,
 							p.stock,
 							p.stockmin,
-							
-							
+
 							p.imagen,
 							cat.descripcion,
 							p.unidades,
@@ -552,7 +552,7 @@ function buscarProductos($tipobusqueda,$busqueda) {
 							p.tipoimagen
 						from dbproductos p 
 						inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
-						where p.activo = 1 and p.codigobarra like '%".$busqueda."%'
+						where p.activo = 1 and p.codigobarra = '".$busqueda."'
 						order by p.nombre
 						limit 100";
 				break;
@@ -560,10 +560,10 @@ function buscarProductos($tipobusqueda,$busqueda) {
 				$sql = "select 
 							p.idproducto,
 							p.nombre,
+							p.codigobarra,
 							p.precioventa,
 							p.stock,
 							p.stockmin,
-							
 							
 							p.imagen,
 							cat.descripcion,
@@ -1509,7 +1509,7 @@ return $res;
 }
 
 function traerVentasPorId($id) {
-$sql = "select idventa,reftipopago,numero,fecha,total,usuario,cancelado,refclientes from dbventas where idventa =".$id;
+$sql = "select idventa,reftipopago,numero,fecha,total,usuario,(case when cancelado = 1 then 'Si' else 'No' end) as cancelado,refclientes from dbventas where idventa =".$id;
 $res = $this->query($sql,0);
 return $res;
 }
