@@ -99,7 +99,11 @@ break;
 case 'buscarProductos':
 		buscarProductos($serviciosReferencias);
 		break;
-		
+case 'eliminarMasivo':
+	borrarMasivo($serviciosReferencias);
+	break;
+	
+	
 case 'eliminarFoto':
 	eliminarFoto($serviciosReferencias);
 	break;
@@ -766,6 +770,7 @@ function buscarProductos($serviciosReferencias) {
                 	<table id="example" class="table table-responsive table-striped" style="font-size:0.8em; padding:2px;">
 						<thead>
                         <tr>
+							<th></th>
                         	<th align="left">Nombre</th>
 							<th align="left">Cod.Barra</th>
                             <th align="left">Precio</th>
@@ -777,6 +782,7 @@ function buscarProductos($serviciosReferencias) {
 						<tbody id="resultadosProd">';
 	while ($rowJ = mysql_fetch_array($res)) {
 		$cad3 .= '<tr>
+					<td><input type="checkbox" class="form-control" name="produ'.$rowJ[0].'" id="produ'.$rowJ[0].'" /></td>
 					<td>'.utf8_encode($rowJ[1]).'</td>
 					<td>'.($rowJ['codigobarra']).'</td>
 					<td>'.($tipo == 'Pedido' ? $rowJ['preciocosto'] : $rowJ['precioventa']).'</td>
@@ -809,11 +815,40 @@ function buscarProductos($serviciosReferencias) {
 	}
 	
 	$cad3 = $cad3.'</tbody>
-                                </table></div>
+                                </table>
+								<input type="button" id="borrarMasivo" class="btn btn-danger" value="Borrar Masivo" />
+								</div>
                             </div>
 						</div>';
 						
 	echo $cad3;
+}
+
+function borrarMasivo($serviciosReferencias) {
+	$numero = count($_POST);
+	$tags = array_keys($_POST);// obtiene los nombres de las varibles
+	$valores = array_values($_POST);// obtiene los valores de las varibles
+	$cantEncontrados = 0;
+	$cantidad = 1;
+	$idProducto = 0;
+	
+	$cad = '';
+	
+	for($i=0;$i<$numero;$i++){
+		
+		if (strpos($tags[$i],"produ") !== false) {
+			
+			if (isset($valores[$i])) {
+				
+				$idProducto = str_replace("produ","",$tags[$i]);
+				
+				$res = $serviciosReferencias->eliminarProductos($idProducto); 
+			}
+		}
+	}
+	
+	echo '';
+
 }
 
 function modificarprecios($serviciosReferencias) {

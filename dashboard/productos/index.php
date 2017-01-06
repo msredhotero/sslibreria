@@ -212,7 +212,7 @@ if ($_SESSION['refroll_predio'] != 1) {
         	
         </div>
     	<div class="panel-body" style="z-index:1;">
-        	
+        	<form class="form-inline formulario" role="form">
             	
                 <div class="row">
                     
@@ -257,12 +257,12 @@ if ($_SESSION['refroll_predio'] != 1) {
                 </div>
                 
                 <div class="row">
-                    <div class="alert"> </div>
+                    <div class="alert" id="errorBusqueda"> </div>
                     <div id="load"> </div>
                 </div>
 
-            
-            
+            <input type="hidden" id="accion" name="accion" value="eliminarMasivo" />
+            </form>
     	</div>
     </div>
     
@@ -289,10 +289,10 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	$('#buscar').click(function(e) {
-        $.ajax({
-				data:  {busqueda: $('#busqueda').val(),
-						tipobusqueda: $('#tipobusqueda').val(),
+	function buscarProducto(busqueda, tipobusqueda) {
+		$.ajax({
+				data:  {busqueda: busqueda,
+						tipobusqueda: tipobusqueda,
 						tipo: 'Pedido',
 						accion: 'buscarProductos'},
 				url:   '../../ajax/ajax.php',
@@ -305,6 +305,10 @@ $(document).ready(function(){
 						
 				}
 		});
+	}
+	
+	$('#buscar').click(function(e) {
+        buscarProducto($('#busqueda').val(), $('#tipobusqueda').val());
 		
 	});
 	
@@ -473,6 +477,52 @@ $(document).ready(function(){
 			});
 		}
     });
+	
+	
+	$("#resultados").on("click",'#borrarMasivo', function(){
+		//información del formulario
+		var formData = new FormData($(".formulario")[1]);
+		var message = "";
+		//hacemos la petición ajax  
+		$.ajax({
+			url: '../../ajax/ajax.php',  
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: formData,
+			//necesario para subir archivos via ajax
+			cache: false,
+			contentType: false,
+			processData: false,
+			//mientras enviamos el archivo
+			beforeSend: function(){
+				$("#load").html('<img src="../../imagenes/load13.gif" width="50" height="50" />');       
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+
+				if (data == '') {
+					$("#errorBusqueda").removeClass("alert-danger");
+					$("#errorBusqueda").removeClass("alert-info");
+					$("#errorBusqueda").addClass("alert-success");
+					$("#errorBusqueda").html('<strong>Ok!</strong> Se eliminaron todos los productos cargados. ');
+					buscarProducto($('#busqueda').val(), $('#tipobusqueda').val());
+					
+					
+				} else {
+					$("#errorBusqueda").removeClass("alert-danger");
+					$("#errorBusqueda").addClass("alert-danger");
+					$("#errorBusqueda").html('<strong>Error!</strong> '+data);
+					$("#load").html('');
+				}
+			},
+			//si ha ocurrido un error
+			error: function(){
+				$("#errorBusqueda").html('<strong>Error!</strong> Actualice la pagina');
+				$("#load").html('');
+			}
+		});
+	});
     
     $('#imagen1').on('change', function(e) {
 	  var Lector,
