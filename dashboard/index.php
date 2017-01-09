@@ -381,6 +381,7 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	
 	$(document).on('click', '.panel-heading span.clickable', function(e){
 		var $this = $(this);
 		if(!$this.hasClass('panel-collapsed')) {

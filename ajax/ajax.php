@@ -32,7 +32,6 @@ switch ($accion) {
 		registrar($serviciosUsuarios);
         break;
 
-
 case 'insertarConfiguracion':
 insertarConfiguracion($serviciosReferencias);
 break;
