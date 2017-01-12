@@ -101,7 +101,7 @@ case 'buscarProductos':
 case 'eliminarMasivo':
 	borrarMasivo($serviciosReferencias);
 	break;
-	
+
 	
 case 'eliminarFoto':
 	eliminarFoto($serviciosReferencias);
@@ -858,7 +858,7 @@ function modificarprecios($serviciosReferencias) {
 	
 	$resCategorias = $serviciosReferencias->traerProductosPorCategoria($idCategoria);
 	
-	$cad = 'prod';
+	$cad = 'produ';
 	
 	while ($rowFS = mysql_fetch_array($resCategorias)) {
 		if (isset($_POST[$cad.$rowFS[0]])) {

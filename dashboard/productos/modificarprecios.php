@@ -177,7 +177,7 @@ if ($_SESSION['refroll_predio'] != 1) {
 						$cantidad += 1;
 				?>
                 	<tr>
-                	<td align="center"><input class="form-control tildar" type="checkbox" name="prod<?php echo $row[0]; ?>" id="prod<?php echo $row[0]; ?>"/></td>
+                	<td align="center"><input class="form-control tildar" type="checkbox" name="produ<?php echo $row[0]; ?>" id="prod<?php echo $row[0]; ?>"/></td>
                     <td><?php echo $row['nombre']; ?></td>
                     <td><?php echo $row['codigo']; ?></td>
                     <td><?php echo $row['codigobarra']; ?></td>
@@ -210,6 +210,9 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <ul class="list-inline" style="margin-left:15px;">
                     <li>
                         <button type="button" class="btn btn-primary" id="cargar" style="margin-left:0px;">Modificar</button>
+                    </li>
+                    <li>
+                    	<input type="button" id="borrarMasivo" class="btn btn-danger" value="Borrar Masivo" />
                     </li>
                     <li>
                         <button type="button" class="btn btn-primary" id="volver" style="margin-left:0px;">Volver</button>
@@ -322,7 +325,7 @@ $(document).ready(function(){
 	//al enviar el formulario
     $('#cargar').click(function(){
 		
-
+			$('#accion').val('modificarprecios');
 			//información del formulario
 			var formData = new FormData($(".formulario")[0]);
 			var message = "";
@@ -372,6 +375,55 @@ $(document).ready(function(){
 			});
 		
     });
+	
+	
+	$('#borrarMasivo').click( function(){
+		
+		$('#accion').val('eliminarMasivo');
+		//información del formulario
+		var formData = new FormData($(".formulario")[0]);
+		var message = "";
+		//hacemos la petición ajax  
+		$.ajax({
+			url: '../../ajax/ajax.php',  
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: formData,
+			//necesario para subir archivos via ajax
+			cache: false,
+			contentType: false,
+			processData: false,
+			//mientras enviamos el archivo
+			beforeSend: function(){
+				$("#load").html('<img src="../../imagenes/load13.gif" width="50" height="50" />');       
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+
+				if (data == '') {
+					$("#errorBusqueda").removeClass("alert-danger");
+					$("#errorBusqueda").removeClass("alert-info");
+					$("#errorBusqueda").addClass("alert-success");
+					$("#errorBusqueda").html('<strong>Ok!</strong> Se eliminaron todos los productos cargados. ');
+					url = "modificarprecios.php?idcategoria=" + <?php echo $id; ?>;
+					$(location).attr('href',url);
+					
+					
+				} else {
+					$("#errorBusqueda").removeClass("alert-danger");
+					$("#errorBusqueda").addClass("alert-danger");
+					$("#errorBusqueda").html('<strong>Error!</strong> '+data);
+					$("#load").html('');
+				}
+			},
+			//si ha ocurrido un error
+			error: function(){
+				$("#errorBusqueda").html('<strong>Error!</strong> Actualice la pagina');
+				$("#load").html('');
+			}
+		});
+	});
     
     $('#imagen1').on('change', function(e) {
 	  var Lector,
