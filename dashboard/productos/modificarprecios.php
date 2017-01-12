@@ -215,7 +215,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                     	<input type="button" id="borrarMasivo" class="btn btn-danger" value="Borrar Masivo" />
                     </li>
                     <li>
-                        <button type="button" class="btn btn-primary" id="volver" style="margin-left:0px;">Volver</button>
+                        <button type="button" class="btn btn-default" id="volver" style="margin-left:0px;">Volver</button>
                     </li>
                 </ul>
                 </div>
