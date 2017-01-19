@@ -1289,30 +1289,64 @@ $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarPredio_menu($id); 
 echo $res; 
 } 
-function insertarCategorias($serviciosReferencias) { 
-$descripcion = $_POST['descripcion']; 
-$res = $serviciosReferencias->insertarCategorias($descripcion); 
-if ((integer)$res > 0) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al insertar datos';	
+
+
+function insertarCategorias($serviciosReferencias) {
+$descripcion = $_POST['descripcion'];
+if (isset($_POST['esegreso'])) {
+$esegreso = 1;
+} else {
+$esegreso = 0;
+}
+
+$activo = 1;
+
+$res = $serviciosReferencias->insertarCategorias($descripcion,$esegreso,$activo);
+if ((integer)$res > 0) {
+echo '';
+} else {
+echo 'Huvo un error al insertar datos';
+}
+}
+
+function modificarCategorias($serviciosReferencias) {
+$id = $_POST['id'];
+$descripcion = $_POST['descripcion'];
+if (isset($_POST['esegreso'])) {
+$esegreso = 1;
+} else {
+$esegreso = 0;
+}
+
+if (isset($_POST['activo'])) {
+	$activo = 1;
+} else {
+	$activo = 0;
+}
+
+$res = $serviciosReferencias->modificarCategorias($id,$descripcion,$esegreso,$activo);
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
 } 
-} 
-function modificarCategorias($serviciosReferencias) { 
-$id = $_POST['id']; 
-$descripcion = $_POST['descripcion']; 
-$res = $serviciosReferencias->modificarCategorias($id,$descripcion); 
-if ($res == true) { 
-echo ''; 
-} else { 
-echo 'Huvo un error al modificar datos'; 
-} 
-} 
+
+
 function eliminarCategorias($serviciosReferencias) { 
-$id = $_POST['id']; 
-$res = $serviciosReferencias->eliminarCategorias($id); 
-echo $res; 
+	$id = $_POST['id']; 
+	
+	$res = $serviciosReferencias->eliminarCategorias($id); 
+
+	$resR = $serviciosReferencias->traerProductosPorCategoria($id);
+	// doy de baja a todos los productos correspondientes a esta categoria
+	while ($row = mysql_fetch_array($resR)) {
+		$serviciosReferencias->eliminarProductos($row[0]);		
+	}
+	echo $res; 
 } 
+
+
 function insertarEstados($serviciosReferencias) { 
 $estado = $_POST['estado']; 
 $icono = $_POST['icono']; 

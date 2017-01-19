@@ -447,7 +447,7 @@ p.preciocosto,
 p.tipoimagen
 from dbproductos p 
 inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
-where p.activo = 1
+where p.activo = 1 and cat.activo = 1
 order by p.nombre"; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -472,7 +472,7 @@ p.preciocosto,
 p.tipoimagen
 from dbproductos p 
 inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
-where p.activo = 1
+where p.activo = 1 and cat.activo = 1
 order by 1
 limit 100"; 
 $res = $this->query($sql,0); 
@@ -501,7 +501,7 @@ p.preciocosto,
 p.tipoimagen
 from dbproductos p 
 inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
-where p.activo = 1 and cat.idcategoria = ".$categoria."
+where p.activo = 1 and cat.idcategoria = ".$categoria." and cat.activo = 1
 order by p.nombre"; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -529,7 +529,7 @@ function buscarProductos($tipobusqueda,$busqueda) {
 							p.tipoimagen
 						from dbproductos p 
 						inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
-						where p.activo = 1 and p.nombre like '%".$busqueda."%'
+						where p.activo = 1 and p.nombre like '%".$busqueda."%' and cat.activo = 1
 						order by p.nombre
 						limit 100";
 				break;
@@ -552,7 +552,7 @@ function buscarProductos($tipobusqueda,$busqueda) {
 							p.tipoimagen
 						from dbproductos p 
 						inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
-						where p.activo = 1 and p.codigobarra = '".$busqueda."'
+						where p.activo = 1 and p.codigobarra = '".$busqueda."' and cat.activo = 1
 						order by p.nombre
 						limit 100";
 				break;
@@ -575,7 +575,7 @@ function buscarProductos($tipobusqueda,$busqueda) {
 							p.tipoimagen
 						from dbproductos p 
 						inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
-						where p.activo = 1 and p.codigo like '%".$busqueda."%'
+						where p.activo = 1 and p.codigo like '%".$busqueda."%' and cat.activo = 1
 						order by p.nombre
 						limit 100";
 				break;
@@ -623,7 +623,7 @@ p.descripcion,
 p.tipoimagen
 from dbproductos p 
 inner join tbcategorias cat ON cat.idcategoria = p.refcategorias 
-where p.stockmin >= p.stock and p.activo = 1
+where p.stockmin >= p.stock and p.activo = 1 and cat.activo = 1
 order by nombre"; 
 $res = $this->query($sql,0); 
 return $res; 
@@ -1044,46 +1044,48 @@ return $res;
 
 /* PARA Categorias */
 
-function insertarCategorias($descripcion) { 
-$sql = "insert into tbcategorias(idcategoria,descripcion) 
-values ('','".utf8_decode($descripcion)."')"; 
-$res = $this->query($sql,1); 
-return $res; 
-} 
+function insertarCategorias($descripcion,$esegreso,$activo) {
+$sql = "insert into tbcategorias(idcategoria,descripcion,esegreso,activo)
+values ('','".utf8_decode($descripcion)."',".$esegreso.",".$activo.")";
+$res = $this->query($sql,1);
+return $res;
+}
 
 
-function modificarCategorias($id,$descripcion) { 
-$sql = "update tbcategorias 
-set 
-descripcion = '".utf8_decode($descripcion)."' 
-where idcategoria =".$id; 
-$res = $this->query($sql,0); 
-return $res; 
+function modificarCategorias($id,$descripcion,$esegreso,$activo) {
+$sql = "update tbcategorias
+set
+descripcion = '".utf8_decode($descripcion)."',esegreso = ".$esegreso.",activo = ".$activo."
+where idcategoria =".$id;
+$res = $this->query($sql,0);
+return $res;
 } 
 
 
 function eliminarCategorias($id) { 
-$sql = "delete from tbcategorias where idcategoria =".$id; 
+$sql = "update tbcategorias set activo = 0 where idcategoria =".$id; 
 $res = $this->query($sql,0); 
 return $res; 
 } 
 
 
-function traerCategorias() { 
-$sql = "select 
+function traerCategorias() {
+$sql = "select
 c.idcategoria,
-c.descripcion
-from tbcategorias c 
-order by 1"; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
+c.descripcion,
+(case when c.esegreso = 1 then 'Si' else 'No' end) as esegreso,
+(case when c.activo = 1 then 'Si' else 'No' end) as activo
+from tbcategorias c
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
 
 
-function traerCategoriasPorId($id) { 
-$sql = "select idcategoria,descripcion from tbcategorias where idcategoria =".$id; 
-$res = $this->query($sql,0); 
-return $res; 
+function traerCategoriasPorId($id) {
+$sql = "select idcategoria,descripcion,esegreso,activo from tbcategorias where idcategoria =".$id;
+$res = $this->query($sql,0);
+return $res;
 } 
 
 /* Fin */

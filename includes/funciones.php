@@ -48,7 +48,16 @@ class Servicios {
 		$classPagar = '';
 		$lblTask = '';
 		$iconoEditar = '';
+		$cambio = 0;
+		
 		switch ($cantidad) {
+			case 0:
+				$cambio = 1;
+				$cantidad = 3;
+				$classMod = 'varmodificar';
+				$classEli = 'varborrar';
+				$idresultados = "resultados";
+				break;
 			case 99:
 				$cantidad = 6;
 				$classMod = '';
@@ -119,123 +128,244 @@ class Servicios {
 			$classEli = 'varborrar';
 			$idresultados = "resultados";
 		}*/
-		while ($row = mysql_fetch_array($datos)) {
-			$cadsubRows = '';
-			$cadRows = $cadRows.'
-			
-					<tr class="'.$row[0].'">
-                        	';
-			
-			
-			for ($i=1;$i<=$cantidad;$i++) {
+		if ($cambio == 1) { 
+			while ($row = mysql_fetch_array($datos)) {
+				$cadsubRows = '';
+				$cadRows = $cadRows.'
 				
-				$cadsubRows = $cadsubRows.'<td><div style="height:60px;overflow:auto;">'.$row[$i].'</div></td>';	
+						<tr class="'.$row[0].'"><td><div style="height:60px;overflow:auto;"><input type="checkbox" name="cat'.$row[0].'" id="cat'.$row[0].'"/></div></td>
+								';
+				
+				
+				for ($i=1;$i<=$cantidad;$i++) {
+					
+					$cadsubRows = $cadsubRows.'<td><div style="height:60px;overflow:auto;">'.$row[$i].'</div></td>';	
+				}
+				
+				
+				if ($classMod != '') { 
+					$cadRows = $cadRows.'
+									'.$cadsubRows.'
+									<td>
+										
+										<div class="btn-group">
+											<button class="btn btn-success" type="button">Acciones</button>
+											
+											<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
+											<span class="caret"></span>
+											<span class="sr-only">Toggle Dropdown</span>
+											</button>
+											
+											<ul class="dropdown-menu" role="menu">
+											   
+												<li>
+												<a href="javascript:void(0)" class="'.$classMod.'" id="'.$row[0].'"><span class="glyphicon glyphicon-pencil"></span> Modificar</a>
+												</li>';
+					if ($classFinalizar != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classFinalizar.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal2"><span class="glyphicon glyphicon-ok"></span> Finalizar</a>
+												</li>';	
+					}						
+					
+					if ($classVer != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classVer.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-search"></span> '.$lblVer.'</a>
+												</li>';	
+					}
+					
+					if ($classTask != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classTask.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal2"><span class="glyphicon glyphicon-usd"></span> '.$lblTask.'</a>
+												</li>';	
+					}
+					
+					if ($classPagar != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classPagar.'" id="'.$row[0].'"><span class="glyphicon glyphicon-shopping-cart"></span> Entrada</a>
+												</li>';	
+					}
+					
+					if ($classEditar != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classEditar.'" id="'.$row[0].'" ><span class="'.$iconoEditar.'"></span> '.$lblEditar.'</a>
+												</li>';	
+					}
+											
+					$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'"><span class="glyphicon glyphicon-remove"></span> Borrar</a>
+												</li>
+												
+											</ul>
+										</div>
+									</td>
+								</tr>
+					';
+				} else {
+					
+					$cadRows = $cadRows.'
+									'.$cadsubRows.'
+									<td>
+										
+										<div class="btn-group">
+											<button class="btn btn-success" type="button">Action</button>
+											
+											<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
+											<span class="caret"></span>
+											<span class="sr-only">Toggle Dropdown</span>
+											</button>
+											
+											<ul class="dropdown-menu" role="menu">
+											
+												<li>
+												<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'">Delete</a>
+												</li>
+												
+											</ul>
+										</div>
+									</td>
+								</tr>
+					';
+				}
 			}
 			
+			$cadView = $cadView.'
+				<table class="table table-striped table-responsive" id="example">
+					<thead>
+						<tr>
+							<th><input name="select_all" value="0" id="example-select-all" type="checkbox"></th>
+							'.$cabeceras.'
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody id="'.$idresultados.'">
+						
+						'.($cadRows).'
+					</tbody>
+				</table>
+				<div style="margin-bottom:85px; margin-right:60px;"></div>
 			
-			if ($classMod != '') { 
+			';	
+		} else {
+			while ($row = mysql_fetch_array($datos)) {
+				$cadsubRows = '';
 				$cadRows = $cadRows.'
-								'.$cadsubRows.'
-								<td>
-									
-									<div class="btn-group">
-										<button class="btn btn-success" type="button">Acciones</button>
+				
+						<tr class="'.$row[0].'">
+								';
+				
+				
+				for ($i=1;$i<=$cantidad;$i++) {
+					
+					$cadsubRows = $cadsubRows.'<td><div style="height:60px;overflow:auto;">'.$row[$i].'</div></td>';	
+				}
+				
+				
+				if ($classMod != '') { 
+					$cadRows = $cadRows.'
+									'.$cadsubRows.'
+									<td>
 										
-										<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
-										<span class="caret"></span>
-										<span class="sr-only">Toggle Dropdown</span>
-										</button>
-										
-										<ul class="dropdown-menu" role="menu">
-										   
-											<li>
-											<a href="javascript:void(0)" class="'.$classMod.'" id="'.$row[0].'"><span class="glyphicon glyphicon-pencil"></span> Modificar</a>
-											</li>';
-				if ($classFinalizar != '') {
-					$cadRows = $cadRows.'		<li>
-											<a href="javascript:void(0)" class="'.$classFinalizar.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal2"><span class="glyphicon glyphicon-ok"></span> Finalizar</a>
-											</li>';	
-				}						
-				
-				if ($classVer != '') {
-					$cadRows = $cadRows.'		<li>
-											<a href="javascript:void(0)" class="'.$classVer.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-search"></span> '.$lblVer.'</a>
-											</li>';	
-				}
-				
-				if ($classTask != '') {
-					$cadRows = $cadRows.'		<li>
-											<a href="javascript:void(0)" class="'.$classTask.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal2"><span class="glyphicon glyphicon-usd"></span> '.$lblTask.'</a>
-											</li>';	
-				}
-				
-				if ($classPagar != '') {
-					$cadRows = $cadRows.'		<li>
-											<a href="javascript:void(0)" class="'.$classPagar.'" id="'.$row[0].'"><span class="glyphicon glyphicon-shopping-cart"></span> Entrada</a>
-											</li>';	
-				}
-				
-				if ($classEditar != '') {
-					$cadRows = $cadRows.'		<li>
-											<a href="javascript:void(0)" class="'.$classEditar.'" id="'.$row[0].'" ><span class="'.$iconoEditar.'"></span> '.$lblEditar.'</a>
-											</li>';	
-				}
-										
-				$cadRows = $cadRows.'		<li>
-											<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'"><span class="glyphicon glyphicon-remove"></span> Borrar</a>
-											</li>
+										<div class="btn-group">
+											<button class="btn btn-success" type="button">Acciones</button>
 											
-										</ul>
-									</div>
-								</td>
-							</tr>
-				';
-			} else {
-				
-				$cadRows = $cadRows.'
-								'.$cadsubRows.'
-								<td>
-									
-									<div class="btn-group">
-										<button class="btn btn-success" type="button">Action</button>
-										
-										<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
-										<span class="caret"></span>
-										<span class="sr-only">Toggle Dropdown</span>
-										</button>
-										
-										<ul class="dropdown-menu" role="menu">
-										
-											<li>
-											<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'">Delete</a>
-											</li>
+											<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
+											<span class="caret"></span>
+											<span class="sr-only">Toggle Dropdown</span>
+											</button>
 											
-										</ul>
-									</div>
-								</td>
-							</tr>
-				';
+											<ul class="dropdown-menu" role="menu">
+											   
+												<li>
+												<a href="javascript:void(0)" class="'.$classMod.'" id="'.$row[0].'"><span class="glyphicon glyphicon-pencil"></span> Modificar</a>
+												</li>';
+					if ($classFinalizar != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classFinalizar.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal2"><span class="glyphicon glyphicon-ok"></span> Finalizar</a>
+												</li>';	
+					}						
+					
+					if ($classVer != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classVer.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-search"></span> '.$lblVer.'</a>
+												</li>';	
+					}
+					
+					if ($classTask != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classTask.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal2"><span class="glyphicon glyphicon-usd"></span> '.$lblTask.'</a>
+												</li>';	
+					}
+					
+					if ($classPagar != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classPagar.'" id="'.$row[0].'"><span class="glyphicon glyphicon-shopping-cart"></span> Entrada</a>
+												</li>';	
+					}
+					
+					if ($classEditar != '') {
+						$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classEditar.'" id="'.$row[0].'" ><span class="'.$iconoEditar.'"></span> '.$lblEditar.'</a>
+												</li>';	
+					}
+											
+					$cadRows = $cadRows.'		<li>
+												<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'"><span class="glyphicon glyphicon-remove"></span> Borrar</a>
+												</li>
+												
+											</ul>
+										</div>
+									</td>
+								</tr>
+					';
+				} else {
+					
+					$cadRows = $cadRows.'
+									'.$cadsubRows.'
+									<td>
+										
+										<div class="btn-group">
+											<button class="btn btn-success" type="button">Action</button>
+											
+											<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
+											<span class="caret"></span>
+											<span class="sr-only">Toggle Dropdown</span>
+											</button>
+											
+											<ul class="dropdown-menu" role="menu">
+											
+												<li>
+												<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'">Delete</a>
+												</li>
+												
+											</ul>
+										</div>
+									</td>
+								</tr>
+					';
+				}
 			}
+			
+			$cadView = $cadView.'
+				<table class="table table-striped table-responsive" id="example">
+					<thead>
+						<tr>
+							'.$cabeceras.'
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody id="'.$idresultados.'">
+						
+						'.($cadRows).'
+					</tbody>
+				</table>
+				<div style="margin-bottom:85px; margin-right:60px;"></div>
+			
+			';	
 		}
 		
 		//'.utf8_encode($cadRows).' verificar al subir al servidor
 		
-		$cadView = $cadView.'
-			<table class="table table-striped table-responsive" id="example">
-            	<thead>
-                	<tr>
-                    	'.$cabeceras.'
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="'.$idresultados.'">
-
-                	'.($cadRows).'
-                </tbody>
-            </table>
-			<div style="margin-bottom:85px; margin-right:60px;"></div>
 		
-		';	
 		
 		
 		return $cadView;
