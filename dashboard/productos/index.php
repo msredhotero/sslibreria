@@ -289,6 +289,13 @@ if ($_SESSION['refroll_predio'] != 1) {
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	$(".formulario").bind("keypress", function(e) {
+	  if (e.keyCode == 13) {               
+		e.preventDefault();
+		return false;
+	  }
+	});
+
 	function buscarProducto(busqueda, tipobusqueda) {
 		$.ajax({
 				data:  {busqueda: busqueda,

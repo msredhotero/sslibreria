@@ -212,6 +212,11 @@ break;
 case 'eliminarCategorias': 
 eliminarCategorias($serviciosReferencias); 
 break; 
+
+case 'borrarMasivoCategorias':
+	borrarMasivoCategorias($serviciosReferencias);
+	break;
+
 case 'insertarEstados': 
 insertarEstados($serviciosReferencias); 
 break; 
@@ -1345,6 +1350,38 @@ function eliminarCategorias($serviciosReferencias) {
 	}
 	echo $res; 
 } 
+
+function borrarMasivoCategorias($serviciosReferencias) {
+	$numero = count($_POST);
+	$tags = array_keys($_POST);// obtiene los nombres de las varibles
+	$valores = array_values($_POST);// obtiene los valores de las varibles
+	$cantEncontrados = 0;
+	$cantidad = 1;
+	$idProducto = 0;
+	
+	$cad = '';
+	
+	for($i=0;$i<$numero;$i++){
+		
+		if (strpos($tags[$i],"produ") !== false) {
+			
+			if (isset($valores[$i])) {
+				
+				$idProducto = str_replace("produ","",$tags[$i]);
+				
+				$res = $serviciosReferencias->eliminarCategorias($idProducto); 
+
+				$resR = $serviciosReferencias->traerProductosPorCategoria($idProducto);
+				// doy de baja a todos los productos correspondientes a esta categoria
+				while ($row = mysql_fetch_array($resR)) {
+					$serviciosReferencias->eliminarProductos($row[0]);		
+				}
+			}
+		}
+	}
+	
+	echo '';	
+}
 
 
 function insertarEstados($serviciosReferencias) { 

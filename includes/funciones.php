@@ -133,7 +133,7 @@ class Servicios {
 				$cadsubRows = '';
 				$cadRows = $cadRows.'
 				
-						<tr class="'.$row[0].'"><td><div style="height:60px;overflow:auto;"><input type="checkbox" name="cat'.$row[0].'" id="cat'.$row[0].'"/></div></td>
+						<tr class="'.$row[0].'"><td><div style="height:60px;overflow:auto;"></div></td>
 								';
 				
 				
@@ -232,7 +232,7 @@ class Servicios {
 				<table class="table table-striped table-responsive" id="example">
 					<thead>
 						<tr>
-							<th><input name="select_all" value="0" id="example-select-all" type="checkbox"></th>
+							<th>
 							'.$cabeceras.'
 							<th>Acciones</th>
 						</tr>

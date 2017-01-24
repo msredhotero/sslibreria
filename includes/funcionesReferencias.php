@@ -1076,6 +1076,7 @@ c.descripcion,
 (case when c.esegreso = 1 then 'Si' else 'No' end) as esegreso,
 (case when c.activo = 1 then 'Si' else 'No' end) as activo
 from tbcategorias c
+where c.activo = 1
 order by 1";
 $res = $this->query($sql,0);
 return $res;
