@@ -12,7 +12,9 @@ function conexion() {
 		$password = "";
 		
 		/*
-		$hostname = "localhost";
+		$hostname = "185.28.21.241"; //para conexiones remotas
+		
+		//$hostname = "localhost";
 		$database = "u235498999_libre";
 		$username = "u235498999_libre";
 		$password = "rhcp7575";

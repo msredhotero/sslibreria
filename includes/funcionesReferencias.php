@@ -97,6 +97,12 @@ function GUID()
     return $string;
 }
 
+function crearDirectorioPrincipal($dir) {
+	if (!file_exists($dir)) {
+		mkdir($dir, 0777);
+	}
+}
+
 	function subirArchivo($file,$carpeta,$id) {
 		
 		
@@ -1682,7 +1688,7 @@ return $res;
 
 function insertarLibros($autor,$titulo,$editorial,$genero,$paginas,$edicion,$refclientes) {
 $sql = "insert into dblibros(idlibro,autor,titulo,editorial,genero,paginas,edicion,refclientes)
-values ('','".utf8_decode($autor)."','".utf8_decode($titulo)."','".utf8_decode($editorial)."','".utf8_decode($genero)."',".$paginas.",'".utf8_decode($edicion)."',".$refclientes.")";
+values ('','".utf8_decode($autor)."','".utf8_decode($titulo)."','".utf8_decode($editorial)."','".utf8_decode($genero)."',".($paginas == '' ? 0 : $paginas).",'".utf8_decode($edicion)."',".$refclientes.")";
 $res = $this->query($sql,1);
 return $res;
 }
@@ -1691,7 +1697,7 @@ return $res;
 function modificarLibros($id,$autor,$titulo,$editorial,$genero,$paginas,$edicion,$refclientes) {
 $sql = "update dblibros
 set
-autor = '".utf8_decode($autor)."',titulo = '".utf8_decode($titulo)."',editorial = '".utf8_decode($editorial)."',genero = '".utf8_decode($genero)."',paginas = ".$paginas.",edicion = '".utf8_decode($edicion)."',refclientes = ".$refclientes."
+autor = '".utf8_decode($autor)."',titulo = '".utf8_decode($titulo)."',editorial = '".utf8_decode($editorial)."',genero = '".utf8_decode($genero)."',paginas = ".($paginas == '' ? 0 : $paginas).",edicion = '".utf8_decode($edicion)."',refclientes = ".$refclientes."
 where idlibro =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -1719,6 +1725,26 @@ l.ruta,
 l.refclientes
 from dblibros l
 inner join dbclientes cli ON cli.idcliente = l.refclientes
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerLibrosPorCliente($idCliente) {
+$sql = "select
+l.idlibro,
+l.autor,
+l.titulo,
+l.editorial,
+l.genero,
+l.paginas,
+l.edicion,
+cli.nombrecompleto,
+l.ruta,
+l.refclientes
+from dblibros l
+inner join dbclientes cli ON cli.idcliente = l.refclientes
+where cli.idcliente = ".$idCliente."
 order by 1";
 $res = $this->query($sql,0);
 return $res;

@@ -127,7 +127,7 @@ if ($_SESSION['refroll_predio'] != 1) {
                 <?php
 					if (mysql_num_rows($autorizacion)>0) {
 				?>
-                	<img src="../../imagenes/pdf_ico2.jpg" width="100" height="100"><a href="../<?php echo mysql_result($resResultado,0,'ruta'); ?>">Haga "Click" aqui para descargar </a>
+                	<img src="../../imagenes/pdf_ico2.jpg" width="100" height="100"><a href="../<?php echo mysql_result($resResultado,0,'ruta'); ?>" target="_blank">Haga "Click" aqui para descargar.</a>
                 <?php 
 					$serviciosReferencias->eliminarAutorizacionPorToken($token);
 					} else { ?>

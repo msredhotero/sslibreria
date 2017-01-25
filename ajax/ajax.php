@@ -1629,10 +1629,14 @@ function insertarLibros($serviciosReferencias) {
 	$res = $serviciosReferencias->insertarLibros($autor,$titulo,$editorial,$genero,$paginas,$edicion,$refclientes);
 	
 	if ((integer)$res > 0) {
+		
+		$serviciosReferencias->crearDirectorioPrincipal("./../archivos/libros/".$refclientes);
+		
 		$imagenes = array("imagen" => 'ruta');
 	
 		foreach ($imagenes as $valor) {
-			$serviciosReferencias->subirArchivo($valor,'libros',$res);
+			$serviciosReferencias->subirArchivo($valor,'libros/'.$refclientes,$res);
+			
 		}
 		echo '';
 	} else {
@@ -1655,12 +1659,14 @@ function modificarLibros($serviciosReferencias) {
 	
 	if ($res == true) {
 		
-		$serviciosReferencias->borrarDirecctorio("./../archivos/libros/".$id);
+		$serviciosReferencias->borrarDirecctorio("./../archivos/libros/".$refclientes."/".$id);
+		
+		$serviciosReferencias->crearDirectorioPrincipal("./../archivos/libros/".$refclientes);
 		
 		$imagenes = array("imagen" => 'ruta');
 	
 		foreach ($imagenes as $valor) {
-			$serviciosReferencias->subirArchivo($valor,'libros',$id);
+			$serviciosReferencias->subirArchivo($valor,'libros/'.$refclientes,$id);
 		}
 		echo '';
 	} else {
@@ -1670,7 +1676,7 @@ function modificarLibros($serviciosReferencias) {
 
 function eliminarLibros($serviciosReferencias) {
 	$id = $_POST['id'];
-	$res = $serviciosReferencias->borrarDirecctorio("./../archivos/libros/".$id);
+	$res = $serviciosReferencias->borrarDirecctorio("./../archivos/libros/".$refclientes."/".$id);
 	$serviciosReferencias->eliminarLibro($id);
 	echo $res;
 } 

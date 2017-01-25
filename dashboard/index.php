@@ -253,7 +253,7 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
                                     	<button type="button" class="btn btn-warning" id="pagarCliente"><span class="glyphicon glyphicon-credit-card"></span> Pagar</button>
                                     </li>
                                     <li>
-                                    	<button type="button" class="btn btn-info" id="pagarCliente"><span class="glyphicon glyphicon-book"></span> Libros</button>
+                                    	<button type="button" class="btn btn-info varlibros" id="librosCliente"><span class="glyphicon glyphicon-book"></span> Libros</button>
                                     </li>     
                                 </ul>
                             </div>
@@ -487,6 +487,18 @@ $(document).ready(function(){
 		  if (!isNaN(usersid)) {
 			
 			url = "pedidos/entrada.php?id=" + usersid;
+			$(location).attr('href',url);
+		  } else {
+			alert("Error, vuelva a realizar la acción.");	
+		  }
+	});//fin del boton entradas
+	
+	$('.varlibros').click( function(){
+		  usersid =  $('#refclientes').chosen().val();
+		  
+		  if (!isNaN(usersid)) {
+			
+			url = "libros/libros.php?id=" + usersid;
 			$(location).attr('href',url);
 		  } else {
 			alert("Error, vuelva a realizar la acción.");	
