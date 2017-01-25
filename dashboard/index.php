@@ -242,16 +242,19 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
                         </div>
                     </div>
                     <div class="col-md-6">
-                    	<div class="form-group col-md-6" style="display:block">
-                            <label class="control-label" for="codigobarra" style="text-align:left">Buscar Compras y Pagos | Pagar</label>
+                    	<div class="form-group col-md-12" style="display:block">
+                            <label class="control-label" for="codigobarra" style="text-align:left">Buscar Compras y Pagos | Pagar | Libros</label>
                             <div class="input-group col-md-12">
                                 <ul class="list-inline">
                                 	<li>
-                                    	<button type="button" class="btn btn-primary" id="buscarCliente" style="margin-left:0px;"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+                                    	<button type="button" class="btn btn-primary" id="buscarCliente"><span class="glyphicon glyphicon-search"></span> Buscar</button>
                                     </li>
                                     <li>
-                                    	<button type="button" class="btn btn-warning" id="pagarCliente" style="margin-left:0px;"><span class="glyphicon glyphicon-credit-card"></span> Pagar</button>
-                                    </li>    
+                                    	<button type="button" class="btn btn-warning" id="pagarCliente"><span class="glyphicon glyphicon-credit-card"></span> Pagar</button>
+                                    </li>
+                                    <li>
+                                    	<button type="button" class="btn btn-info" id="pagarCliente"><span class="glyphicon glyphicon-book"></span> Libros</button>
+                                    </li>     
                                 </ul>
                             </div>
                         </div>

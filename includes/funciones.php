@@ -113,6 +113,15 @@ class Servicios {
 				$idresultados = "resultados";
 				$lblVer = 'Detalle';
 				break;
+			case 92:
+				$cantidad = 7;
+				$classMod = 'varmodificarlibros';
+				$classEli = 'varborrarlibros';
+				$classEditar = 'vardescargar';
+				$iconoEditar = 'glyphicon glyphicon-download-alt';
+				$lblEditar	  = 'Descargar';
+				$idresultados = "resultados";
+				break;
 			default:
 				$classMod = 'varmodificar';
 				$classEli = 'varborrar';
@@ -128,124 +137,7 @@ class Servicios {
 			$classEli = 'varborrar';
 			$idresultados = "resultados";
 		}*/
-		if ($cambio == 1) { 
-			while ($row = mysql_fetch_array($datos)) {
-				$cadsubRows = '';
-				$cadRows = $cadRows.'
-				
-						<tr class="'.$row[0].'"><td><div style="height:60px;overflow:auto;"></div></td>
-								';
-				
-				
-				for ($i=1;$i<=$cantidad;$i++) {
-					
-					$cadsubRows = $cadsubRows.'<td><div style="height:60px;overflow:auto;">'.$row[$i].'</div></td>';	
-				}
-				
-				
-				if ($classMod != '') { 
-					$cadRows = $cadRows.'
-									'.$cadsubRows.'
-									<td>
-										
-										<div class="btn-group">
-											<button class="btn btn-success" type="button">Acciones</button>
-											
-											<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
-											<span class="caret"></span>
-											<span class="sr-only">Toggle Dropdown</span>
-											</button>
-											
-											<ul class="dropdown-menu" role="menu">
-											   
-												<li>
-												<a href="javascript:void(0)" class="'.$classMod.'" id="'.$row[0].'"><span class="glyphicon glyphicon-pencil"></span> Modificar</a>
-												</li>';
-					if ($classFinalizar != '') {
-						$cadRows = $cadRows.'		<li>
-												<a href="javascript:void(0)" class="'.$classFinalizar.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal2"><span class="glyphicon glyphicon-ok"></span> Finalizar</a>
-												</li>';	
-					}						
-					
-					if ($classVer != '') {
-						$cadRows = $cadRows.'		<li>
-												<a href="javascript:void(0)" class="'.$classVer.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-search"></span> '.$lblVer.'</a>
-												</li>';	
-					}
-					
-					if ($classTask != '') {
-						$cadRows = $cadRows.'		<li>
-												<a href="javascript:void(0)" class="'.$classTask.'" id="'.$row[0].'" data-toggle="modal" data-target="#myModal2"><span class="glyphicon glyphicon-usd"></span> '.$lblTask.'</a>
-												</li>';	
-					}
-					
-					if ($classPagar != '') {
-						$cadRows = $cadRows.'		<li>
-												<a href="javascript:void(0)" class="'.$classPagar.'" id="'.$row[0].'"><span class="glyphicon glyphicon-shopping-cart"></span> Entrada</a>
-												</li>';	
-					}
-					
-					if ($classEditar != '') {
-						$cadRows = $cadRows.'		<li>
-												<a href="javascript:void(0)" class="'.$classEditar.'" id="'.$row[0].'" ><span class="'.$iconoEditar.'"></span> '.$lblEditar.'</a>
-												</li>';	
-					}
-											
-					$cadRows = $cadRows.'		<li>
-												<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'"><span class="glyphicon glyphicon-remove"></span> Borrar</a>
-												</li>
-												
-											</ul>
-										</div>
-									</td>
-								</tr>
-					';
-				} else {
-					
-					$cadRows = $cadRows.'
-									'.$cadsubRows.'
-									<td>
-										
-										<div class="btn-group">
-											<button class="btn btn-success" type="button">Action</button>
-											
-											<button class="btn btn-success dropdown-toggle" data-toggle="dropdown" type="button">
-											<span class="caret"></span>
-											<span class="sr-only">Toggle Dropdown</span>
-											</button>
-											
-											<ul class="dropdown-menu" role="menu">
-											
-												<li>
-												<a href="javascript:void(0)" class="'.$classEli.'" id="'.$row[0].'">Delete</a>
-												</li>
-												
-											</ul>
-										</div>
-									</td>
-								</tr>
-					';
-				}
-			}
-			
-			$cadView = $cadView.'
-				<table class="table table-striped table-responsive" id="example">
-					<thead>
-						<tr>
-							<th>
-							'.$cabeceras.'
-							<th>Acciones</th>
-						</tr>
-					</thead>
-					<tbody id="'.$idresultados.'">
-						
-						'.($cadRows).'
-					</tbody>
-				</table>
-				<div style="margin-bottom:85px; margin-right:60px;"></div>
-			
-			';	
-		} else {
+		
 			while ($row = mysql_fetch_array($datos)) {
 				$cadsubRows = '';
 				$cadRows = $cadRows.'
@@ -361,7 +253,7 @@ class Servicios {
 				<div style="margin-bottom:85px; margin-right:60px;"></div>
 			
 			';	
-		}
+		
 		
 		//'.utf8_encode($cadRows).' verificar al subir al servidor
 		
@@ -683,7 +575,7 @@ class Servicios {
 												
 												} else {
 												
-												if ($row[0]=='imagen') {
+												if  (($row[0]=='imagen') || (((integer)(str_replace('varchar(','',$row[1])) == 149))) {
 													$label = ucwords($label);
 													$campo = strtolower($row[0]);
 													
@@ -691,8 +583,8 @@ class Servicios {
 													$form	=	$form.'
 													
 													<div class="row" style="margin-left:25px; margin-right:25px;">
-														<h4>Agregar Imagen</h4>
-															<p style=" color: #999;">Imagenes / Archivos (tamaño maximo del archivo 2 MB)</p>
+														<h4>Agregar Imagen/Archivos</h4>
+															<p style=" color: #999;">Imagenes / Archivos (tamaño maximo del archivo 9 MB)</p>
 															<div style="height:auto; 
 																	width:100%; 
 																	background-color:#FFF;
@@ -777,6 +669,15 @@ class Servicios {
 							on	s.idproducto = f.refproyecto
 
 							where s.idproducto = ".$id;
+		$result =   $this->query($sql, 0);
+		return $result;	
+	}
+	
+	
+	function traerLibroUnico($id) {
+		$sql    =   "select s.ruta, s.titulo, s.idlibro
+							from dblibros s
+							where s.idlibro = ".$id." and ruta <> ''";
 		$result =   $this->query($sql, 0);
 		return $result;	
 	}
@@ -1009,10 +910,11 @@ class Servicios {
 											
 											} else {
 												
-												if ($row[0]=='imagen') {
+												if ($row[0]=='imagen'){
 													$label = ucwords($label);
 													$campo = strtolower($row[0]);
 													
+
 													$imagen = $this->traerImagenUnica(mysql_result($resMod,0,0));
 													
 													if (mysql_num_rows($imagen)>0) {
@@ -1025,6 +927,7 @@ class Servicios {
 														$pos = strpos($mystring, $findme);
 
 													}
+
 													$form	=	$form.'
 													
 													<div class="form-group col-md-6" style="display:'.$lblOculta.'">';
@@ -1036,16 +939,16 @@ class Servicios {
 																<div class="col-md-4" align="center">
 																<div id="img'.$row[0].'">';
                             	
-													if ($pos !== false) { 
-								
-                               				 		$form	=	$form.'<img src="../../archivos/'.mysql_result($imagen,0,0).'/'.mysql_result($imagen,0,1).'/'.utf8_encode(mysql_result($imagen,0,2)).'" width="100" height="100">';
-                                					} else { 
-                                					$form	=	$form.'<img src="../../imagenes/pdf_ico2.jpg" width="100" height="100">'.$imagen["imagen"];
-													
-                                 					} 
-                            $form	=	$form.'</div>';
+														if ($pos !== false) { 
+									
+															$form	=	$form.'<img src="../../archivos/'.mysql_result($imagen,0,0).'/'.mysql_result($imagen,0,1).'/'.utf8_encode(mysql_result($imagen,0,2)).'" width="100" height="100">';
+														} else { 
+															$form	=	$form.'<img src="../../imagenes/pdf_ico2.jpg" width="100" height="100">'.$imagen["imagen"];
+														
+														} 
+                            							$form	=	$form.'</div>';
 							
-                            	$form	=	$form.'<input type="button" name="eliminar" id="'.mysql_result($imagen,0,3).'" class="btn btn-danger eliminar" value="Borrar">';
+                            							$form	=	$form.'<input type="button" name="eliminar" id="'.mysql_result($imagen,0,3).'" class="btn btn-danger eliminar" value="Borrar">';
 							
 							$form	=	$form.'</div>
 															
@@ -1070,19 +973,72 @@ class Servicios {
 													
 													';
 												} else {
-													$label = ucwords($label);
-													$campo = strtolower($row[0]);
 													
-													$form	=	$form.'
-													
-													<div class="form-group col-md-6" style="display:'.$lblOculta.'">
-														<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-														<div class="input-group col-md-12">
-															<input type="text" value="'.(mysql_result($resMod,0,$row[0])).'" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required>
+													if ((integer)(str_replace('varchar(','',$row[1])) == 149) {
+														$label = ucwords($label);
+														$campo = strtolower($row[0]);
+														
+	
+														$imagen = $this->traerLibroUnico(mysql_result($resMod,0,0));
+														
+	
+														$form	=	$form.'
+														
+														<div class="form-group col-md-6" style="display:'.$lblOculta.'">';
+														if (mysql_num_rows($imagen)>0) {
+															$form	=	$form.'<h3>Libro Cargado</h3>
+															<ul class="list-inline">
+																<li>
+																	
+																	<div class="col-md-4" align="center">
+																	<div id="img'.$row[0].'">';
+									
+
+															$form	=	$form.'<img src="../../imagenes/pdf_ico2.jpg" width="100" height="100">'.mysql_result($imagen,0,'ruta');
+															
+															
+															$form	=	$form.'</div>';
+								
+															$form	=	$form.'<input type="button" name="eliminar" id="'.mysql_result($imagen,0,'idlibro').'" class="btn btn-danger eliminar" value="Borrar">';
+								
+								$form	=	$form.'</div>
+																
+															</li>';
+														} //fin del if de si existe imagen
+								$form	=	$form.'<li>
+																<div style=" height:210px; width:340px; border:2px dashed #CCC; text-align:center; overflow: auto;">
+																	<div class="custom-input-file">
+																		<input type="file" name="'.$campo.'" id="imagen1">
+																		<img src="../../imagenes/clip20.jpg">
+																		<div class="files">...</div>
+																	</div>
+																	
+																	<img id="vistaPrevia1" name="vistaPrevia1" width="100" height="100"/>
+																</div>
+																<div style="height:14px;">
+																	
+																</div>
+															</li>
+														</ul>
 														</div>
-													</div>
-													
-													';
+														
+														';
+														
+													} else {
+														$label = ucwords($label);
+														$campo = strtolower($row[0]);
+														
+														$form	=	$form.'
+														
+														<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+															<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+															<div class="input-group col-md-12">
+																<input type="text" value="'.(mysql_result($resMod,0,$row[0])).'" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required>
+															</div>
+														</div>
+														
+														';
+													}
 												}
 											}
 										}

@@ -119,7 +119,10 @@ function GUID()
 		}	else	{
 			if ($_FILES[$file]['tmp_name'] != '') {
 				if(is_uploaded_file($_FILES[$file]['tmp_name'])){
-					$this->eliminarFotoPorObjeto($id);
+					//la carpeta de libros solo los piso
+					if ($carpeta == 'galeria') {
+						$this->eliminarFotoPorObjeto($id);
+					}
 					/*echo "Archivo ". $_FILES['foto']['name'] ." subido con éxtio.\n";
 					echo "Mostrar contenido\n";
 					echo $imagen_subida;*/
@@ -128,9 +131,14 @@ function GUID()
 						$archivo = $this->sanear_string($_FILES[$file]["name"]);
 						$tipoarchivo = $_FILES[$file]["type"];
 						
-						if ($this->existeArchivo($id,$archivo,$tipoarchivo) == 0) {
-							$sql	=	"insert into images(idfoto,refproyecto,imagen,type) values ('',".$id.",'".str_replace(' ','',$archivo)."','".$tipoarchivo."')";
-							$this->query($sql,1);
+						if ($carpeta == 'galeria') {
+							if ($this->existeArchivo($id,$archivo,$tipoarchivo) == 0) {
+								$sql	=	"insert into images(idfoto,refproyecto,imagen,type) values ('',".$id.",'".str_replace(' ','',$archivo)."','".$tipoarchivo."')";
+								$this->query($sql,1);
+							}
+						} else {
+							$sql = "update dblibros set ruta = '".$dir_destino.$archivo."'";
+							$this->query($sql,0);	
 						}
 						echo "";
 						
@@ -181,6 +189,19 @@ function GUID()
 		} else {
 			$res = true;
 		}
+		if ($res == false) {
+			return 'Error al eliminar datos';
+		} else {
+			return '';
+		}
+	}
+	
+	function eliminarLibro($id)
+	{
+		
+		$sql		=	"update dblibros set ruta = '' where idlibro =".$id;
+		$res		=	$this->query($sql,0);
+		
 		if ($res == false) {
 			return 'Error al eliminar datos';
 		} else {
@@ -1657,6 +1678,70 @@ return $res;
 
 
 
+/* PARA Libros */
+
+function insertarLibros($autor,$titulo,$editorial,$genero,$paginas,$edicion,$refclientes) {
+$sql = "insert into dblibros(idlibro,autor,titulo,editorial,genero,paginas,edicion,refclientes)
+values ('','".utf8_decode($autor)."','".utf8_decode($titulo)."','".utf8_decode($editorial)."','".utf8_decode($genero)."',".$paginas.",'".utf8_decode($edicion)."',".$refclientes.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarLibros($id,$autor,$titulo,$editorial,$genero,$paginas,$edicion,$refclientes) {
+$sql = "update dblibros
+set
+autor = '".utf8_decode($autor)."',titulo = '".utf8_decode($titulo)."',editorial = '".utf8_decode($editorial)."',genero = '".utf8_decode($genero)."',paginas = ".$paginas.",edicion = '".utf8_decode($edicion)."',refclientes = ".$refclientes."
+where idlibro =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarLibros($id) {
+$sql = "delete from dblibros where idlibro =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerLibros() {
+$sql = "select
+l.idlibro,
+l.autor,
+l.titulo,
+l.editorial,
+l.genero,
+l.paginas,
+l.edicion,
+cli.nombrecompleto,
+l.ruta,
+l.refclientes
+from dblibros l
+inner join dbclientes cli ON cli.idcliente = l.refclientes
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerLibrosPorId($id) {
+$sql = "select idlibro,autor,titulo,editorial,genero,paginas,edicion,refclientes, ruta from dblibros where idlibro =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: dblibros*/
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1783,6 +1868,73 @@ return $res;
 /* Fin */
 /* /* Fin de la Tabla: tbconfiguracion*/
 
+
+
+/* PARA Autorizacion */
+
+function insertarAutorizacion($token) {
+$sql = "insert into tbautorizacion(idautorizacion,token)
+values ('','".$token."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarAutorizacion($id,$token) {
+$sql = "update tbautorizacion
+set
+token = ".$token."
+where idautorizacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarAutorizacion($id) {
+$sql = "delete from tbautorizacion where idautorizacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function eliminarAutorizacionTodas() {
+$sql = "delete from tbautorizacion ";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function eliminarAutorizacionPorToken($token) {
+$sql = "delete from tbautorizacion where token ='".$token."'";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerAutorizacion() {
+$sql = "select
+a.idautorizacion,
+a.token
+from tbautorizacion a
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerAutorizacionPorId($id) {
+$sql = "select idautorizacion,token from tbautorizacion where idautorizacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerAutorizacionPorToken($token) {
+$sql = "select idautorizacion,token from tbautorizacion where token ='".$token."'";
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: tbautorizacion*/
 
 function query($sql,$accion) {
 		

@@ -53,6 +53,16 @@ case 'eliminarClientes':
 eliminarClientes($serviciosReferencias); 
 break; 
 
+case 'insertarLibros':
+insertarLibros($serviciosReferencias);
+break;
+case 'modificarLibros':
+modificarLibros($serviciosReferencias);
+break;
+case 'eliminarLibros':
+eliminarLibros($serviciosReferencias);
+break; 
+
 case 'traerPagosPorCliente':
 	traerPagosPorCliente($serviciosReferencias);
 	break;
@@ -106,6 +116,11 @@ case 'eliminarMasivo':
 case 'eliminarFoto':
 	eliminarFoto($serviciosReferencias);
 	break;
+	
+case 'eliminarLibro':
+	eliminarLibro($serviciosReferencias);
+	break;
+	
 case 'traerProductoPorCodigo':
 	traerProductoPorCodigo($serviciosReferencias);
 	break;
@@ -956,6 +971,13 @@ function eliminarFoto($serviciosReferencias) {
 	echo $serviciosReferencias->eliminarFoto($id);
 }
 
+function eliminarLibro($serviciosReferencias) {
+	$id			=	$_POST['id'];
+	echo $serviciosReferencias->eliminarLibro($id);
+}
+
+
+
 
 function insertarProveedores($serviciosReferencias) { 
 $nombre = $_POST['nombre']; 
@@ -1589,6 +1611,68 @@ function eliminarConfiguracion($serviciosReferencias) {
 $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarConfiguracion($id);
 echo $res;
+} 
+
+
+
+
+
+function insertarLibros($serviciosReferencias) {
+	$autor = $_POST['autor'];
+	$titulo = $_POST['titulo'];
+	$editorial = $_POST['editorial'];
+	$genero = $_POST['genero'];
+	$paginas = $_POST['paginas'];
+	$edicion = $_POST['edicion'];
+	$refclientes = $_POST['refclientes'];
+	
+	$res = $serviciosReferencias->insertarLibros($autor,$titulo,$editorial,$genero,$paginas,$edicion,$refclientes);
+	
+	if ((integer)$res > 0) {
+		$imagenes = array("imagen" => 'ruta');
+	
+		foreach ($imagenes as $valor) {
+			$serviciosReferencias->subirArchivo($valor,'libros',$res);
+		}
+		echo '';
+	} else {
+		echo 'Huvo un error al insertar datos';
+	}
+}
+
+
+function modificarLibros($serviciosReferencias) {
+	$id = $_POST['id'];
+	$autor = $_POST['autor'];
+	$titulo = $_POST['titulo'];
+	$editorial = $_POST['editorial'];
+	$genero = $_POST['genero'];
+	$paginas = $_POST['paginas'];
+	$edicion = $_POST['edicion'];
+	$refclientes = $_POST['refclientes'];
+	
+	$res = $serviciosReferencias->modificarLibros($id,$autor,$titulo,$editorial,$genero,$paginas,$edicion,$refclientes);
+	
+	if ($res == true) {
+		
+		$serviciosReferencias->borrarDirecctorio("./../archivos/libros/".$id);
+		
+		$imagenes = array("imagen" => 'ruta');
+	
+		foreach ($imagenes as $valor) {
+			$serviciosReferencias->subirArchivo($valor,'libros',$id);
+		}
+		echo '';
+	} else {
+		echo 'Huvo un error al modificar datos';
+	}
+}
+
+function eliminarLibros($serviciosReferencias) {
+	$id = $_POST['id'];
+	$res = $serviciosReferencias->borrarDirecctorio("./../archivos/libros/".$id);
+	$serviciosReferencias->eliminarLibro($id);
+	echo $res;
 } 
 
 ////////////////////////// FIN DE TRAER DATOS ////////////////////////////////////////////////////////////
