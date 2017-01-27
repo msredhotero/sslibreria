@@ -1656,12 +1656,22 @@ return $res;
 
 function traerPagosPorCliente($idCliente) {
 $sql = "select
-coalesce(coalesce(sum(p.pago),0) - coalesce(sum(v.total),0),0) as cuenta
-from dbventas v
-inner join dbclientes cli ON v.refclientes = cli.idcliente
-left join dbpagos p ON cli.idcliente = p.refclientes
-where v.reftipopago = 5 and cli.idcliente = ".$idCliente."
-order by 1";
+(
+(select 
+    coalesce(sum(v.total), 0) as cuenta
+from
+    dbventas v
+        inner join
+    dbclientes cli ON v.refclientes = cli.idcliente
+where
+    v.reftipopago = 5 and cli.idcliente = ".$idCliente.")
+-
+(select 
+		coalesce(coalesce(sum(p.pago), 0))
+	from
+		dbpagos p
+	where
+		p.refclientes = ".$idCliente.")) * -1 as cuenta";
 $res = $this->query($sql,0);
 
 	if (mysql_num_rows($res)>0) {
