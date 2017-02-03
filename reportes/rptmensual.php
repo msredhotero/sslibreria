@@ -5,20 +5,13 @@ date_default_timezone_set('America/Buenos_Aires');
 include ('../includes/funcionesUsuarios.php');
 include ('../includes/funciones.php');
 include ('../includes/funcionesHTML.php');
-include ('../includes/funcionesClientes.php');
-include ('../includes/funcionesEmpresas.php');
-include ('../includes/funcionesEmpresaClientes.php');
-include ('../includes/funcionesFacturas.php');
-include ('../includes/funcionesPagos.php');
+include ('../includes/funcionesReferencias.php');
+
 
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
 $serviciosHTML				= new ServiciosHTML();
-$serviciosClientes 			= new ServiciosClientes();
-$serviciosEmpresas			= new ServiciosEmpresas();
-$serviciosEmpresaClientes 	= new ServiciosEmpresaClientes();
-$serviciosFacturas			= new ServiciosFacturas();
-$serviciosPagos				= new ServiciosPagos();
+$serviciosReferancias 		= new ServiciosReferencias();
 
 $fecha = date('Y-m-d');
 

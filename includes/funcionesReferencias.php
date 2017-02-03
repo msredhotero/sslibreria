@@ -1525,6 +1525,155 @@ return $res;
 }
 
 
+function traerVentasPorDiaPorTipo($fecha, $tipo) {
+	switch ($tipo) {
+		case 1:
+			$sql = "select
+			v.idventa,
+			v.numero,
+			v.fecha,
+			tip.descripcion,
+			v.total,
+			cli.nombrecompleto,
+			(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+			v.reftipopago,
+			v.usuario,
+			v.refclientes,
+			dv.nombre,
+			dv.cantidad,
+			dv.precio,
+			dv.total
+			from dbventas v
+			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+			inner join dbclientes cli ON cli.idcliente = v.refclientes
+			inner join dbdetalleventas dv ON v.idventa = dv.refventas
+			inner join dbproductos p ON p.idproducto = dv.refproductos
+			inner join tbcategorias c ON c.idcategoria = p.refcategorias
+			where	fecha = '".$fecha."' and v.reftipopago = 1 and c.esegreso = 0 and v.cancelado = 0
+			order by 1 desc";
+			break;
+		case 2:
+			$sql = "select
+			v.idventa,
+			v.numero,
+			v.fecha,
+			tip.descripcion,
+			v.total,
+			cli.nombrecompleto,
+			(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+			v.reftipopago,
+			v.usuario,
+			v.refclientes,
+			dv.nombre,
+			dv.cantidad,
+			dv.precio,
+			dv.total
+			from dbventas v
+			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+			inner join dbclientes cli ON cli.idcliente = v.refclientes
+			inner join dbdetalleventas dv ON v.idventa = dv.refventas
+			inner join dbproductos p ON p.idproducto = dv.refproductos
+			inner join tbcategorias c ON c.idcategoria = p.refcategorias
+			where	fecha = '".$fecha."' and v.reftipopago in (2,3,4,5) and c.esegreso = 0 and v.cancelado = 0
+			order by 1 desc";
+			break;
+		case 3:
+			$sql = "select
+			v.idventa,
+			v.numero,
+			v.fecha,
+			tip.descripcion,
+			v.total,
+			cli.nombrecompleto,
+			(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+			v.reftipopago,
+			v.usuario,
+			v.refclientes,
+			dv.nombre,
+			dv.cantidad,
+			dv.precio,
+			dv.total
+			from dbventas v
+			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+			inner join dbclientes cli ON cli.idcliente = v.refclientes
+			inner join dbdetalleventas dv ON v.idventa = dv.refventas
+			inner join dbproductos p ON p.idproducto = dv.refproductos
+			inner join tbcategorias c ON c.idcategoria = p.refcategorias
+			where	fecha = '".$fecha."' and c.esegreso = 1 and v.cancelado = 0
+			order by 1 desc";
+			break;		
+	}
+	
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentasPorDiaPorTipoTotales($fecha, $tipo) {
+	switch ($tipo) {
+		case 1:
+			$sql = "select
+				sum(dv.total) as total
+			from dbventas v
+			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+			inner join dbclientes cli ON cli.idcliente = v.refclientes
+			inner join dbdetalleventas dv ON v.idventa = dv.refventas
+			inner join dbproductos p ON p.idproducto = dv.refproductos
+			inner join tbcategorias c ON c.idcategoria = p.refcategorias
+			where	fecha = '".$fecha."' and v.reftipopago = 1 and c.esegreso = 0 and v.cancelado = 0";
+			break;
+		case 2:
+			$sql = "select
+				sum(dv.total) as total
+			from dbventas v
+			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+			inner join dbclientes cli ON cli.idcliente = v.refclientes
+			inner join dbdetalleventas dv ON v.idventa = dv.refventas
+			inner join dbproductos p ON p.idproducto = dv.refproductos
+			inner join tbcategorias c ON c.idcategoria = p.refcategorias
+			where	fecha = '".$fecha."' and v.reftipopago in (2,3,4,5) and c.esegreso = 0 and v.cancelado = 0";
+			break;
+		case 3:
+			$sql = "select
+				sum(dv.total) as total
+			from dbventas v
+			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+			inner join dbclientes cli ON cli.idcliente = v.refclientes
+			inner join dbdetalleventas dv ON v.idventa = dv.refventas
+			inner join dbproductos p ON p.idproducto = dv.refproductos
+			inner join tbcategorias c ON c.idcategoria = p.refcategorias
+			where	fecha = '".$fecha."' and c.esegreso = 1 and v.cancelado = 0";
+			break;		
+	}
+	
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerVentasPorMesTipo($fecha) {
+	$sql = "select
+v.idventa,
+
+v.numero,
+v.fecha,
+tip.descripcion,
+v.total,
+cli.nombrecompleto,
+(case when v.cancelado = 1 then 'Si' else 'No' end) as cancelado,
+v.reftipopago,
+v.usuario,
+v.refclientes
+from dbventas v
+inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbclientes cli ON cli.idcliente = v.refclientes
+where	fecha = '".$fecha."'
+order by 1 desc";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
 function traerVentasPorDiaTotales($fecha) {
 	$sql = "select
 	count(*),
