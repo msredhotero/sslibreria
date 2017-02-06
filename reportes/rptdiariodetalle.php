@@ -88,7 +88,7 @@ class PDF extends FPDF
 			
 			$this->Cell($w[0],6,$row['numero'],'LR',0,'C',$fill);
 			$this->Cell($w[1],6,$row['nombrecompleto'],'LR',0,'L',$fill);
-			$this->Cell($w[2],6,$row['nombre'],'LR',0,'L',$fill);
+			$this->Cell($w[2],6,substr($row['nombre'],0,22),'LR',0,'L',$fill);
 			$this->Cell($w[3],6,$row['cantidad'],'LR',0,'C',$fill);
 			$this->Cell($w[4],6,$row['precio'],'LR',0,'R',$fill);
 			$this->Cell($w[3],6,$row['subtotal'],'LR',0,'R',$fill);
@@ -146,7 +146,7 @@ class PDF extends FPDF
 			
 			$this->Cell($w[0],6,$row['numero'],'LR',0,'C',$fill);
 			$this->Cell($w[1],6,$row['nombrecompleto'],'LR',0,'L',$fill);
-			$this->Cell($w[2],6,$row['nombre'],'LR',0,'L',$fill);
+			$this->Cell($w[2],6,substr($row['nombre'],0,22),'LR',0,'L',$fill);
 			$this->Cell($w[3],6,$row['cantidad'],'LR',0,'C',$fill);
 			$this->Cell($w[4],6,$row['precio'],'LR',0,'R',$fill);
 			$this->Cell($w[3],6,$row['subtotal'],'LR',0,'R',$fill);
@@ -205,7 +205,7 @@ class PDF extends FPDF
 			
 			$this->Cell($w[0],6,$row['numero'],'LR',0,'C',$fill);
 			$this->Cell($w[1],6,$row['nombrecompleto'],'LR',0,'L',$fill);
-			$this->Cell($w[2],6,$row['nombre'],'LR',0,'L',$fill);
+			$this->Cell($w[2],6,substr($row['nombre'],0,22),'LR',0,'L',$fill);
 			$this->Cell($w[3],6,$row['cantidad'],'LR',0,'C',$fill);
 			$this->Cell($w[4],6,$row['precio'],'LR',0,'R',$fill);
 			$this->Cell($w[3],6,$row['subtotal'],'LR',0,'R',$fill);
@@ -239,12 +239,6 @@ $pdf->SetFont('Arial','U',14);
 $pdf->Cell(180,7,"Empresa: ".strtoupper($empresa),0,0,'C',false);
 $pdf->Ln();
 $pdf->Cell(180,7,'Fecha: '.date('Y-m-d'),0,0,'C',false);
-$pdf->Ln();
-
-$pdf->SetFont('Arial','',10);
-
-$pdf->Ln();
-
 $pdf->SetFont('Arial','',10);
 
 // Títulos de las columnas
@@ -264,7 +258,6 @@ $pdf->SetFont('Arial','U',14);
 $pdf->Cell(180,7,"Empresa: ".strtoupper($empresa),0,0,'C',false);
 $pdf->Ln();
 $pdf->Cell(180,7,'Fecha: '.date('Y-m-d'),0,0,'C',false);
-$pdf->Ln();
 // Títulos de las columnas
 $headerFacturacion = array("Factura", "Cliente", "Producto","Cantidad", "Importe", "Total");
 $pdf->detalleCreditos($headerFacturacion,$res2d,$TotalIngresos);
@@ -282,7 +275,7 @@ $pdf->SetFont('Arial','U',14);
 $pdf->Cell(180,7,"Empresa: ".strtoupper($empresa),0,0,'C',false);
 $pdf->Ln();
 $pdf->Cell(180,7,'Fecha: '.date('Y-m-d'),0,0,'C',false);
-$pdf->Ln();
+
 // Títulos de las columnas
 $headerFacturacion = array("Factura", "Cliente", "Producto","Cantidad", "Importe", "Total");
 $pdf->detalleEgresos($headerFacturacion,$res3d,$TotalEgresos);
