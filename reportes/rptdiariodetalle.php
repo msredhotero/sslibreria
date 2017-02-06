@@ -34,6 +34,10 @@ $res1	= $serviciosReferancias->traerVentasPorDiaPorTipoTotales($fechaPost, 1);
 $res2	= $serviciosReferancias->traerVentasPorDiaPorTipoTotales($fechaPost, 2);
 $res3	= $serviciosReferancias->traerVentasPorDiaPorTipoTotales($fechaPost, 3);
 
+$res1d	= $serviciosReferancias->traerVentasPorDiaPorTipo($fechaPost, 1);
+$res2d	= $serviciosReferancias->traerVentasPorDiaPorTipo($fechaPost, 2);
+$res3d	= $serviciosReferancias->traerVentasPorDiaPorTipo($fechaPost, 3);
+
 
 $TotalIngresos = 0;
 $TotalEgresos = 0;
@@ -48,12 +52,12 @@ class PDF extends FPDF
 
 	
 	// Tabla coloreada
-	function detalleCaja($header, $data, &$TotalIngresos)
+	function detalleCaja($header, $data, &$Totales)
 	{
 		$this->SetFont('Arial','',12);
 		$this->Ln();
 		$this->Ln();
-		$this->Cell(60,7,'Ingresos de Fiestas',0,0,'L',false);
+		$this->Cell(60,7,'Ingresos de Caja',0,0,'L',false);
 		$this->SetFont('Arial','',10);
 		// Colores, ancho de línea y fuente en negrita
 		$this->SetFillColor(255,0,0);
@@ -64,7 +68,7 @@ class PDF extends FPDF
 		
 		
 		// Cabecera
-		$w = array(90, 20,25,25,25);
+		$w = array(25, 50,50,22,22,22);
 		for($i=0;$i<count($header);$i++)
 			$this->Cell($w[$i],7,$header[$i],1,0,'C',true);
 		$this->Ln();
@@ -79,16 +83,15 @@ class PDF extends FPDF
 		$totalcant = 0;
 		while ($row = mysql_fetch_array($data))
 		{
-			$total = $total + $row[0];
-			$totalcant = $totalcant + $row[2];
+			$total = $total + $row['subtotal'];
+			$totalcant = $totalcant + 1;
 			
-			$this->Cell($w[0],6,$row[1],'LR',0,'L',$fill);
-			$this->Cell($w[1],6,$row[0],'LR',0,'R',$fill);
-			$this->Cell($w[2],6,$row[2],'LR',0,'C',$fill);
-			$this->Cell($w[3],6,$row[3],'LR',0,'C',$fill);
-			$this->Cell($w[4],6,$row[4],'LR',0,'C',$fill);
-			$this->Cell($w[3],6,$row[3],'LR',0,'C',$fill);
-			$this->Cell($w[4],6,$row[4],'LR',0,'C',$fill);
+			$this->Cell($w[0],6,$row['numero'],'LR',0,'C',$fill);
+			$this->Cell($w[1],6,$row['nombrecompleto'],'LR',0,'L',$fill);
+			$this->Cell($w[2],6,$row['nombre'],'LR',0,'L',$fill);
+			$this->Cell($w[3],6,$row['cantidad'],'LR',0,'C',$fill);
+			$this->Cell($w[4],6,$row['precio'],'LR',0,'R',$fill);
+			$this->Cell($w[3],6,$row['subtotal'],'LR',0,'R',$fill);
 			$this->Ln();
 			$fill = !$fill;
 		}
@@ -98,11 +101,11 @@ class PDF extends FPDF
 		$this->SetFont('Arial','',12);
 		$this->Ln();
 		$this->Ln();
-		$this->Cell(60,7,'Cantidad de Fiestas:'.number_format($totalcant, 2, '.', ','),0,0,'L',false);
+		$this->Cell(60,7,'Cantidad:'.number_format($totalcant, 2, '.', ','),0,0,'L',false);
 		$this->Ln();
-		$this->Cell(60,7,'Total de Fiestas: $'.number_format($total, 2, '.', ','),0,0,'L',false);
+		$this->Cell(60,7,'Total: $'.number_format($total, 2, '.', ','),0,0,'L',false);
 		
-		$TotalIngresos = $TotalIngresos + $total;
+		$Totales = $Totales + $total;
 	}
 	
 	
@@ -112,7 +115,7 @@ class PDF extends FPDF
 		$this->SetFont('Arial','',12);
 		$this->Ln();
 		$this->Ln();
-		$this->Cell(60,7,'Ingresos de Fiestas',0,0,'L',false);
+		$this->Cell(60,7,'Ingresos de Caja a Credito',0,0,'L',false);
 		$this->SetFont('Arial','',10);
 		// Colores, ancho de línea y fuente en negrita
 		$this->SetFillColor(255,0,0);
@@ -123,7 +126,7 @@ class PDF extends FPDF
 		
 		
 		// Cabecera
-		$w = array(90, 20,25,25,25);
+		$w = array(25, 50,50,22,22,22);
 		for($i=0;$i<count($header);$i++)
 			$this->Cell($w[$i],7,$header[$i],1,0,'C',true);
 		$this->Ln();
@@ -138,16 +141,15 @@ class PDF extends FPDF
 		$totalcant = 0;
 		while ($row = mysql_fetch_array($data))
 		{
-			$total = $total + $row[0];
-			$totalcant = $totalcant + $row[2];
+			$total = $total + $row['subtotal'];
+			$totalcant = $totalcant + 1;
 			
-			$this->Cell($w[0],6,$row[1],'LR',0,'L',$fill);
-			$this->Cell($w[1],6,$row[0],'LR',0,'R',$fill);
-			$this->Cell($w[2],6,$row[2],'LR',0,'C',$fill);
-			$this->Cell($w[3],6,$row[3],'LR',0,'C',$fill);
-			$this->Cell($w[4],6,$row[4],'LR',0,'C',$fill);
-			$this->Cell($w[3],6,$row[3],'LR',0,'C',$fill);
-			$this->Cell($w[4],6,$row[4],'LR',0,'C',$fill);
+			$this->Cell($w[0],6,$row['numero'],'LR',0,'C',$fill);
+			$this->Cell($w[1],6,$row['nombrecompleto'],'LR',0,'L',$fill);
+			$this->Cell($w[2],6,$row['nombre'],'LR',0,'L',$fill);
+			$this->Cell($w[3],6,$row['cantidad'],'LR',0,'C',$fill);
+			$this->Cell($w[4],6,$row['precio'],'LR',0,'R',$fill);
+			$this->Cell($w[3],6,$row['subtotal'],'LR',0,'R',$fill);
 			$this->Ln();
 			$fill = !$fill;
 		}
@@ -157,9 +159,9 @@ class PDF extends FPDF
 		$this->SetFont('Arial','',12);
 		$this->Ln();
 		$this->Ln();
-		$this->Cell(60,7,'Cantidad de Fiestas:'.number_format($totalcant, 2, '.', ','),0,0,'L',false);
+		$this->Cell(60,7,'Cantidad:'.number_format($totalcant, 2, '.', ','),0,0,'L',false);
 		$this->Ln();
-		$this->Cell(60,7,'Total de Fiestas: $'.number_format($total, 2, '.', ','),0,0,'L',false);
+		$this->Cell(60,7,'Total: $'.number_format($total, 2, '.', ','),0,0,'L',false);
 		
 		$TotalIngresos = $TotalIngresos + $total;
 	}
@@ -167,12 +169,12 @@ class PDF extends FPDF
 
 	
 	// Tabla coloreada
-	function detalleEgresos($header, $data, &$TotalIngresos)
+	function detalleEgresos($header, $data, &$TotalEgresos)
 	{
 		$this->SetFont('Arial','',12);
 		$this->Ln();
 		$this->Ln();
-		$this->Cell(60,7,'Ingresos de Fiestas',0,0,'L',false);
+		$this->Cell(60,7,'Egresos',0,0,'L',false);
 		$this->SetFont('Arial','',10);
 		// Colores, ancho de línea y fuente en negrita
 		$this->SetFillColor(255,0,0);
@@ -183,7 +185,7 @@ class PDF extends FPDF
 		
 		
 		// Cabecera
-		$w = array(90, 20,25,25,25);
+		$w = array(25, 50,50,22,22,22);
 		for($i=0;$i<count($header);$i++)
 			$this->Cell($w[$i],7,$header[$i],1,0,'C',true);
 		$this->Ln();
@@ -198,16 +200,15 @@ class PDF extends FPDF
 		$totalcant = 0;
 		while ($row = mysql_fetch_array($data))
 		{
-			$total = $total + $row[0];
-			$totalcant = $totalcant + $row[2];
+			$total = $total + $row['subtotal'];
+			$totalcant = $totalcant + 1;
 			
-			$this->Cell($w[0],6,$row[1],'LR',0,'L',$fill);
-			$this->Cell($w[1],6,$row[0],'LR',0,'R',$fill);
-			$this->Cell($w[2],6,$row[2],'LR',0,'C',$fill);
-			$this->Cell($w[3],6,$row[3],'LR',0,'C',$fill);
-			$this->Cell($w[4],6,$row[4],'LR',0,'C',$fill);
-			$this->Cell($w[3],6,$row[3],'LR',0,'C',$fill);
-			$this->Cell($w[4],6,$row[4],'LR',0,'C',$fill);
+			$this->Cell($w[0],6,$row['numero'],'LR',0,'C',$fill);
+			$this->Cell($w[1],6,$row['nombrecompleto'],'LR',0,'L',$fill);
+			$this->Cell($w[2],6,$row['nombre'],'LR',0,'L',$fill);
+			$this->Cell($w[3],6,$row['cantidad'],'LR',0,'C',$fill);
+			$this->Cell($w[4],6,$row['precio'],'LR',0,'R',$fill);
+			$this->Cell($w[3],6,$row['subtotal'],'LR',0,'R',$fill);
 			$this->Ln();
 			$fill = !$fill;
 		}
@@ -217,22 +218,22 @@ class PDF extends FPDF
 		$this->SetFont('Arial','',12);
 		$this->Ln();
 		$this->Ln();
-		$this->Cell(60,7,'Cantidad de Fiestas:'.number_format($totalcant, 2, '.', ','),0,0,'L',false);
+		$this->Cell(60,7,'Cantidad:'.number_format($totalcant, 2, '.', ','),0,0,'L',false);
 		$this->Ln();
-		$this->Cell(60,7,'Total de Fiestas: $'.number_format($total, 2, '.', ','),0,0,'L',false);
+		$this->Cell(60,7,'Total: $'.number_format($total, 2, '.', ','),0,0,'L',false);
 		
-		$TotalIngresos = $TotalIngresos + $total;
+		$TotalEgresos = $TotalEgresos + $total;
 	}
 
 
 }
 
-$pdf = new FPDF();
+$pdf = new PDF();
 
 $pdf->AddPage();
 
 $pdf->SetFont('Arial','U',17);
-$pdf->Cell(180,7,'Reporte Caja Diaria Totales',0,0,'C',false);
+$pdf->Cell(180,7,'Reporte Detalle Caja Diaria Totales',0,0,'C',false);
 $pdf->Ln();
 $pdf->SetFont('Arial','U',14);
 $pdf->Cell(180,7,"Empresa: ".strtoupper($empresa),0,0,'C',false);
@@ -248,25 +249,55 @@ $pdf->SetFont('Arial','',10);
 
 // Títulos de las columnas
 $headerFacturacion = array("Factura", "Cliente", "Producto","Cantidad", "Importe", "Total");
-$pdf->detalleCaja($headerFacturacion,$resIngresosFacturacion,$TotalFacturacion);
+$pdf->detalleCaja($headerFacturacion,$res1d,$Totales);
 
 $pdf->Ln();
 
 
+
+$pdf->AddPage();
+
+$pdf->SetFont('Arial','U',17);
+$pdf->Cell(180,7,'Reporte Detalle Caja Diaria Totales',0,0,'C',false);
+$pdf->Ln();
+$pdf->SetFont('Arial','U',14);
+$pdf->Cell(180,7,"Empresa: ".strtoupper($empresa),0,0,'C',false);
+$pdf->Ln();
+$pdf->Cell(180,7,'Fecha: '.date('Y-m-d'),0,0,'C',false);
+$pdf->Ln();
 // Títulos de las columnas
 $headerFacturacion = array("Factura", "Cliente", "Producto","Cantidad", "Importe", "Total");
-$pdf->detalleCreditos($headerFacturacion,$resIngresosFacturacion,$TotalFacturacion);
+$pdf->detalleCreditos($headerFacturacion,$res2d,$TotalIngresos);
 
 $pdf->Ln();
 
 
+
+$pdf->AddPage();
+
+$pdf->SetFont('Arial','U',17);
+$pdf->Cell(180,7,'Reporte Detalle Caja Diaria Totales',0,0,'C',false);
+$pdf->Ln();
+$pdf->SetFont('Arial','U',14);
+$pdf->Cell(180,7,"Empresa: ".strtoupper($empresa),0,0,'C',false);
+$pdf->Ln();
+$pdf->Cell(180,7,'Fecha: '.date('Y-m-d'),0,0,'C',false);
+$pdf->Ln();
 // Títulos de las columnas
 $headerFacturacion = array("Factura", "Cliente", "Producto","Cantidad", "Importe", "Total");
-$pdf->detalleEgresos($headerFacturacion,$resIngresosFacturacion,$TotalFacturacion);
+$pdf->detalleEgresos($headerFacturacion,$res3d,$TotalEgresos);
 
 $pdf->Ln();
 
-
+$pdf->AddPage();
+$pdf->SetFont('Arial','U',17);
+$pdf->Cell(180,7,'Reporte Detalle Caja Diaria Totales',0,0,'C',false);
+$pdf->Ln();
+$pdf->SetFont('Arial','U',14);
+$pdf->Cell(180,7,"Empresa: ".strtoupper($empresa),0,0,'C',false);
+$pdf->Ln();
+$pdf->Cell(180,7,'Fecha: '.date('Y-m-d'),0,0,'C',false);
+$pdf->Ln();
 $pdf->SetFont('Arial','',14);
 
 if (mysql_num_rows($res1)>0) {
@@ -302,7 +333,7 @@ $pdf->Cell(60,7,'Total Caja: $ '.number_format((float)$Totales - (float)$TotalEg
 $pdf->Ln();
 $pdf->Cell(60,7,'Total Dia: $ '.number_format((float)$TotalIngresos + (float)$Totales, 2, '.', ','),0,0,'L',false);
 
-$nombreTurno = "CajaDiaria-".$fecha.".pdf";
+$nombreTurno = "CajaDiariaDetalle-".$fecha.".pdf";
 
 $pdf->Output($nombreTurno,'D');
 

@@ -160,6 +160,11 @@ $(document).ready(function(){
 						
     });
 	
+	$("#rptCajaDiariaDetalle").click(function(event) {
+        window.open("../../reportes/rptdiariodetalle.php?fecha=" + $("#fecha1").val() ,'_blank');	
+						
+    });
+	
 	
 	$("#rptsc").click(function(event) {
         window.open("../../reportes/rptSaldosClientes.php?idEmp=" + $("#refempresa2").val() + "&fechadesde=" + $("#fechadesde2").val()+ "&fechahasta=" + $("#fechahasta2").val(),'_blank');	

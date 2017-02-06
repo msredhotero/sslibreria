@@ -1542,7 +1542,7 @@ function traerVentasPorDiaPorTipo($fecha, $tipo) {
 			dv.nombre,
 			dv.cantidad,
 			dv.precio,
-			dv.total
+			dv.total as subtotal
 			from dbventas v
 			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
 			inner join dbclientes cli ON cli.idcliente = v.refclientes
@@ -1567,7 +1567,7 @@ function traerVentasPorDiaPorTipo($fecha, $tipo) {
 			dv.nombre,
 			dv.cantidad,
 			dv.precio,
-			dv.total
+			dv.total as subtotal
 			from dbventas v
 			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
 			inner join dbclientes cli ON cli.idcliente = v.refclientes
@@ -1592,7 +1592,7 @@ function traerVentasPorDiaPorTipo($fecha, $tipo) {
 			dv.nombre,
 			dv.cantidad,
 			dv.precio,
-			dv.total
+			dv.total as subtotal
 			from dbventas v
 			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
 			inner join dbclientes cli ON cli.idcliente = v.refclientes
