@@ -1363,9 +1363,10 @@ echo 'Huvo un error al modificar datos';
 function eliminarCategorias($serviciosReferencias) { 
 	$id = $_POST['id']; 
 	
+	$resR = $serviciosReferencias->traerProductosPorCategoria($id);
+	
 	$res = $serviciosReferencias->eliminarCategorias($id); 
 
-	$resR = $serviciosReferencias->traerProductosPorCategoria($id);
 	// doy de baja a todos los productos correspondientes a esta categoria
 	while ($row = mysql_fetch_array($resR)) {
 		$serviciosReferencias->eliminarProductos($row[0]);		
@@ -1390,10 +1391,10 @@ function borrarMasivoCategorias($serviciosReferencias) {
 			if (isset($valores[$i])) {
 				
 				$idProducto = str_replace("produ","",$tags[$i]);
-				
-				$res = $serviciosReferencias->eliminarCategorias($idProducto); 
 
 				$resR = $serviciosReferencias->traerProductosPorCategoria($idProducto);
+				
+				$res = $serviciosReferencias->eliminarCategorias($idProducto); 
 				// doy de baja a todos los productos correspondientes a esta categoria
 				while ($row = mysql_fetch_array($resR)) {
 					$serviciosReferencias->eliminarProductos($row[0]);		
