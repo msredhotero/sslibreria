@@ -1972,7 +1972,54 @@ return $res;
 
 /* Fin */
 
+/* PARA Cajadiaria */
 
+function insertarCajadiaria($fecha,$inicio,$fin) {
+$sql = "insert into tbcajadiaria(idcajadiaria,fecha,inicio,fin)
+values ('','".utf8_decode($fecha)."',".$inicio.",".($fin == '' ? 0 : $fin).")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarCajadiaria($id,$fecha,$inicio,$fin) {
+$sql = "update tbcajadiaria
+set
+fecha = '".utf8_decode($fecha)."',inicio = ".$inicio.",fin = ".($fin == '' ? 0 : $fin)."
+where idcajadiaria =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarCajadiaria($id) {
+$sql = "delete from tbcajadiaria where idcajadiaria =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerCajadiaria() {
+$sql = "select
+c.idcajadiaria,
+c.fecha,
+c.inicio,
+c.fin
+from tbcajadiaria c
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerCajadiariaPorId($id) {
+$sql = "select idcajadiaria,fecha,inicio,fin from tbcajadiaria where idcajadiaria =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+/* Fin */
+/* /* Fin de la Tabla: tbcajadiaria*/
 
 
 

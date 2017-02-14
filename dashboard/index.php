@@ -133,7 +133,7 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
     <!-- Latest compiled and minified JavaScript -->
     <script src="../bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="../css/chosen.css">
-
+	<link rel="stylesheet" href="../css/bootstrap-datetimepicker.min.css">
 
 
     
@@ -370,6 +370,40 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
   </div>
 </div>
 
+
+<div class="modal fade" id="myModalcaja" tabindex="1" style="z-index:500000;" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Inicio de Caja</h4>
+      </div>
+      <div class="modal-body inicioCaja">
+      	<div class="row">
+        <div class="form-group col-md-6 col-xs-6" style="display:'.$lblOculta.'">
+            <label for="'.$campo.'" class="control-label" style="text-align:left">Fecha</label>
+            <div class="input-group date form_date col-md-6 col-xs-6" data-date="" data-date-format="dd MM yyyy" data-link-field="fechacaja" data-link-format="yyyy-mm-dd">
+                <input class="form-control" size="50" type="text" value="<?php echo date('Y-m-d'); ?>" readonly>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+            </div>
+            <input type="hidden" name="fechacaja" id="fechacaja" value="<?php echo date('Y-m-d'); ?>" />
+        </div>
+        <div class="col-md-6">
+        	<label class="control-label">Ingresa Inicio de Caja</label>
+            <div class="col-md-12 input-group">
+            	<input type="number" class="form-control" id="cajainicio" name="cajainicio" value="0"/>
+            </div>
+        </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary" data-dismiss="modal" id="guardarcaja">Guardar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="dialog2" title="Eliminar <?php echo $singular; ?>">
     	<p>
         	<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>
@@ -381,6 +415,8 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
 <script type="text/javascript" src="../js/jquery.dataTables.min.js"></script>
 <script src="../bootstrap/js/dataTables.bootstrap.js"></script>
 
+<script src="../js/bootstrap-datetimepicker.min.js"></script>
+<script src="../js/bootstrap-datetimepicker.es.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
 	
@@ -812,7 +848,23 @@ $(document).ready(function(){
 		);
 
 	</script>
-    
+ 
+<script type="text/javascript">
+
+		
+$('.form_date').datetimepicker({
+	language:  'es',
+	weekStart: 1,
+	todayBtn:  1,
+	autoclose: 1,
+	todayHighlight: 1,
+	startView: 2,
+	minView: 2,
+	forceParse: 0,
+	format: 'dd/mm/yyyy'
+});
+</script>
+   
     <script src="../js/chosen.jquery.js" type="text/javascript"></script>
 <script type="text/javascript">
     var config = {

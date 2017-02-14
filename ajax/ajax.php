@@ -42,6 +42,15 @@ case 'eliminarConfiguracion':
 eliminarConfiguracion($serviciosReferencias);
 break; 
 
+case 'insertarCajadiaria':
+insertarCajadiaria($serviciosReferencias);
+break;
+case 'modificarCajadiaria':
+modificarCajadiaria($serviciosReferencias);
+break;
+case 'eliminarCajadiaria':
+eliminarCajadiaria($serviciosReferencias);
+break; 
 
 case 'insertarClientes': 
 insertarClientes($serviciosReferencias); 
@@ -1568,7 +1577,34 @@ echo $res;
 } 
 
 
-
+function insertarCajadiaria($serviciosReferencias) {
+$fecha = $_POST['fecha'];
+$inicio = $_POST['inicio'];
+$fin = $_POST['fin'];
+$res = $serviciosReferencias->insertarCajadiaria($fecha,$inicio,$fin);
+if ((integer)$res > 0) {
+echo '';
+} else {
+echo 'Huvo un error al insertar datos';
+}
+}
+function modificarCajadiaria($serviciosReferencias) {
+$id = $_POST['id'];
+$fecha = $_POST['fecha'];
+$inicio = $_POST['inicio'];
+$fin = $_POST['fin'];
+$res = $serviciosReferencias->modificarCajadiaria($id,$fecha,$inicio,$fin);
+if ($res == true) {
+echo '';
+} else {
+echo 'Huvo un error al modificar datos';
+}
+}
+function eliminarCajadiaria($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarCajadiaria($id);
+echo $res;
+} 
 
 
 
