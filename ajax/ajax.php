@@ -51,6 +51,9 @@ break;
 case 'eliminarCajadiaria':
 eliminarCajadiaria($serviciosReferencias);
 break; 
+case 'traerCajadiariaPorFecha':
+traerCajadiariaPorFecha($serviciosReferencias);
+break;
 
 case 'insertarClientes': 
 insertarClientes($serviciosReferencias); 
@@ -1586,16 +1589,37 @@ echo $res;
 
 
 function insertarCajadiaria($serviciosReferencias) {
-$fecha = $_POST['fecha'];
-$inicio = $_POST['inicio'];
-$fin = $_POST['fin'];
-$res = $serviciosReferencias->insertarCajadiaria($fecha,$inicio,$fin);
-if ((integer)$res > 0) {
-echo '';
-} else {
-echo 'Huvo un error al insertar datos';
+	$fecha = $_POST['fecha'];
+	$inicio = $_POST['inicio'];
+	$fin = 0;
+	
+	$existe = $serviciosReferencias->traerCajadiariaPorFecha($fecha);
+	
+	if (mysql_num_rows($existe)>0) {
+		$res = $serviciosReferencias->modificarCajadiaria(mysql_result($existe,0,0),$fecha,$inicio,$fin);
+	} else {
+		$res = $serviciosReferencias->insertarCajadiaria($fecha,$inicio,$fin);
+	}
+	
+	if ((integer)$res > 0) {
+		echo '';
+	} else {
+		echo 'Huvo un error al insertar datos';
+	}
 }
+
+function traerCajadiariaPorFecha($serviciosReferencias) {
+	$fecha = $_POST['fecha'];	
+	
+	$res = $serviciosReferencias->traerCajadiariaPorFecha($fecha);
+	
+	if (mysql_num_rows($res)>0) {
+		echo mysql_result($res,0,'inicio');	
+	} else {
+		echo 0;
+	}
 }
+
 function modificarCajadiaria($serviciosReferencias) {
 $id = $_POST['id'];
 $fecha = $_POST['fecha'];

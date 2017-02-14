@@ -39,6 +39,14 @@ $res2d	= $serviciosReferancias->traerVentasPorDiaPorTipo($fechaPost, 2);
 $res3d	= $serviciosReferancias->traerVentasPorDiaPorTipo($fechaPost, 3);
 
 
+$cajaInicio = $serviciosReferancias->traerCajadiariaPorFecha($fecha);
+
+if (mysql_num_rows($cajaInicio)>0) {
+	$caja = mysql_result($cajaInicio,0,'inicio');	
+} else {
+	$caja = 0;
+}
+
 $TotalIngresos = 0;
 $TotalEgresos = 0;
 $Totales = 0;
@@ -325,6 +333,9 @@ $pdf->Cell(60,7,'Total Caja: $ '.number_format((float)$Totales - (float)$TotalEg
 
 $pdf->Ln();
 $pdf->Cell(60,7,'Total Dia: $ '.number_format((float)$TotalIngresos + (float)$Totales, 2, '.', ','),0,0,'L',false);
+
+$pdf->Ln();
+$pdf->Cell(60,7,'Total Caja + Inicio de Caja: $ '.number_format((float)$Totales - (float)$TotalEgresos + (float)$Caja, 2, '.', ','),0,0,'L',false);
 
 $nombreTurno = "CajaDiariaDetalle-".$fecha.".pdf";
 

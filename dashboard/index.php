@@ -391,7 +391,7 @@ $lstVentas	= $serviciosFunciones->camposTablaView($cabeceras2, $serviciosReferen
         <div class="col-md-6">
         	<label class="control-label">Ingresa Inicio de Caja</label>
             <div class="col-md-12 input-group">
-            	<input type="number" class="form-control" id="cajainicio" name="cajainicio" value="0"/>
+            	<input type="number" class="form-control valor" id="cajainicio" name="cajainicio" value="5" required />
             </div>
         </div>
         </div>
@@ -476,6 +476,41 @@ $(document).ready(function(){
 				}
 		});
 	});
+	
+	$('#guardarcaja').click(function() {
+
+		$.ajax({
+			data:  {fecha: $('#fechacaja').val(),
+					inicio: $('.valor').val(), 
+					accion: 'insertarCajadiaria'},
+			url:   '../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+					
+			},
+			success:  function (response) {
+				$('.detallePedido').html(response);	
+				traerCaja();
+			}
+		});
+	});
+	
+	function traerCaja() {
+		$.ajax({
+			data:  {fecha: $('#fechacaja').val(),
+					accion: 'traerCajadiariaPorFecha'},
+			url:   '../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+					
+			},
+			success:  function (response) {
+				$('.valor').val(response);
+			}
+		});
+	}
+	
+	traerCaja();
 	
 	
 

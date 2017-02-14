@@ -1674,6 +1674,41 @@ return $res;
 }
 
 
+function traerVentasPorAno($anio) {
+	$sql = "select
+month(v.fecha) as mes,
+sum(v.total) as total
+from dbventas v
+inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+inner join dbclientes cli ON cli.idcliente = v.refclientes
+where	year(fecha) = ".$anio." and v.cancelado = 0 
+group by month(fecha) 
+order by month(fecha) desc";
+$res = $this->query($sql,0);
+/*
+$cad	= "Morris.Bar({
+              element: 'graph',
+              data: [";
+	$cadValue = '';
+	if ($res > 0) {
+		while ($row = mysql_fetch_array($res)) {
+			$cadValue .= "{ y: '".$row['mes']."', a: ".$row['total']." },";
+		}
+	}
+	
+	$cad .= substr($cadValue,0,strlen($cadValue)-1);
+    $cad .=          "],
+		  xkey: 'y',
+		  ykeys: ['a'],
+		  labels: ['Totales']
+		});";
+			
+	return $cad;
+*/
+	return $res;
+}
+
+
 function traerVentasPorDiaTotales($fecha) {
 	$sql = "select
 	count(*),
@@ -1988,7 +2023,7 @@ set
 fecha = '".utf8_decode($fecha)."',inicio = ".$inicio.",fin = ".($fin == '' ? 0 : $fin)."
 where idcajadiaria =".$id;
 $res = $this->query($sql,0);
-return $res;
+return $id;
 }
 
 
@@ -2007,6 +2042,19 @@ c.inicio,
 c.fin
 from tbcajadiaria c
 order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerCajadiariaPorFecha($fecha) {
+$sql = "select
+c.idcajadiaria,
+c.fecha,
+c.inicio,
+c.fin
+from tbcajadiaria c 
+where c.fecha = '".$fecha."'
+";
 $res = $this->query($sql,0);
 return $res;
 }
