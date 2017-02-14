@@ -303,6 +303,14 @@ eliminarPagos($serviciosReferencias);
 break; 
 
 
+/*****************			ESTADISTICAS           *****************************/
+case 'traerVentasPorAno':
+	traerVentasPorAno($serviciosReferencias);
+	break;
+
+
+/*****************			FIN						****************************/
+
 }
 
 /* Fin */
@@ -1717,6 +1725,40 @@ function eliminarLibros($serviciosReferencias) {
 	$serviciosReferencias->eliminarLibro($id);
 	echo $res;
 } 
+
+
+
+/*****************			ESTADISTICAS           *****************************/
+function traerVentasPorAno($serviciosReferencias) {
+	$anio = $_POST['anio'];
+	
+	$res = $serviciosReferencias->traerVentasPorAno($anio);
+	/*
+	$cad = "Morris.Bar({
+		  element: 'graph',
+		  data: [";
+
+	*/
+	/*
+	$subcad = ' ';
+	while ($row = mysql_fetch_array($res)) {
+		$subcad .= "{ y: '".$row['mes']."', a: ".$row['total']." },";	
+	}
+	*/
+	/*
+	$cad .= substr($subcad,0,-1)."],
+		  xkey: 'y',
+		  ykeys: ['a'],
+		  labels: ['Totales']
+		});";
+	*/	
+	echo json_encode(toArray($res));
+}
+
+
+
+/*****************			FIN						****************************/
+
 
 ////////////////////////// FIN DE TRAER DATOS ////////////////////////////////////////////////////////////
 
