@@ -118,10 +118,10 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
 
                     	<ul class="list-inline">
                         	<li>
-                    			<button type="button" class="btn btn-success" id="rptCajaDiaria" style="margin-left:0px;">Generar</button>
+                    			<button type="button" class="btn btn-info" id="rptCajaDiaria" style="margin-left:0px;">Caja Mensual</button>
                             </li>
                             <li>
-                    			<button type="button" class="btn btn-info" id="rptCajaDiariaDetalle" style="margin-left:0px;">Generar Detalle</button>
+                    			<button type="button" class="btn btn-info" id="rptCajaDiariaDetalle" style="margin-left:0px;">Consumo de Productos</button>
                             </li>
                             <!--<li>
                         		<button type="button" class="btn btn-default" id="rptCJExcel" style="margin-left:0px;">Generar Excel</button>
@@ -133,6 +133,16 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
                 <div class="form-group col-md-12">
                 	<div id="graph"></div>
                     
+                </div>
+                
+                <div class="form-group col-md-12">
+                    <div align="center">
+                    <h3>Consumo Productos</h3>
+                    </div>
+                    <div id="graph2"></div>
+                    <pre id="code2" class="prettyprint linenums">
+        
+                    </pre>
                 </div>
                 
 
@@ -213,6 +223,32 @@ $(document).ready(function(){
         GraficosAnual();
 						
     });
+	
+	
+	
+	
+	function graficosProductosConsumo() {
+	
+	  eval($('#code2').text());
+	  prettyPrint();
+	}
+	
+	
+	function graficosProductosConsumo() {
+		$.ajax({
+				data:  {anio : $('#anio').val(),
+						accion: 'graficosProductosConsumo'},
+				url:   '../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+						
+				},
+				success:  function (response) {
+						$('#code2').html(response);
+						graficosProductosConsumo();
+				}
+		});
+	}
 	/*
 	var chart = Morris.Bar({
     // ID of the element in which to draw the chart.

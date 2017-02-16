@@ -1675,16 +1675,80 @@ return $res;
 
 
 function traerVentasPorAno($anio) {
-	$sql = "select
-month(v.fecha) as mes,
-sum(v.total) as total
-from dbventas v
-inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
-inner join dbclientes cli ON cli.idcliente = v.refclientes
-where	year(fecha) = ".$anio." and v.cancelado = 0 
-group by month(fecha) 
-order by month(fecha) desc";
+		$sql = "select
+			m.nombremes as mes,
+			coalesce( v.total,0) as total
+			from tbmeses m
+			left join (select sum(ve.total) as total,month(ve.fecha) as mes
+						from dbventas ve
+						where year(ve.fecha)=".$anio." and ve.cancelado = 0 
+						group by month(ve.fecha)
+					  ) v on v.mes = m.mes
+			order by m.mes";
 $res = $this->query($sql,0);
+
+function graficosTipoVivienda($anio) {
+	
+	/*
+	i.idinmueble, i.dormitorios, i.banios, i.encontruccion, i.mts2,
+						i.anioconstruccion, i.precioventapropietario, i.nombrepropietario, i.apellidopropietario, i.fechacarga,
+						i.calc_edadconstruccion, i.calc_porcentajedepreciacion, i.calc_avaluoconstruccion, i.calc_depreciacion, i.calc_avaluoterreno,
+						i.calc_preciorealmercado, i.calc_restacliente, i.calc_porcentaje,
+						v.observacion, u.urbanizacion, c.ciudad, p.provincia, pa.nombre, tv.tipovivienda, us.usos, si.situacioninmueble, ur.apellidoynombre, co.comision,
+						i.refvaloracion, i.refurbanizacion, i.reftipovivienda, i.refuso, i.refsituacioninmueble, i.refusuario, i.refcomision
+	
+	*/
+
+	$sql = "select
+				tv.idtipovivienda, tv.tipovivienda, coalesce(count(i.reftipovivienda),0)
+			
+			from tipovivienda tv 
+				left join inmuebles i on tv.idtipovivienda = i.reftipovivienda
+				left join valoracion v on v.idvaloracion = i.refvaloracion
+				left join urbanizacion u on u.idurbanizacion = i.refurbanizacion
+				
+				left join usos us on us.iduso = i.refuso
+				left join situacioninmueble si on si.idsituacioninmueble = i.refsituacioninmueble
+				left join usuariosregistrados ur on ur.idusuarioregistrado = i.refusuario
+				left join comision co on co.idcomision = i.refcomision
+			group by tv.idtipovivienda, tv.tipovivienda
+			order by tv.idtipovivienda
+			";
+			
+	$sqlT = "select
+					count(*)
+				from dbproductos p
+				where p.activo = 1
+			";
+
+	
+	$resT = mysql_result($this->query($sqlT,0),0,0);
+	$resR = $this->query($sql,0);
+	
+	$cad	= "Morris.Donut({
+              element: 'graph2',
+              data: [";
+	$cadValue = '';
+	if ($resT > 0) {
+		while ($row = mysql_fetch_array($resR)) {
+			$cadValue .= "{value: ".((100 * $row[2])	/ $resT).", label: '".$row[1]."'},";
+		}
+	}
+	
+/*
+                {value: ".$porcentajeOportunidad.", label: 'Oportunidad'},
+                {value: ".$porcentajeNormal.", label: 'Normal'},
+                {value: ".$porcentajeCaro.", label: 'Caro'},
+                {value: ".$porcentajeFueraMercado.", label: 'Fuera del Mercado'}*/
+	$cad .= substr($cadValue,0,strlen($cadValue)-1);
+    $cad .=          "],
+              formatter: function (x) { return x + '%'}
+            }).on('click', function(i, row){
+              console.log(i, row);
+            });";
+			
+	return $cad;
+}
 /*
 $cad	= "Morris.Bar({
               element: 'graph',
