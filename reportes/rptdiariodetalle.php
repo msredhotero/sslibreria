@@ -335,6 +335,9 @@ $pdf->Ln();
 $pdf->Cell(60,7,'Total Dia: $ '.number_format((float)$TotalIngresos + (float)$Totales, 2, '.', ','),0,0,'L',false);
 
 $pdf->Ln();
+$pdf->Cell(60,7,'Inicio Caja: $ '.number_format((float)$Caja, 2, '.', ','),0,0,'L',false);
+
+$pdf->Ln();
 $pdf->Cell(60,7,'Total Caja + Inicio de Caja: $ '.number_format((float)$Totales - (float)$TotalEgresos + (float)$Caja, 2, '.', ','),0,0,'L',false);
 
 $nombreTurno = "CajaDiariaDetalle-".$fecha.".pdf";
