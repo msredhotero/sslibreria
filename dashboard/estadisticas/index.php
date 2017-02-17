@@ -91,7 +91,7 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
 
     <div class="boxInfoLargo tile-stats stat-til tile-white">
         <div id="headBoxInfo">
-        	<p style="color: #fff; font-size:18px; height:16px;">Reporte Caja Diaria</p>
+        	<p style="color: #fff; font-size:18px; height:16px;">Estadisticas</p>
         	
         </div>
     	<div class="cuerpoBox">
@@ -131,18 +131,26 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
                 </div>
                 
                 <div class="form-group col-md-12">
-                	<div id="graph"></div>
+                	
+                    <h3>Caja Mensual Año: <span class="lblAnio"></span></h3>
+                    <hr>
+                	<div align="center">
+                    <div id="graph"></div>
                     
+                    </div>
                 </div>
                 
                 <div class="form-group col-md-12">
+                    
+                    <h3>Consumo Productos Año: <span class="lblAnio2"></span></h3>
+                    <hr>
                     <div align="center">
-                    <h3>Consumo Productos</h3>
-                    </div>
+                    
                     <div id="graph2"></div>
-                    <pre id="code2" class="prettyprint linenums">
+                    <pre id="code2" class="prettyprint linenums" style="display:none;">
         
                     </pre>
+                    </div>
                 </div>
                 
 
@@ -195,12 +203,14 @@ $(document).ready(function(){
 						json = $.parseJSON(response);
 						
 						var myarray = [];
-
+						$('.lblAnio').html($('#anio').val());
 						$.each(json, function(i, item) {
-							myarray.push({
-								y: item.mes, 
-								a: item.total
-							});	
+							if (i != 0) {
+								myarray.push({
+									y: item.nombremes, 
+									a: item.total
+								});	
+							}
 						});
 
 						Morris.Bar({
@@ -209,6 +219,7 @@ $(document).ready(function(){
 							  xkey: 'y',
 							  ykeys: ['a'],
 							  labels: ['Totales'],
+							  xLabelMargin: 10,
 							  resize: true
 							});
 
@@ -225,10 +236,13 @@ $(document).ready(function(){
     });
 	
 	
+	$("#rptCajaDiariaDetalle").click(function(event) {
+        graficosProductosConsumo();
+						
+    });
 	
-	
-	function graficosProductosConsumo() {
-	
+	function graficosProductosConsumo2() {
+	  $('.lblAnio2').html($('#anio').val());	
 	  eval($('#code2').text());
 	  prettyPrint();
 	}
@@ -238,17 +252,20 @@ $(document).ready(function(){
 		$.ajax({
 				data:  {anio : $('#anio').val(),
 						accion: 'graficosProductosConsumo'},
-				url:   '../ajax/ajax.php',
+				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {
 						
 				},
 				success:  function (response) {
 						$('#code2').html(response);
-						graficosProductosConsumo();
+						graficosProductosConsumo2();
+						
 				}
 		});
 	}
+	
+	
 	/*
 	var chart = Morris.Bar({
     // ID of the element in which to draw the chart.

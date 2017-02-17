@@ -310,6 +310,9 @@ break;
 case 'traerVentasPorAno':
 	traerVentasPorAno($serviciosReferencias);
 	break;
+case 'graficosProductosConsumo':
+	graficosProductosConsumo($serviciosReferencias);
+	break;
 
 
 /*****************			FIN						****************************/

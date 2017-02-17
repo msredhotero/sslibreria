@@ -1676,7 +1676,8 @@ return $res;
 
 function traerVentasPorAno($anio) {
 		$sql = "select
-			m.nombremes as mes,
+			m.mes as mes,
+			m.nombremes as nombremes,
 			coalesce( v.total,0) as total
 			from tbmeses m
 			left join (select sum(ve.total) as total,month(ve.fecha) as mes
@@ -1685,37 +1686,40 @@ function traerVentasPorAno($anio) {
 						group by month(ve.fecha)
 					  ) v on v.mes = m.mes
 			order by m.mes";
-$res = $this->query($sql,0);
+	$res = $this->query($sql,0);
+	return $res;
+}
 
-function graficosTipoVivienda($anio) {
-	
-	/*
-	i.idinmueble, i.dormitorios, i.banios, i.encontruccion, i.mts2,
-						i.anioconstruccion, i.precioventapropietario, i.nombrepropietario, i.apellidopropietario, i.fechacarga,
-						i.calc_edadconstruccion, i.calc_porcentajedepreciacion, i.calc_avaluoconstruccion, i.calc_depreciacion, i.calc_avaluoterreno,
-						i.calc_preciorealmercado, i.calc_restacliente, i.calc_porcentaje,
-						v.observacion, u.urbanizacion, c.ciudad, p.provincia, pa.nombre, tv.tipovivienda, us.usos, si.situacioninmueble, ur.apellidoynombre, co.comision,
-						i.refvaloracion, i.refurbanizacion, i.reftipovivienda, i.refuso, i.refsituacioninmueble, i.refusuario, i.refcomision
-	
-	*/
+function graficosProductosConsumo($anio) {
+
 
 	$sql = "select
-				tv.idtipovivienda, tv.tipovivienda, coalesce(count(i.reftipovivienda),0)
 			
-			from tipovivienda tv 
-				left join inmuebles i on tv.idtipovivienda = i.reftipovivienda
-				left join valoracion v on v.idvaloracion = i.refvaloracion
-				left join urbanizacion u on u.idurbanizacion = i.refurbanizacion
-				
-				left join usos us on us.iduso = i.refuso
-				left join situacioninmueble si on si.idsituacioninmueble = i.refsituacioninmueble
-				left join usuariosregistrados ur on ur.idusuarioregistrado = i.refusuario
-				left join comision co on co.idcomision = i.refcomision
-			group by tv.idtipovivienda, tv.tipovivienda
-			order by tv.idtipovivienda
+				p.idproducto, dv.nombre, coalesce(count(dv.refproductos),0)
+		
+					from dbventas v
+					inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+					inner join dbclientes cli ON cli.idcliente = v.refclientes
+					inner join dbdetalleventas dv ON v.idventa = dv.refventas
+					inner join dbproductos p ON p.idproducto = dv.refproductos
+					inner join tbcategorias c ON c.idcategoria = p.refcategorias
+					where	year(v.fecha) = ".$anio." and c.esegreso = 0 and v.cancelado = 0
+			group by p.idproducto, p.nombre
 			";
 			
 	$sqlT = "select
+			
+				coalesce(count(p.idproducto),0)
+
+			from dbventas v
+			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+			inner join dbclientes cli ON cli.idcliente = v.refclientes
+			inner join dbdetalleventas dv ON v.idventa = dv.refventas
+			inner join dbproductos p ON p.idproducto = dv.refproductos
+			inner join tbcategorias c ON c.idcategoria = p.refcategorias
+			where	year(v.fecha) = ".$anio." and c.esegreso = 0 and v.cancelado = 0";
+			
+	$sqlT2 = "select
 					count(*)
 				from dbproductos p
 				where p.activo = 1
@@ -1735,11 +1739,7 @@ function graficosTipoVivienda($anio) {
 		}
 	}
 	
-/*
-                {value: ".$porcentajeOportunidad.", label: 'Oportunidad'},
-                {value: ".$porcentajeNormal.", label: 'Normal'},
-                {value: ".$porcentajeCaro.", label: 'Caro'},
-                {value: ".$porcentajeFueraMercado.", label: 'Fuera del Mercado'}*/
+
 	$cad .= substr($cadValue,0,strlen($cadValue)-1);
     $cad .=          "],
               formatter: function (x) { return x + '%'}
@@ -1749,28 +1749,7 @@ function graficosTipoVivienda($anio) {
 			
 	return $cad;
 }
-/*
-$cad	= "Morris.Bar({
-              element: 'graph',
-              data: [";
-	$cadValue = '';
-	if ($res > 0) {
-		while ($row = mysql_fetch_array($res)) {
-			$cadValue .= "{ y: '".$row['mes']."', a: ".$row['total']." },";
-		}
-	}
-	
-	$cad .= substr($cadValue,0,strlen($cadValue)-1);
-    $cad .=          "],
-		  xkey: 'y',
-		  ykeys: ['a'],
-		  labels: ['Totales']
-		});";
-			
-	return $cad;
-*/
-	return $res;
-}
+
 
 
 function traerVentasPorDiaTotales($fecha) {
