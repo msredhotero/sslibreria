@@ -313,6 +313,9 @@ case 'traerVentasPorAno':
 case 'graficosProductosConsumo':
 	graficosProductosConsumo($serviciosReferencias);
 	break;
+case 'graficosProductosConsumoMayores':
+	graficosProductosConsumoMayores($serviciosReferencias);
+	break;
 
 
 /*****************			FIN						****************************/
@@ -1771,6 +1774,22 @@ function graficosProductosConsumo($serviciosReferencias) {
 	$res	=	$serviciosReferencias->graficosProductosConsumo($anio);
 	
 	echo $res;
+}
+
+function graficosProductosConsumoMayores($serviciosReferencias) {
+	$anio = $_POST['anio'];
+	
+	$res	=	$serviciosReferencias->graficosProductosConsumoMayores($anio);
+	
+	$cad = '<h4>Mayores Porcentajes</h4><ul>';
+	
+	while ($row = mysql_fetch_array($res)) {
+		$cad .= '<li style="margin-top:8px; margin-bottom:8px;"><span class="glyphicon glyphicon-info-sign"></span> '.$row[1].' - Porcentaje: <span style="color:#04B431;"> %'.$row[2].'</span></li>';
+	}
+	
+	$cad .= '</ul>';
+	
+	echo $cad;
 }
 
 

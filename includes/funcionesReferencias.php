@@ -1690,12 +1690,28 @@ function traerVentasPorAno($anio) {
 	return $res;
 }
 
-function graficosProductosConsumo($anio) {
-
-
-	$sql = "select
+function graficosProductosConsumoMayores($anio) {
+	
+	$sqlT = "select
 			
-				p.idproducto, dv.nombre, coalesce(count(dv.refproductos),0)
+				coalesce(count(c.idcategoria),0)
+
+			from dbventas v
+			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+			inner join dbclientes cli ON cli.idcliente = v.refclientes
+			inner join dbdetalleventas dv ON v.idventa = dv.refventas
+			inner join dbproductos p ON p.idproducto = dv.refproductos
+			inner join tbcategorias c ON c.idcategoria = p.refcategorias
+			where	year(v.fecha) = ".$anio." and c.esegreso = 0 and v.cancelado = 0";
+			
+	$resT = $this->query($sqlT,0);
+	
+	if (mysql_num_rows($resT)>0) {
+	
+		$cantidad = mysql_result($resT,0,0);
+		$sql = "select
+			
+				c.idcategoria, c.descripcion, round((coalesce(count(c.idcategoria),0) * 100 / ".$cantidad."),2) as porcentaje
 		
 					from dbventas v
 					inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
@@ -1704,12 +1720,59 @@ function graficosProductosConsumo($anio) {
 					inner join dbproductos p ON p.idproducto = dv.refproductos
 					inner join tbcategorias c ON c.idcategoria = p.refcategorias
 					where	year(v.fecha) = ".$anio." and c.esegreso = 0 and v.cancelado = 0
-			group by p.idproducto, p.nombre
+			group by c.idcategoria, c.descripcion
+			order by (coalesce(count(c.idcategoria),0) / 100 * ".$cantidad.") desc
+			limit 10
+			";
+			
+		//return $this->query($sql,0);	
+		$resR = $this->query($sql,0);
+		return $resR;
+			
+	}
+	
+	$sql = "select
+			
+				c.idcategoria, c.descripcion, 10 as porcentaje
+		
+					from dbventas v
+					inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+					inner join dbclientes cli ON cli.idcliente = v.refclientes
+					inner join dbdetalleventas dv ON v.idventa = dv.refventas
+					inner join dbproductos p ON p.idproducto = dv.refproductos
+					inner join tbcategorias c ON c.idcategoria = p.refcategorias
+					where	year(v.fecha) = 9 and c.esegreso = 0 and v.cancelado = 0
+			group by c.idcategoria, c.descripcion
+			limit 5
+			";
+			
+		return $this->query($sql,0);
+		//return $sql;
+
+	
+}
+
+
+function graficosProductosConsumo($anio) {
+
+
+	$sql = "select
+			
+				c.idcategoria, c.descripcion, coalesce(count(c.idcategoria),0)
+		
+					from dbventas v
+					inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
+					inner join dbclientes cli ON cli.idcliente = v.refclientes
+					inner join dbdetalleventas dv ON v.idventa = dv.refventas
+					inner join dbproductos p ON p.idproducto = dv.refproductos
+					inner join tbcategorias c ON c.idcategoria = p.refcategorias
+					where	year(v.fecha) = ".$anio." and c.esegreso = 0 and v.cancelado = 0
+			group by c.idcategoria, c.descripcion
 			";
 			
 	$sqlT = "select
 			
-				coalesce(count(p.idproducto),0)
+				coalesce(count(c.idcategoria),0)
 
 			from dbventas v
 			inner join tbtipopago tip ON tip.idtipopago = v.reftipopago
@@ -1731,6 +1794,7 @@ function graficosProductosConsumo($anio) {
 	
 	$cad	= "Morris.Donut({
               element: 'graph2',
+			  stacked: true,
               data: [";
 	$cadValue = '';
 	if ($resT > 0) {

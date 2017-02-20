@@ -150,6 +150,9 @@ $resMenu = $serviciosHTML->menu(utf8_encode($_SESSION['nombre_predio']),"Reporte
                     <pre id="code2" class="prettyprint linenums" style="display:none;">
         
                     </pre>
+                    <div id="descripcionPorcentajes">
+                    
+                    </div>
                     </div>
                 </div>
                 
@@ -238,7 +241,7 @@ $(document).ready(function(){
 	
 	$("#rptCajaDiariaDetalle").click(function(event) {
         graficosProductosConsumo();
-						
+		graficosProductosConsumoMayores();				
     });
 	
 	function graficosProductosConsumo2() {
@@ -260,6 +263,23 @@ $(document).ready(function(){
 				success:  function (response) {
 						$('#code2').html(response);
 						graficosProductosConsumo2();
+						
+				}
+		});
+	}
+	
+	
+	function graficosProductosConsumoMayores() {
+		$.ajax({
+				data:  {anio : $('#anio').val(),
+						accion: 'graficosProductosConsumoMayores'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+						
+				},
+				success:  function (response) {
+						$('#descripcionPorcentajes').html(response);
 						
 				}
 		});
